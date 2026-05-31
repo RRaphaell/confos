@@ -83,6 +83,25 @@ def test_missing_fields_are_safe() -> None:
     assert paper.topics == []
 
 
+def test_scalar_keyword_and_author_fields_are_safe() -> None:
+    # A bare string where a list is expected must NOT iterate char-by-char.
+    note = make_note("pZ")
+    note["content"]["keywords"] = {"value": "agents"}
+    note["content"]["authors"] = {"value": "Alice Smith"}
+    note["content"]["authorids"] = {"value": "~Alice_Smith1"}
+    paper = _normalize(note)
+    assert paper.keywords == []
+    assert paper.topics == []
+    assert paper.authors == []
+
+
+def test_empty_id_raises() -> None:
+    note = make_note("x")
+    note["id"] = ""
+    with pytest.raises(ValueError):
+        _normalize(note)
+
+
 def test_map_handle_alias_passthrough_and_error() -> None:
     assert ADAPTER._map_handle("neurips-2025") == ("NeurIPS.cc/2025/Conference", "neurips-2025")
     assert ADAPTER._map_handle("ICLR.cc/2025/Workshop/MLMP") == (

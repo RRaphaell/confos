@@ -47,6 +47,13 @@ class ConfigError(ConfosError):
     error_type = "config"
 
 
+class NotFoundError(ConfosError):
+    """A requested entity (venue, paper, author) isn't present locally."""
+
+    exit_code = EXIT_GENERIC
+    error_type = "not_found"
+
+
 class NetworkError(ConfosError):
     """Network or upstream-backend failure (OpenReview unreachable, etc.)."""
 

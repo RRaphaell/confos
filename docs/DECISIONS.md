@@ -130,6 +130,40 @@ exception classes typer raises is required for the exit-code mapping to fire. **
 depend on external `click` (rejected — would not be the same class typer raises → missed
 `isinstance`).
 
+### D17 — Incremental ingest is a true hybrid; the snapshot is current-state (2026-05-31, Phase 1)
+**What:** re-running `ingest` (D6) now fetches BOTH new submissions (`mintcdate` >
+stored `max_tcdate`) AND edited notes (a `sort='tmdate:desc'` scan that short-circuits
+at the stored `max_tmdate`) — so abstract edits, late co-authors, and decision-time
+`venueid` rewrites (under_review→accepted) are caught without `--force`. The raw JSONL
+snapshot is written **current-state, keyed by id**: a full run rewrites it; an incremental
+run merges fetched notes into it (one line per id). **Why:** ARCHITECTURE §8 + research §6
+promise this hybrid; the first cut implemented only the `mintcdate` half, so the default
+re-ingest silently missed status flips and the snapshot went stale (Phase-1 architecture-
+critic, both majors). The merge is idempotent, so a failed DB transaction simply re-merges
+next run (no duplicate lines), and `index rebuild` re-normalizes truth with no dedup
+ambiguity (last/only line per id wins). **Alternatives:** mintcdate-only + document the
+gap (rejected — the product's core claim is trustworthy acceptance status); append-only log
+(rejected — stale truth + dedup burden on rebuild).
+
+### D18 — Schema evolves freely during 0.x; frozen at v0.1.0 (2026-05-31, Phase 1)
+**What:** before the v0.1.0 release the SQLite schema may change in place (e.g. Phase 1
+added `venues.submission_venueid`) while keeping `user_version = 1`; pre-release stores are
+disposable (re-`init`/re-ingest). At v0.1.0 the schema is frozen and any later change bumps
+`user_version` with a real migration. **Why:** the only stores that exist during 0.x are
+ephemeral test stores; a migration ladder for an unreleased tool is the exact over-build D13
+avoids. **Alternatives:** bump `user_version` per dev tweak (rejected — premature migration
+machinery); never change the schema (rejected — Phase 1 genuinely needed the column).
+
+### D19 — Adapter seam carries OpenReview vocabulary in v1; neutralize before source #2 (2026-05-31, Phase 1)
+**What:** `NormalizedPaper`/`VenueRef` carry OpenReview-shaped fields (`tcdate`/`tmdate`,
+`*_venueid`) and commands construct `OpenReviewAdapter` directly (no registry). **Why:**
+acceptable for a one-adapter v1 (BUILD_PLAN §3 simplicity); building a registry + fully
+source-neutral watermark model now would be speculative. **Before a second adapter (AIE/
+PMLR/OpenAlex) lands:** add a `source name → adapter factory` registry so commands resolve
+the adapter from `VenueRef.source` and derive provenance `sources` from it, and treat
+`tcdate/tmdate` as the OpenReview adapter's watermark detail (other sources may leave them
+null and use a different strategy). Logged so it isn't rediscovered late (Phase-1 critic).
+
 ---
 
 ## Assumptions (verify before/while building)

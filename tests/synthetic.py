@@ -77,13 +77,27 @@ class FakeAdapter:
         return self._ref
 
     def fetch_notes(
-        self, ref: VenueRef, opts: IngestOptions, *, since_tcdate: int | None = None
+        self,
+        ref: VenueRef,
+        opts: IngestOptions,
+        *,
+        since_tcdate: int | None = None,
+        since_tmdate: int | None = None,
     ) -> Iterator[RawNote]:
+        incremental = since_tcdate is not None and not opts.force
+        if not incremental:
+            yield from self._notes
+            return
+        # Hybrid: new (tcdate past watermark) + edited (tmdate past watermark), deduped.
+        collected: dict[str, RawNote] = {}
         for note in self._notes:
             tcdate = int(note.get("tcdate") or 0)
-            if since_tcdate is not None and not opts.force and tcdate <= since_tcdate:
-                continue
-            yield note
+            tmdate = int(note.get("tmdate") or 0)
+            is_new = since_tcdate is not None and tcdate > since_tcdate
+            is_edited = since_tmdate is not None and tmdate > since_tmdate
+            if is_new or is_edited:
+                collected[str(note["id"])] = note
+        yield from collected.values()
 
     def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
         if raw.get("id") == "BAD-NOTE":

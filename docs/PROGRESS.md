@@ -9,22 +9,24 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 0 (Foundation) — COMPLETE (gate green, 4-subagent validation passed, findings fixed). Next: Phase 1.**
+**Phase: 1 (Ingest) — COMPLETE (gate green, 3-subagent validation passed, findings fixed). Next: Phase 2.**
 
-- ✅ Docs/blueprint complete & cross-validated (3 subagent passes; 6 criticals fixed).
-- ✅ Repo initialized, pushed to private GitHub: `RRaphaell/confos`.
-- ✅ Decisions/assumptions captured in [DECISIONS.md](DECISIONS.md) (now through D16).
-- ✅ **Phase 0 built:** package scaffold, typer CLI, `init`/`doctor`, full command tree
-  (stubs for later phases), SQLite schema + migrate, JSON envelope, CI. ruff + mypy(strict)
-  + 31 pytest all green locally.
-- ⏳ **Next:** Phase 1 — Ingest (OpenReview → raw JSONL + SQLite).
+- ✅ Decisions/assumptions captured in [DECISIONS.md](DECISIONS.md) (now through D19).
+- ✅ **Phase 0:** package scaffold, typer CLI, `init`/`doctor`, full command tree, SQLite
+  schema + migrate, JSON envelope, CI.
+- ✅ **Phase 1 built:** OpenReview adapter (resolve/fetch/normalize), local status
+  derivation (D4), author identity (D5), raw-JSONL-truth + derived SQLite/FTS, one-txn
+  upsert, hybrid incremental (new + edited, D17), `--force`/`--dry-run`/partial(exit 5),
+  `venues` (list/search/show/add/aliases) + alias map. Verified live (MLMP, 33 papers) +
+  offline vcrpy replay. ruff + mypy(strict) + 72 pytest green; CI green.
+- ⏳ **Next:** Phase 2 — Search & explore.
 
 ## Phase checklist (see BUILD_PLAN.md §5 for detail)
 
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Foundation (scaffold, init/doctor, CI) | ✅ done (validated) |
-| 1 | Ingest (OpenReview → raw JSONL + SQLite) | not started |
+| 1 | Ingest (OpenReview → raw JSONL + SQLite) | ✅ done (validated) |
 | 2 | Search & explore | not started |
 | 3 | People discovery & stats | not started |
 | 4 | Trends & visualization | not started |
@@ -41,6 +43,17 @@ progress, what's next, and pointers to any research notes. Read this first when 
 - [x] CI workflow (ruff + format + mypy + pytest)
 - [x] tests: unit (config/paths/json/migrate) + integration (CLI phase-0 surface)
 - [x] **DoD:** `--help` / `--version` / `init` / `doctor` work; doctor checks env/DB/FTS5; gate green
+
+### Phase 1 deliverables
+- [x] `models.py` — VenueRef / IngestOptions / NormalizedPaper / NormalizedAuthor / IngestResult
+- [x] `adapters/` — SourceAdapter Protocol + OpenReviewAdapter (resolve/fetch/normalize/search)
+- [x] `normalize/` — topics (full); orgs/countries best-effort from email domain (Phase-3 enriches)
+- [x] `db/repositories/` — venues (+ ingest_runs watermarks), papers (+ authors/topics/fts), authors, orgs
+- [x] `services/ingest.py` — hybrid incremental (D17), raw-JSONL current-state snapshot, one-txn upsert, partial(exit 5)
+- [x] `services/venues.py` + `venues` command (list/search/show/add/aliases) + built-in alias map
+- [x] `ingest` command wired; `schema.sql` + `venues.submission_venueid`
+- [x] tests: unit (normalize, adapter) + integration (ingest service, venues CLI, vcrpy replay of a real venue)
+- [x] **DoD:** ingest a fixture venue → SQLite + raw JSONL; incremental re-sync (incl. edits); provenance stamped; gate + CI green
 
 > **Per-phase mechanics (so the build survives context loss mid-phase):**
 > When a phase starts, expand its deliverables into a checkbox list right here, and add a
@@ -60,6 +73,16 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   `IF NOT EXISTS` (idempotent recovery) + dropped the dead `PRAGMA`; reworded idempotent
   init. Deferred (logged): `-vv` tracebacks for typed errors (BUILD_PLAN §3 wants them),
   doctor/init logic in command (services layer deferred by design). +9 regression tests.
+- 2026-05-31 · Phase 1 · architecture-critic + code-reviewer + agent-consumer (all
+  **pass_with_findings**, no criticals) → fixed: implemented the incremental HYBRID
+  (mintcdate new + `tmdate:desc` edit-catch) so post-decision status flips/edits are
+  caught (D17); snapshot is now current-state merge (no stale truth / dup lines);
+  defensive parsing guards scalar keyword/author fields (no char-by-char); `venues
+  search` excludes role sub-groups; `venues add` refuses to remap an ingested slug;
+  `items_seen` consistent with the persisted run row; `NotFoundError` (`type:not_found`)
+  for missing venues; empty-id note skipped; `extract_year` handles glued years.
+  Deferred (logged): adapter registry + neutral timestamps before source #2 (D19).
+  +6 regression tests; verified live (MLMP) + offline replay.
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_

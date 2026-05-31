@@ -23,9 +23,15 @@ class SourceAdapter(Protocol):
         ...
 
     def fetch_notes(
-        self, ref: VenueRef, opts: IngestOptions, *, since_tcdate: int | None = None
+        self,
+        ref: VenueRef,
+        opts: IngestOptions,
+        *,
+        since_tcdate: int | None = None,
+        since_tmdate: int | None = None,
     ) -> Iterator[RawNote]:
-        """Yield raw notes for the venue (paginated). ``since_tcdate`` enables incremental."""
+        """Yield raw notes (paginated). ``since_tcdate``/``since_tmdate`` drive the
+        incremental hybrid: new notes by creation time + edited notes by modify time."""
         ...
 
     def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
@@ -33,7 +39,8 @@ class SourceAdapter(Protocol):
         ...
 
 
-_YEAR_RE = re.compile(r"\b(19|20)\d{2}\b")
+# A 4-digit 19xx/20xx year, even when glued to letters (e.g. "ICLR2025").
+_YEAR_RE = re.compile(r"(?<!\d)(?:19|20)\d{2}(?!\d)")
 # Domain/track labels dropped when deriving a slug from a raw venue id.
 _SLUG_DROP = {"cc", "org", "com", "net", "www", "conference"}
 

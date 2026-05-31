@@ -6,6 +6,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Phase 1 — Ingest (OpenReview).** `confos ingest <venue>` pulls a venue's full
+  submission set, snapshots raw JSONL (the source of truth), normalizes, and upserts into
+  SQLite + FTS in one transaction; status (accepted/under_review/withdrawn/desk_rejected)
+  is derived locally from each note's raw venueid. Incremental re-runs use a hybrid
+  watermark (new submissions by creation date + edited notes by modify date, so
+  post-decision status flips are caught); `--force` re-pulls, `--dry-run` reports counts,
+  partial failures exit 5. New `confos venues` group: list / search (network) / show / add
+  / aliases, with a built-in alias map for major venues. Author identity follows OpenReview
+  profile ids (else email / unresolved name), never merged across papers by name.
 - **Phase 0 — Foundation.** Python/uv package scaffold; typer CLI with the full command
   tree (`init`, `doctor`, and stubbed groups for later phases); global flag handling that
   works before *and* after the subcommand; strict stdout/stderr split with a stable

@@ -6,7 +6,7 @@ import typer
 
 from ..adapters.openreview import OpenReviewAdapter
 from ..console import bind_command, global_output_options
-from ..errors import ConfosError
+from ..errors import NotFoundError
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import data_table, key_value_table
 from ..services import venues as venues_service
@@ -94,7 +94,7 @@ def show(
                 "status": "known alias (not ingested)",
             }
         else:
-            raise ConfosError(
+            raise NotFoundError(
                 f"Venue '{slug}' is not known locally.",
                 hint="See `confos venues list` / `aliases` / `search`.",
             )

@@ -107,32 +107,97 @@ class OpenReviewAdapter:
         )
 
     def fetch_notes(
-        self, ref: VenueRef, opts: Any, *, since_tcdate: int | None = None
+        self,
+        ref: VenueRef,
+        opts: Any,
+        *,
+        since_tcdate: int | None = None,
+        since_tmdate: int | None = None,
     ) -> Iterator[RawNote]:
+        """Yield raw notes. Full fetch by default; incremental = new (mintcdate) +
+        edited (tmdate:desc short-circuit) notes, deduped by id (hybrid per
+        ARCHITECTURE §8 / research §6)."""
         invitation = f"{ref.source_venue_id}/-/{ref.submission_name or 'Submission'}"
+        details = "replies" if opts.include_decisions else None
+        incremental = since_tcdate is not None and not opts.force
+
+        if not incremental:
+            for note in self._get_all(invitation, details=details):
+                yield _note_to_raw(note)
+            return
+
+        # New submissions (created since the watermark) ...
+        collected: dict[str, Any] = {}
+        assert since_tcdate is not None  # `incremental` implies this
+        for note in self._get_all(invitation, details=details, mintcdate=since_tcdate + 1):
+            collected[note.id] = note
+        # ... plus notes modified since the tmdate watermark (edits, decision rewrites).
+        if since_tmdate is not None:
+            for note in self._fetch_modified_since(invitation, since_tmdate, details=details):
+                collected[note.id] = note
+        for note in collected.values():
+            yield _note_to_raw(note)
+
+    def _get_all(
+        self, invitation: str, *, details: str | None = None, mintcdate: int | None = None
+    ) -> list[Any]:
         kwargs: dict[str, Any] = {"invitation": invitation, "sort": "tcdate:asc"}
-        if since_tcdate is not None and not opts.force:
-            kwargs["mintcdate"] = since_tcdate + 1
-        if opts.include_decisions:
-            kwargs["details"] = "replies"
+        if mintcdate is not None:
+            kwargs["mintcdate"] = mintcdate
+        if details:
+            kwargs["details"] = details
         try:
-            notes = self.client.get_all_notes(**kwargs)
+            notes: list[Any] = self.client.get_all_notes(**kwargs)
+            return notes
         except Exception as exc:
             raise NetworkError(
-                f"Failed to fetch submissions for '{ref.slug}': {exc}",
+                f"Failed to fetch submissions for '{invitation}': {exc}",
                 hint="Retry; if it persists, OpenReview may be unreachable.",
             ) from exc
-        for note in notes:
-            yield _note_to_raw(note)
+
+    def _fetch_modified_since(
+        self, invitation: str, since_tmdate: int, *, details: str | None = None, page: int = 200
+    ) -> Iterator[Any]:
+        """Pull notes by descending tmdate, stopping once we reach the watermark."""
+        offset = 0
+        while True:
+            kwargs: dict[str, Any] = {
+                "invitation": invitation,
+                "sort": "tmdate:desc",
+                "offset": offset,
+                "limit": page,
+            }
+            if details:
+                kwargs["details"] = details
+            try:
+                notes = self.client.get_notes(**kwargs)
+            except Exception as exc:
+                raise NetworkError(
+                    f"Failed to fetch modified notes for '{invitation}': {exc}",
+                    hint="Retry; if it persists, OpenReview may be unreachable.",
+                ) from exc
+            if not notes:
+                return
+            for note in notes:
+                if (getattr(note, "tmdate", 0) or 0) <= since_tmdate:
+                    return  # sorted desc → everything after is older
+                yield note
+            offset += len(notes)
 
     def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
         content = raw.get("content") or {}
         paper_id = str(raw.get("id") or "")
+        if not paper_id:
+            raise ValueError("note is missing an id")
         raw_venueid = _unwrap(content, "venueid")
         venue_string = _unwrap(content, "venue")
         status = _derive_status(raw_venueid, ref)
-        keywords_raw = _unwrap(content, "keywords") or []
-        keywords = [k for k in keywords_raw if isinstance(k, str)]
+        keywords_raw = _unwrap(content, "keywords")
+        keywords = (
+            [k for k in keywords_raw if isinstance(k, str)]
+            if isinstance(keywords_raw, list)
+            else []
+        )
         return NormalizedPaper(
             paper_id=paper_id,
             venue_slug=ref.slug,
@@ -186,7 +251,9 @@ class OpenReviewAdapter:
                     continue
                 if year and year not in low:
                     continue
-                if not (low.endswith("/conference") or "/workshop/" in low):
+                # A conference group, or a workshop's top group — not role/committee
+                # sub-groups one level deeper (e.g. .../Workshop/GEM/Publication_Chairs).
+                if not (low.endswith("/conference") or re.search(r"/workshop/[^/]+$", low)):
                     continue
                 results.append(
                     {
@@ -288,8 +355,10 @@ def _derive_acceptance_type(venue_string: str | None, details: Any) -> str | Non
 
 
 def _normalize_authors(content: dict[str, Any], paper_id: str) -> list[NormalizedAuthor]:
-    names = _unwrap(content, "authors") or []
-    ids = _unwrap(content, "authorids") or []
+    names_raw = _unwrap(content, "authors")
+    ids_raw = _unwrap(content, "authorids")
+    names = names_raw if isinstance(names_raw, list) else []
+    ids = ids_raw if isinstance(ids_raw, list) else []
     authors: list[NormalizedAuthor] = []
     for position, name in enumerate(names):
         if not isinstance(name, str):

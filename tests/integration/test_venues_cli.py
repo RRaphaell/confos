@@ -37,7 +37,9 @@ def test_show_known_alias_when_not_ingested(run_cli: RunCli) -> None:
 def test_show_unknown_is_error(run_cli: RunCli) -> None:
     result = run_cli("venues", "show", "no-such-venue", "--json")
     assert result.exit_code == 1
-    assert result.json()["ok"] is False
+    payload = result.json()
+    assert payload["ok"] is False
+    assert payload["error"]["type"] == "not_found"
 
 
 def test_add_rejects_non_openreview_id(run_cli: RunCli) -> None:

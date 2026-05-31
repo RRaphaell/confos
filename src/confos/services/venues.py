@@ -63,13 +63,24 @@ def add_local_venue(paths: Paths, slug: str, source_venue_id: str) -> dict[str, 
     conn = connect(paths.db)
     try:
         migrate(conn)
+        existing = venues_repo.get_venue(conn, slug)
+        if (
+            existing is not None
+            and existing["last_ingested_at"]
+            and existing["source_venue_id"] != source_venue_id
+        ):
+            raise UsageError(
+                f"Venue '{slug}' is already ingested as {existing['source_venue_id']}; "
+                "remapping it would orphan its papers.",
+                hint="Pick a different slug, or remove the store and re-ingest.",
+            )
         with conn:
             venues_repo.register_venue(conn, slug, source_venue_id)
-        result = get_local_venue(paths, slug)
-        assert result is not None  # we just registered it
-        return result
     finally:
         conn.close()
+    result = get_local_venue(paths, slug)
+    assert result is not None  # we just registered it
+    return result
 
 
 def search_venues(

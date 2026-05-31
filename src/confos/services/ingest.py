@@ -58,12 +58,16 @@ def ingest_venue(
         incremental = last_tcdate is not None and not opts.force
         since = last_tcdate if incremental else None
         on_progress(
-            "Incremental update (new submissions only)"
+            "Incremental update (new + edited submissions)"
             if incremental
             else "Full fetch (this may take a while for a large venue)"
         )
 
-        raw_notes = list(adapter.fetch_notes(ref, opts, since_tcdate=since))
+        raw_notes = list(
+            adapter.fetch_notes(
+                ref, opts, since_tcdate=since, since_tmdate=last_tmdate if incremental else None
+            )
+        )
         papers: list[NormalizedPaper] = []
         failed = 0
         for raw in raw_notes:
@@ -88,11 +92,16 @@ def ingest_venue(
 
         raw_dir = paths.raw_venue_dir(ref.source, ref.slug)
         raw_dir.mkdir(parents=True, exist_ok=True)
-        _write_jsonl(raw_dir / "submissions.jsonl", raw_notes, append=incremental)
+        # Current-state snapshot keyed by id: full = rewrite, incremental = merge. The
+        # merge is idempotent, so a failed DB transaction simply re-merges next run (no
+        # duplicate lines), and the snapshot never goes stale for edited notes.
+        _persist_snapshot(raw_dir / "submissions.jsonl", raw_notes, full=not incremental)
         _write_json(raw_dir / "venue.json", ref.model_dump())
 
         started = now_iso()
-        added, updated = _write_papers(conn, ref, papers, started, status, max_tcdate, max_tmdate)
+        added, updated = _write_papers(
+            conn, ref, papers, started, status, max_tcdate, max_tmdate, items_seen=len(raw_notes)
+        )
 
         result = IngestResult(
             venue=ref.slug,
@@ -130,6 +139,8 @@ def _write_papers(
     status: IngestStatus,
     max_tcdate: int | None,
     max_tmdate: int | None,
+    *,
+    items_seen: int,
 ) -> tuple[int, int]:
     added = updated = 0
     with conn:  # transaction: all-or-nothing
@@ -150,7 +161,7 @@ def _write_papers(
             status=status,
             started_at=started,
             finished_at=now_iso(),
-            items_seen=len(papers),
+            items_seen=items_seen,
             items_added=added,
             items_updated=updated,
             max_tcdate=max_tcdate,
@@ -190,10 +201,24 @@ def _dry_run_result(
     )
 
 
-def _write_jsonl(path: Path, notes: list[RawNote], *, append: bool) -> None:
-    mode = "a" if append and path.exists() else "w"
-    with path.open(mode, encoding="utf-8") as fh:
-        for note in notes:
+def _persist_snapshot(path: Path, notes: list[RawNote], *, full: bool) -> None:
+    """Write the raw snapshot as current-state, one line per note id.
+
+    ``full`` rewrites from scratch; otherwise the fetched notes are merged into the
+    existing snapshot by id (updating edited notes, adding new ones). Either way the
+    file holds exactly one current line per id, so ``index rebuild`` re-normalizes
+    truth without any dedup ambiguity.
+    """
+    by_id: dict[str, RawNote] = {}
+    if not full and path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                existing = json.loads(line)
+                by_id[str(existing.get("id"))] = existing
+    for note in notes:
+        by_id[str(note.get("id"))] = note
+    with path.open("w", encoding="utf-8") as fh:
+        for note in by_id.values():
             fh.write(json.dumps(note, ensure_ascii=False) + "\n")
 
 
