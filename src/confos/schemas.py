@@ -1,0 +1,168 @@
+"""Output-contract descriptions for ``confos schema <command>`` (AGENTS.md discovery).
+
+Each entry documents the stable ``--json`` shape for a command: the envelope is always
+the standard one (SCHEMAS §1); ``data`` is described as a field→type map. These are
+hand-maintained against docs/SCHEMAS.md + RANKING.md (the canonical specs). Field names
+are the contract; types are descriptive (not a formal JSON-Schema validator).
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+SCHEMA_VERSION = "1"
+
+_ENVELOPE = {
+    "ok": "bool",
+    "schema_version": "string",
+    "command": "string",
+    "query": "object (echo of resolved args)",
+    "data": "see 'data' below",
+    "warnings": "string[]",
+    "provenance": {
+        "db": "string",
+        "sources": "string[]",
+        "venue": "string?",
+        "generated_at": "iso8601",
+    },
+}
+
+_PAPER = {
+    "paper_id": "string (OpenReview note id)",
+    "title": "string",
+    "abstract": "string (only with --with abstract / in show)",
+    "authors": "[{author_id, name, position}]",
+    "keywords": "string[]",
+    "status": "accepted|under_review|withdrawn|desk_rejected|unknown",
+    "acceptance_type": "oral|spotlight|poster|null",
+    "venue": "string (slug)",
+    "url": "string",
+    "bm25": "number (search/find only; bigger = more relevant)",
+}
+
+_AUTHOR = {
+    "author_id": "string (profile id | email:<addr> | name:<slug>#…)",
+    "display_name": "string",
+    "affiliation_current": "string ('Unknown' if absent)",
+    "data_quality": "resolved|low|unresolved",
+    "profile_url": "string|null",
+}
+
+_FOUND_AUTHOR = {
+    **_AUTHOR,
+    "matched_paper_count": "int",
+    "score": "number (4dp)",
+    "score_components": {"paper_count": "int", "bm25_sum": "number", "recency_bonus": "number"},
+    "why_relevant": "string",
+    "matched_papers": "[{paper_id, title, url, bm25}]",
+}
+
+_STATS = {
+    "rows": "[{key: string, papers: int}]",
+    "data_quality": {
+        "papers_total": "int",
+        "papers_with_signal": "int",
+        "unknown": "int",
+        "low_confidence": "int",
+        "method": "string",
+    },
+}
+
+SCHEMAS: dict[str, dict[str, Any]] = {
+    "papers.search": {"envelope": _ENVELOPE, "data": [_PAPER]},
+    "papers.show": {
+        "envelope": _ENVELOPE,
+        "data": {**_PAPER, "related": "[Paper] (with --with related)"},
+    },
+    "papers.related": {"envelope": _ENVELOPE, "data": [_PAPER]},
+    "authors.find": {"envelope": _ENVELOPE, "data": [_FOUND_AUTHOR]},
+    "authors.search": {"envelope": _ENVELOPE, "data": [{**_AUTHOR, "paper_count": "int"}]},
+    "authors.show": {
+        "envelope": _ENVELOPE,
+        "data": {**_AUTHOR, "paper_count": "int", "venues": "[{venue, papers}]"},
+    },
+    "authors.papers": {"envelope": _ENVELOPE, "data": {"author": _AUTHOR, "papers": [_PAPER]}},
+    "authors.coauthors": {
+        "envelope": _ENVELOPE,
+        "data": {"author": _AUTHOR, "coauthors": [{**_AUTHOR, "shared_papers": "int"}]},
+    },
+    "orgs.top": {
+        "envelope": _ENVELOPE,
+        "data": {"rows": "[{name, country, papers}]", "data_quality": _STATS["data_quality"]},
+    },
+    "orgs.papers": {
+        "envelope": _ENVELOPE,
+        "data": {"org": {"name": "string", "country": "string|null"}, "papers": [_PAPER]},
+    },
+    "stats.overview": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "venue": "string|null",
+            "papers": "int",
+            "status": "{status: int}",
+            "authors": "int",
+            "orgs": "int",
+            "topics": "int",
+            "venues": "int",
+        },
+    },
+    "stats.topics": {"envelope": _ENVELOPE, "data": _STATS},
+    "stats.orgs": {"envelope": _ENVELOPE, "data": _STATS},
+    "stats.countries": {"envelope": _ENVELOPE, "data": _STATS},
+    "trends.topic": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "topic": "string",
+            "series": "[{venue, year, matched, total, share, top_authors, top_orgs}]",
+            "delta": {"matched_abs": "int", "share_pp": "number"},
+            "warnings": "string[]",
+        },
+    },
+    "trends.compare": {"envelope": _ENVELOPE, "data": "same as trends.topic (two venues)"},
+    "viz.topics": {"envelope": _ENVELOPE, "data": _STATS},
+    "viz.orgs": {"envelope": _ENVELOPE, "data": _STATS},
+    "viz.network": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "topic": "string",
+            "venue": "string|null",
+            "node_count": "int",
+            "edge_count": "int",
+            "truncated": "bool",
+            "nodes": "[{id, label, degree}]",
+            "edges": "[[id, id]]",
+        },
+    },
+    "export.context": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "type": "confos.context_pack",
+            "topic": "string",
+            "venue": "string|null",
+            "papers": [_PAPER],
+            "authors": [_FOUND_AUTHOR],
+            "orgs": "[{name, papers}]",
+            "stats": {
+                "matched": "int",
+                "total": "int",
+                "share": "number",
+                "by_status": "{status:int}",
+            },
+            "thin_areas": "string[] (heuristic, labelled)",
+            "notes": "string",
+        },
+    },
+    "venues.list": {
+        "envelope": _ENVELOPE,
+        "data": "[{slug, source_venue_id, display_name, year, paper_count, last_ingested_at}]",
+    },
+    "doctor": {"envelope": _ENVELOPE, "data": {"ok": "bool", "checks": "[{name, status, detail}]"}},
+}
+
+
+def schema_for(command: str) -> dict[str, Any] | None:
+    return SCHEMAS.get(command)
+
+
+def available_commands() -> list[str]:
+    return sorted(SCHEMAS)

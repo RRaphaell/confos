@@ -66,17 +66,3 @@ class PartialIngestError(ConfosError):
 
     exit_code = EXIT_PARTIAL
     error_type = "partial_ingest"
-
-
-class NotImplementedYetError(ConfosError):
-    """A command that is scaffolded but not wired up in the current build phase."""
-
-    exit_code = EXIT_GENERIC
-    error_type = "not_implemented"
-
-    def __init__(self, command: str, *, phase: str | None = None) -> None:
-        where = f" (planned for {phase})" if phase else ""
-        super().__init__(
-            f"`{command}` is not implemented yet{where}.",
-            hint="This build is in progress; see docs/PROGRESS.md for the live status.",
-        )

@@ -90,14 +90,14 @@ def test_json_plain_mutually_exclusive(run_cli: RunCli) -> None:
     assert result.exit_code == 2
 
 
-def test_stub_command_returns_json_error_envelope(run_cli: RunCli) -> None:
-    # schema is still a stub (Phase 5).
-    result = run_cli("schema", "papers.search", "--json")
+def test_erroring_command_returns_json_error_envelope(run_cli: RunCli) -> None:
+    # A command that raises a typed error emits the JSON error envelope (ok:false).
+    result = run_cli("papers", "show", "no-such-id", "--json")
     assert result.exit_code == 1
     payload = result.json()
     assert payload["ok"] is False
-    assert payload["command"] == "schema"
-    assert payload["error"]["type"] == "not_implemented"
+    assert payload["command"] == "papers.show"
+    assert payload["error"]["type"] == "not_found"
 
 
 def test_missing_required_arg_is_usage_error(run_cli: RunCli) -> None:
@@ -169,19 +169,19 @@ def test_click_parse_error_under_json_is_envelope(run_cli: RunCli) -> None:
     assert payload["error"]["type"] == "usage"
 
 
-def test_stub_error_envelope_with_json_before_subcommand(run_cli: RunCli) -> None:
-    result = run_cli("--json", "schema", "papers.search")
+def test_error_envelope_with_json_before_subcommand(run_cli: RunCli) -> None:
+    result = run_cli("--json", "papers", "show", "no-such-id")
     assert result.exit_code == 1
     payload = result.json()
     assert payload["ok"] is False
-    assert payload["command"] == "schema"
-    assert payload["error"]["type"] == "not_implemented"
+    assert payload["command"] == "papers.show"
+    assert payload["error"]["type"] == "not_found"
 
 
 def test_single_verbose_in_both_positions_is_not_vv(run_cli: RunCli) -> None:
-    # -v before AND after a command must stay verbosity 1 (no leaked traceback at -vv).
-    # schema is a stub → exit 1, but the typed error must not dump a traceback.
-    result = run_cli("-v", "schema", "papers.search", "-v")
+    # -v before AND after a command must stay verbosity 1 (no leaked traceback at -vv) —
+    # if it summed to 2, a typed error would dump a stack trace.
+    result = run_cli("-v", "papers", "show", "no-such-id", "-v")
     assert result.exit_code == 1
     assert "Traceback" not in result.stderr
 

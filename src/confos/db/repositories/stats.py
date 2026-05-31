@@ -78,6 +78,18 @@ def topic_counts(
     ).fetchall()
 
 
+def topic_counts_for_papers(conn: sqlite3.Connection, paper_ids: list[str]) -> list[sqlite3.Row]:
+    """Per-topic matched-paper counts over a specific set of papers (for thin_areas)."""
+    if not paper_ids:
+        return []
+    placeholders = ",".join("?" * len(paper_ids))
+    return conn.execute(
+        f"SELECT topic AS key, COUNT(*) AS papers FROM paper_topics "
+        f"WHERE paper_id IN ({placeholders}) GROUP BY topic ORDER BY papers ASC, topic ASC",
+        paper_ids,
+    ).fetchall()
+
+
 def papers_with_keywords(conn: sqlite3.Connection, venue: str | None = None) -> int:
     clause, params = _scope(venue)
     where = f"WHERE {clause}" if clause else ""
