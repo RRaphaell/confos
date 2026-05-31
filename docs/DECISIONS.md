@@ -91,6 +91,45 @@ Claude` line (the harness default must be omitted). Push to private `RRaphaell/c
 after each phase. **Why:** Raphael's hard rule. **Note:** the 3 blueprint commits were
 history-rewritten to strip a trailer that slipped in.
 
+### D13 — Full v1 schema applied once via `PRAGMA user_version` (2026-05-31, Phase 0)
+**What:** the complete v1 schema (core tables + FTS5) lives in `db/schema.sql` and is
+applied exactly once at `init`, gated by `PRAGMA user_version` (`db/migrate.py`).
+`index rebuild` drops + recreates only the derived FTS tables (`drop_derived` /
+`create_derived`) and re-normalises from raw JSONL. **Why:** simplest correct model;
+no Alembic, no per-phase migration ladder. Tables sit empty until their phase populates
+them. **Alternatives:** grow the schema per phase with versioned migrations (rejected —
+migration framework overhead for a single-process local store). *Resolves the Phase-0
+"migration model" open item.*
+
+### D14 — Global output flags work before AND after the subcommand (2026-05-31, Phase 0)
+**What:** `--json/--plain/--quiet/--verbose/--no-input/--no-color` are accepted both as
+root options (`confos --json doctor`) and after the command (`confos doctor --json`) via
+a `global_output_options` decorator that injects them onto every command and OR-merges
+them into the base `AppContext`. `--home`/`--version` are root-only; `--venue`/`--limit`
+are command-level where the command tree lists them, with a root-level global as the
+fallback default. **Why:** CLI_CONTRACT §1 says "global flags first," but every worked
+example in AGENTS.md/PRODUCT/README puts `--json --no-input` *after* the command — agents
+will type it that way. Supporting both removes a sharp edge. **Alternatives:** root-only
+globals (rejected — breaks the documented agent usage); duplicate every flag on every
+command (rejected — unmaintainable).
+
+### D15 — Internal schema naming refined from the ARCHITECTURE §6 sketch (2026-05-31, Phase 0)
+**What:** the FK column is `papers.venue_slug` (not `venue_id`) referencing
+`venues.slug` (the PK); added explicit `withdrawn_venueid` / `desk_rejected_venueid`
+columns on `venues`, and `number` / `tldr` / `primary_area` / `tcdate` / `tmdate` /
+`venue_string` on `papers`. **Why:** ARCHITECTURE §6 is a sketch (with `...`); these make
+local status derivation (D4) and incremental sync (S1) implementable without ambiguity.
+The public JSON field stays `venue` (the slug) per SCHEMAS §2. **Alternatives:** literal
+`venue_id` name (rejected — it stores a slug, so the name would mislead).
+
+### D16 — typer vendors click → `_clickcompat` shim (2026-05-31, Phase 0)
+**What:** typer ≥ 0.16 vendors click as `typer._click`; `standalone_mode=False` re-raises
+*that* click's exceptions, so `cli.main` catches classes resolved through a small
+`_clickcompat` shim (vendored first, external click fallback). **Why:** matching the exact
+exception classes typer raises is required for the exit-code mapping to fire. **Alternatives:**
+depend on external `click` (rejected — would not be the same class typer raises → missed
+`isinstance`).
+
 ---
 
 ## Assumptions (verify before/while building)
