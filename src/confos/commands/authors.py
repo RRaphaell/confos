@@ -8,11 +8,17 @@ from typing import Annotated
 import typer
 
 from ..console import bind_command, global_output_options
-from ..errors import NotImplementedYetError
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import data_table, key_value_table
 from ..services import authors as authors_service
-from ._render import papers_tsv, render_authors, render_papers, resolve_limit
+from ..services import ranking as ranking_service
+from ._render import (
+    papers_tsv,
+    render_authors,
+    render_found_authors,
+    render_papers,
+    resolve_limit,
+)
 
 app = typer.Typer(no_args_is_help=False, help="Find and explore authors.")
 
@@ -23,10 +29,38 @@ def find(
     ctx: typer.Context,
     topic: Annotated[str, typer.Option("--topic", help="Topic to rank authors by.")],
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
+    limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """Rank the people actually publishing on a topic, with why-relevant + provenance."""
-    bind_command(ctx, "authors.find")
-    raise NotImplementedYetError("authors find", phase="Phase 3")
+    """Rank the people actually publishing on a topic, with why-relevant + provenance.
+
+    Examples:
+      confos authors find --topic "agent memory" --venue neurips-2025 --limit 20
+      confos authors find --topic "evals" --json
+    """
+    app_ctx = bind_command(ctx, "authors.find")
+    resolved_venue = venue or app_ctx.venue
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
+    result = ranking_service.find_authors(
+        app_ctx.paths, topic, venue=resolved_venue, limit=resolved_limit
+    )
+    authors = result["authors"]
+    query = {"topic": topic, "venue": resolved_venue, "limit": resolved_limit}
+    if app_ctx.is_json:
+        app_ctx.render_json(authors, query=query, venue=resolved_venue)
+        return
+    if app_ctx.is_plain:
+        tsv_rows(
+            app_ctx.out,
+            [
+                (a["author_id"], a["display_name"], a["matched_paper_count"], a["score"])
+                for a in authors
+            ],
+        )
+        return
+    if not authors:
+        app_ctx.out.print(f"No authors found for topic {topic!r}.")
+        return
+    render_found_authors(app_ctx, authors)
 
 
 @app.command()
@@ -127,7 +161,29 @@ def papers(
 def coauthors(
     ctx: typer.Context,
     author_id: Annotated[str, typer.Argument(help="Profile id (or email:/name: fallback).")],
+    limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
     """List an author's co-authors, ranked by shared papers."""
-    bind_command(ctx, "authors.coauthors")
-    raise NotImplementedYetError("authors coauthors", phase="Phase 3")
+    app_ctx = bind_command(ctx, "authors.coauthors")
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
+    result = ranking_service.coauthors(app_ctx.paths, author_id, limit=resolved_limit)
+    if app_ctx.is_json:
+        app_ctx.render_json(result, query={"author_id": author_id, "limit": resolved_limit})
+        return
+    if app_ctx.is_plain:
+        tsv_rows(
+            app_ctx.out,
+            [(c["author_id"], c["display_name"], c["shared_papers"]) for c in result["coauthors"]],
+        )
+        return
+    app_ctx.out.print(
+        f"[bold]{result['author']['display_name']}[/bold] — {len(result['coauthors'])} co-author(s)"
+    )
+    data_table(
+        app_ctx.out,
+        ["author", "affiliation", "shared"],
+        [
+            (c["display_name"], c["affiliation_current"], str(c["shared_papers"]))
+            for c in result["coauthors"]
+        ],
+    )

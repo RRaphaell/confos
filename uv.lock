@@ -162,6 +162,7 @@ dependencies = [
     { name = "networkx" },
     { name = "openreview-py" },
     { name = "pydantic" },
+    { name = "pyyaml" },
     { name = "rich" },
     { name = "typer" },
 ]
@@ -172,6 +173,7 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
     { name = "types-networkx" },
+    { name = "types-pyyaml" },
     { name = "vcrpy" },
 ]
 
@@ -180,6 +182,7 @@ requires-dist = [
     { name = "networkx", specifier = ">=3.2" },
     { name = "openreview-py", specifier = ">=2.0.0" },
     { name = "pydantic", specifier = ">=2.6" },
+    { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", specifier = ">=13.7" },
     { name = "typer", specifier = ">=0.12" },
 ]
@@ -190,6 +193,7 @@ dev = [
     { name = "pytest", specifier = ">=8.0" },
     { name = "ruff", specifier = ">=0.6" },
     { name = "types-networkx", specifier = ">=3.2" },
+    { name = "types-pyyaml", specifier = ">=6.0" },
     { name = "vcrpy", specifier = ">=6.0" },
 ]
 
@@ -815,6 +819,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f9/9f/e6fe2543aecbfe4d67fe86f280afae1e6d532c49755c5fb6c1f05f8af91e/types_networkx-3.6.1.20260518.tar.gz", hash = "sha256:af3ab153815b366c3695a0015cc75aece9b3eb0e5df56bb60ffee0b7cec8f630", size = 73977 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1f/4f/422a91e9fa008b804746fc2ce4da5bcb7eca4bfb45c31e8282fbb3664601/types_networkx-3.6.1.20260518-py3-none-any.whl", hash = "sha256:574304deea33828fb32cdca757af84f79b67bd80164aa1725c52a95d4a9347e6", size = 162454 },
+]
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.12.20260518"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b8/83/4a1afc3fbfcf5b8d46fc390cd95ed6b0dc9010a265f4e9f46314efffa37a/types_pyyaml-6.0.12.20260518.tar.gz", hash = "sha256:d917f83fb38462550338c1297faedd860b3ec83912b96b1e3d73255f7473e466", size = 17850 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/a2/c01db32be2ae7d6a1689972f3c492b149ee4e164b12fdfd9f64b50888215/types_pyyaml-6.0.12.20260518-py3-none-any.whl", hash = "sha256:d2150f75a231c9fe9c7463bd29487d93e60bac90400287351384bc2284eba7cd", size = 20312 },
 ]
 
 [[package]]

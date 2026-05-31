@@ -63,6 +63,34 @@ def get_with_stats(conn: sqlite3.Connection, author_id: str) -> sqlite3.Row | No
     return row
 
 
+def get_many(conn: sqlite3.Connection, author_ids: list[str]) -> dict[str, sqlite3.Row]:
+    """Fetch author rows for a set of ids, keyed by id (for ranking)."""
+    if not author_ids:
+        return {}
+    placeholders = ",".join("?" * len(author_ids))
+    rows = conn.execute(
+        f"SELECT * FROM authors WHERE id IN ({placeholders})", author_ids
+    ).fetchall()
+    return {row["id"]: row for row in rows}
+
+
+def coauthors(conn: sqlite3.Connection, author_id: str, *, limit: int = 50) -> list[sqlite3.Row]:
+    """Co-authors ranked by number of shared papers (deterministic tiebreak by id)."""
+    return conn.execute(
+        """
+        SELECT a.*, COUNT(*) AS shared_papers
+        FROM paper_authors mine
+        JOIN paper_authors theirs ON theirs.paper_id = mine.paper_id
+        JOIN authors a ON a.id = theirs.author_id
+        WHERE mine.author_id = :author_id AND theirs.author_id != :author_id
+        GROUP BY a.id
+        ORDER BY shared_papers DESC, a.display_name ASC, a.id ASC
+        LIMIT :limit
+        """,
+        {"author_id": author_id, "limit": limit},
+    ).fetchall()
+
+
 def venues_for_author(conn: sqlite3.Connection, author_id: str) -> list[sqlite3.Row]:
     """Per-venue paper counts for an author (most papers first)."""
     return conn.execute(

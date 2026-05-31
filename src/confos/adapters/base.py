@@ -6,6 +6,7 @@ import re
 from collections.abc import Iterator
 from typing import Any, Protocol, runtime_checkable
 
+from ..aliases import NormalizeAliases
 from ..models import IngestOptions, NormalizedPaper, VenueRef
 
 # A raw note is the source's payload, snapshotted verbatim to JSONL (the truth, D3).
@@ -34,8 +35,14 @@ class SourceAdapter(Protocol):
         incremental hybrid: new notes by creation time + edited notes by modify time."""
         ...
 
-    def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
-        """Turn one raw note into a normalized paper (pure; safe to replay from JSONL)."""
+    def normalize(
+        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+    ) -> NormalizedPaper:
+        """Turn one raw note into a normalized paper (pure; safe to replay from JSONL).
+
+        ``aliases`` (org/country) are applied during normalization so re-running with
+        better alias files (via ``index rebuild``) improves the index without re-fetch.
+        """
         ...
 
 

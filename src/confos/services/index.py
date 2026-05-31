@@ -15,6 +15,7 @@ from typing import Any
 
 from ..adapters.base import SourceAdapter
 from ..adapters.openreview import OpenReviewAdapter
+from ..aliases import load_normalize_aliases
 from ..db.connection import connect
 from ..db.migrate import create_derived, drop_derived, migrate
 from ..db.repositories import count_table, reset_entities
@@ -54,6 +55,7 @@ def rebuild(paths: Paths) -> dict[str, Any]:
         # PREPARE (read-only, fail-soft): load venue refs + normalize all notes BEFORE any
         # destructive write. A malformed venue.json / unknown source raises here, leaving
         # the existing index untouched (never a half-wiped FTS); bad note lines are skipped.
+        aliases = load_normalize_aliases(paths)
         prepared: list[tuple[VenueRef, list[Any]]] = []
         failed = 0
         for venue_dir in _snapshots(paths):
@@ -64,7 +66,7 @@ def rebuild(paths: Paths) -> dict[str, Any]:
                 if not line.strip():
                     continue
                 try:
-                    papers.append(adapter.normalize(json.loads(line), ref))
+                    papers.append(adapter.normalize(json.loads(line), ref, aliases=aliases))
                 except Exception:  # skip an unparseable/invalid note line, keep going
                     failed += 1
             prepared.append((ref, papers))

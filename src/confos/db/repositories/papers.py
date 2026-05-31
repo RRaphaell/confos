@@ -116,7 +116,7 @@ def search(
         )
         params["org_id"] = org_id
     sql = (
-        f"SELECT p.*, -bm25(papers_fts, {_BM25_WEIGHTS}) AS relevance "
+        f"SELECT p.*, v.year AS venue_year, -bm25(papers_fts, {_BM25_WEIGHTS}) AS relevance "
         "FROM papers_fts JOIN papers p ON p.id = papers_fts.paper_id "
         "JOIN venues v ON v.slug = p.venue_slug "
         f"WHERE {' AND '.join(clauses)} "

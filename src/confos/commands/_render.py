@@ -62,6 +62,27 @@ def papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
     return [(p["paper_id"], p["title"], p["venue"], p["status"], p.get("bm25", "")) for p in papers]
 
 
+def render_found_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
+    """Ranked people-discovery table for ``authors find`` (with why-relevant)."""
+    table = Table()
+    table.add_column("#", justify="right", no_wrap=True)
+    table.add_column("author", overflow="ellipsis", no_wrap=True)
+    table.add_column("affiliation", overflow="ellipsis", no_wrap=True)
+    table.add_column("matched", justify="right", no_wrap=True)
+    table.add_column("score", justify="right", no_wrap=True)
+    table.add_column("why", overflow="ellipsis", no_wrap=True)
+    for index, author in enumerate(authors, start=1):
+        table.add_row(
+            str(index),
+            author["display_name"],
+            author["affiliation_current"],
+            str(author["matched_paper_count"]),
+            f"{author['score']:.2f}",
+            author["why_relevant"],
+        )
+    ctx.out.print(table)
+
+
 def render_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
     table = Table()
     table.add_column("id", no_wrap=True)

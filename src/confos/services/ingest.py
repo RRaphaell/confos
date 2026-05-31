@@ -15,6 +15,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from ..adapters.base import RawNote, SourceAdapter
+from ..aliases import load_normalize_aliases
 from ..db.connection import connect
 from ..db.migrate import migrate
 from ..db.repositories import authors as authors_repo
@@ -68,11 +69,12 @@ def ingest_venue(
                 ref, opts, since_tcdate=since, since_tmdate=last_tmdate if incremental else None
             )
         )
+        aliases = load_normalize_aliases(paths)
         papers: list[NormalizedPaper] = []
         failed = 0
         for raw in raw_notes:
             try:
-                papers.append(adapter.normalize(raw, ref))
+                papers.append(adapter.normalize(raw, ref, aliases=aliases))
             except Exception as exc:
                 failed += 1
                 on_progress(f"skipped note {raw.get('id')!r} (normalize failed: {exc})")

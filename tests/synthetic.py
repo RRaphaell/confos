@@ -11,6 +11,7 @@ from collections.abc import Iterator
 
 from confos.adapters.base import RawNote
 from confos.adapters.openreview import OpenReviewAdapter
+from confos.aliases import NormalizeAliases
 from confos.models import IngestOptions, NormalizedPaper, VenueRef
 
 FAKE_REF = VenueRef(
@@ -99,7 +100,9 @@ class FakeAdapter:
                 collected[str(note["id"])] = note
         yield from collected.values()
 
-    def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
+    def normalize(
+        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+    ) -> NormalizedPaper:
         if raw.get("id") == "BAD-NOTE":
             raise ValueError("synthetic normalize failure")
-        return self._real.normalize(raw, ref)
+        return self._real.normalize(raw, ref, aliases=aliases)

@@ -13,6 +13,7 @@ import re
 from collections.abc import Iterator
 from typing import Any
 
+from ..aliases import NormalizeAliases
 from ..config import DEFAULT_OPENREVIEW_BASEURL
 from ..errors import NetworkError, UsageError
 from ..models import NormalizedAuthor, NormalizedPaper, PaperStatus, VenueRef
@@ -184,7 +185,9 @@ class OpenReviewAdapter:
                 yield note
             offset += len(notes)
 
-    def normalize(self, raw: RawNote, ref: VenueRef) -> NormalizedPaper:
+    def normalize(
+        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+    ) -> NormalizedPaper:
         content = raw.get("content") or {}
         paper_id = str(raw.get("id") or "")
         if not paper_id:
@@ -219,7 +222,7 @@ class OpenReviewAdapter:
             pdate=raw.get("pdate"),
             tcdate=raw.get("tcdate"),
             tmdate=raw.get("tmdate"),
-            authors=_normalize_authors(content, paper_id),
+            authors=_normalize_authors(content, paper_id, aliases),
             topics=normalize_keywords(keywords),
         )
 
@@ -354,7 +357,9 @@ def _derive_acceptance_type(venue_string: str | None, details: Any) -> str | Non
     return None
 
 
-def _normalize_authors(content: dict[str, Any], paper_id: str) -> list[NormalizedAuthor]:
+def _normalize_authors(
+    content: dict[str, Any], paper_id: str, aliases: NormalizeAliases | None
+) -> list[NormalizedAuthor]:
     names_raw = _unwrap(content, "authors")
     ids_raw = _unwrap(content, "authorids")
     names = names_raw if isinstance(names_raw, list) else []
@@ -364,12 +369,12 @@ def _normalize_authors(content: dict[str, Any], paper_id: str) -> list[Normalize
         if not isinstance(name, str):
             continue
         raw_id = ids[position] if position < len(ids) and isinstance(ids[position], str) else None
-        authors.append(_normalize_author(name, raw_id, paper_id, position))
+        authors.append(_normalize_author(name, raw_id, paper_id, position, aliases))
     return authors
 
 
 def _normalize_author(
-    name: str, raw_id: str | None, paper_id: str, position: int
+    name: str, raw_id: str | None, paper_id: str, position: int, aliases: NormalizeAliases | None
 ) -> NormalizedAuthor:
     if raw_id and raw_id.startswith("~"):
         return NormalizedAuthor(
@@ -383,7 +388,11 @@ def _normalize_author(
         )
     if raw_id and "@" in raw_id:
         email = raw_id.strip().lower()
-        org = org_from_email(email)
+        org = org_from_email(
+            email,
+            org_aliases=aliases.orgs if aliases else None,
+            country_aliases=aliases.countries if aliases else None,
+        )
         affiliation, country = (org[0], org[1]) if org else (None, None)
         return NormalizedAuthor(
             author_id=f"email:{email}",

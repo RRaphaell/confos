@@ -112,7 +112,20 @@ def test_papers_search_plain_is_tab_separated(run_cli: RunCli, ingested: Path) -
     assert all("\t" in ln for ln in lines)
 
 
-def test_authors_find_still_stub(run_cli: RunCli, ingested: Path) -> None:
+def test_authors_find_returns_ranked_people(run_cli: RunCli, ingested: Path) -> None:
     result = run_cli("authors", "find", "--topic", "agents", "--json")
-    assert result.exit_code == 1
-    assert result.json()["error"]["type"] == "not_implemented"
+    assert result.exit_code == 0
+    data = result.json()["data"]
+    assert data  # at least one author works on "agents"
+    top = data[0]
+    for field in (
+        "author_id",
+        "display_name",
+        "matched_paper_count",
+        "score",
+        "score_components",
+        "why_relevant",
+        "matched_papers",
+    ):
+        assert field in top
+    assert top["matched_papers"][0]["url"].startswith("https://openreview.net/forum?id=")

@@ -55,18 +55,38 @@ def _registrable_name(domain: str) -> str:
     return domain
 
 
-def org_from_email(email: str) -> tuple[str, str | None] | None:
+def org_from_email(
+    email: str,
+    *,
+    org_aliases: dict[str, str] | None = None,
+    country_aliases: dict[str, str] | None = None,
+) -> tuple[str, str | None] | None:
     """Best-effort (org_name, country) from an email, or None if no domain.
 
-    Returns a confident seed mapping when known; otherwise a derived name with a
-    TLD-inferred country (which may be None).
+    Resolution order: user ``orgs.yml`` alias (highest priority) → built-in seed →
+    derived-from-domain. Country comes from ``countries.yml`` (by domain or org name)
+    else the domain TLD.
     """
     domain = domain_from_email(email)
     if domain is None:
         return None
+    org_aliases = org_aliases or {}
+    country_aliases = country_aliases or {}
+
+    def _country(name: str) -> str | None:
+        return (
+            country_aliases.get(domain)
+            or country_aliases.get(name.lower())
+            or country_from_domain(domain)
+        )
+
+    if domain in org_aliases:
+        name = org_aliases[domain]
+        return name, _country(name)
     if domain in _DOMAIN_ORG_SEED:
         return _DOMAIN_ORG_SEED[domain]
-    return _registrable_name(domain), country_from_domain(domain)
+    derived = _registrable_name(domain)
+    return derived, _country(derived)
 
 
 def org_slug(name: str) -> str:
