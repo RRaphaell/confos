@@ -1,16 +1,20 @@
 """``confos ingest <venue>`` — pull a venue into the local store (network).
 
-Stub until Phase 1. There is no separate ``sync`` command: re-running ``ingest``
-performs the incremental update via stored watermarks (D6); ``--force`` does a full
-re-pull.
+There is no separate ``sync`` command: re-running ``ingest`` performs the incremental
+update via stored watermarks (D6); ``--force`` does a full re-pull.
 """
 
 from typing import Annotated
 
 import typer
 
+from ..adapters.openreview import OpenReviewAdapter
 from ..console import bind_command
-from ..errors import NotImplementedYetError
+from ..errors import EXIT_PARTIAL
+from ..models import IngestOptions
+from ..output.plain import key_value_plain
+from ..output.table import key_value_table
+from ..services.ingest import ingest_venue
 
 
 def run(
@@ -36,6 +40,65 @@ def run(
     Examples:
       confos ingest neurips-2025
       confos ingest neurips-2025 --force
+      confos ingest iclr-2025 --dry-run --json
     """
-    bind_command(ctx, "ingest")
-    raise NotImplementedYetError("ingest", phase="Phase 1")
+    app_ctx = bind_command(ctx, "ingest")
+    opts = IngestOptions(include_decisions=include_decisions, force=force, dry_run=dry_run)
+    adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
+
+    result = ingest_venue(
+        paths=app_ctx.paths,
+        adapter=adapter,
+        handle=venue,
+        opts=opts,
+        on_progress=app_ctx.info,
+    )
+
+    data = result.model_dump()
+    query = {
+        "venue": venue,
+        "force": force,
+        "dry_run": dry_run,
+        "include_decisions": include_decisions,
+    }
+
+    if app_ctx.is_json:
+        app_ctx.render_json(
+            data,
+            query=query,
+            sources=["openreview"],
+            venue=result.venue,
+            warnings=result.warnings,
+            ok=result.status != "error",
+        )
+    elif app_ctx.is_plain:
+        key_value_plain(app_ctx.out, list(data.items()))
+    else:
+        _render_human(app_ctx, result)
+
+    if result.status == "partial":
+        raise typer.Exit(EXIT_PARTIAL)
+
+
+def _render_human(app_ctx: object, result: object) -> None:
+    from ..console import AppContext
+    from ..models import IngestResult
+
+    assert isinstance(app_ctx, AppContext)
+    assert isinstance(result, IngestResult)
+
+    mode = "dry-run" if result.dry_run else ("incremental" if result.incremental else "full")
+    verb = "Would ingest" if result.dry_run else "Ingested"
+    app_ctx.out.print(f"{verb} [bold]{result.venue}[/bold] ({mode})")
+    rows = [
+        ("submissions seen", str(result.items_seen)),
+        ("added", str(result.items_added)),
+        ("updated", str(result.items_updated)),
+    ]
+    if result.items_failed:
+        rows.append(("failed/skipped", str(result.items_failed)))
+    if result.raw_path:
+        rows.append(("raw snapshot", result.raw_path))
+    key_value_table(app_ctx.out, rows)
+    for warning in result.warnings:
+        app_ctx.warn(warning)

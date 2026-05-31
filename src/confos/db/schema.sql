@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS venues (
     source                TEXT NOT NULL,           -- adapter name, e.g. 'openreview'
     source_venue_id       TEXT NOT NULL,           -- e.g. 'NeurIPS.cc/2025/Conference'
     published_venueid     TEXT,                    -- venueid value that marks 'accepted'
+    submission_venueid    TEXT,                    -- under-review bucket (marks 'under_review')
     withdrawn_venueid     TEXT,
     desk_rejected_venueid TEXT,
     submission_name       TEXT,                    -- e.g. 'Submission' (read from group)
