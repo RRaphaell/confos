@@ -9,8 +9,11 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 3 (People discovery & stats) — COMPLETE (gate green, 3-subagent validation passed; architecture-critic: "not a worse OpenReview site — the wedge is real"). Next: Phase 4.**
+**Phase: 4 (Trends & visualization) — build complete + gate green; subagent validation next. Then Phase 5.**
 
+- ✅ **Phase 4 built:** `trends topic`/`compare` (matched/total/share + first→last delta,
+  SCHEMAS §5), `viz topics`/`orgs` (terminal bar charts), `viz network` (networkx
+  co-authorship graph → terminal/mermaid/html, HTML-escaped). Verified live (MLMP); 130 tests.
 - ✅ **Phase 3 built:** `authors find --topic` (ranked people + why-relevant + provenance,
   RANKING §2, pinned by the §3 acceptance test), `coauthors`, `stats overview/topics/orgs/
   countries` with honest `data_quality` + `--explain`, user-editable alias files
@@ -34,7 +37,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 | 1 | Ingest (OpenReview → raw JSONL + SQLite) | ✅ done (validated) |
 | 2 | Search & explore | ✅ done (validated) |
 | 3 | People discovery & stats | ✅ done (validated) |
-| 4 | Trends & visualization | not started |
+| 4 | Trends & visualization | build done · validation pending |
 | 5 | Export & agent surface | not started |
 | 6 | Hardening & release polish (v0.1.0) | not started |
 

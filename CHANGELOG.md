@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Phase 4 — Trends & visualization.** `confos trends topic <t> --venues a,b,c` and
+  `confos trends compare a b --topic t` show a topic's matched/total/share across
+  venues with a first→last delta and the top authors/orgs per venue. `confos viz topics`
+  / `viz orgs` render terminal bar charts; `confos viz network --topic t
+  --format terminal|mermaid|html` builds a co-authorship graph (networkx) and exports a
+  mermaid diagram or a self-contained HTML page (free text HTML-escaped).
 - **Phase 3 — People discovery & stats.** `confos authors find --topic` ranks the people
   actually publishing on a topic (count + relevance + recency), each with a why-relevant
   explanation, score breakdown, and cited matched papers — the differentiator, pinned by a
