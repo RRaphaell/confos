@@ -1,0 +1,1057 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - openreview-py/2.2.1 (Python/3.12)
+    method: GET
+    uri: https://api2.openreview.net/groups?id=ICLR.cc%2F2025%2FWorkshop%2FMLMP
+  response:
+    body:
+      string: '{"groups":[{"content":{"submission_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Submission"},"pc_submission_revision_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision"},"meta_invitation_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Edit"},"submission_name":{"value":"Submission"},"submission_venue_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Submission"},"withdrawn_venue_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Withdrawn_Submission"},"desk_rejected_venue_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Desk_Rejected_Submission"},"rejected_venue_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Rejected_Submission"},"public_submissions":{"value":false},"commitments_venue":{"value":false},"public_withdrawn_submissions":{"value":false},"public_desk_rejected_submissions":{"value":false},"submission_email_template":{"value":"Your
+        submission to {{Abbreviated_Venue_Name}} has been {{action}}.\n\nSubmission
+        Number: {{note_number}} \n\nTitle: {{note_title}} {{note_abstract}} \n\nTo
+        view your submission, click here: https://openreview.net/forum?id={{note_forum}}"},"submission_email_pcs":{"value":false},"title":{"value":"ICLR
+        2025 Workshop on Machine Learning Multiscale Processes"},"subtitle":{"value":"ICLR
+        2025 Workshop MLMP"},"website":{"value":"https://multiscale-ai.github.io/"},"contact":{"value":"multiscale-ai-orgs@googlegroups.com"},"message_sender":{"value":{"fromName":"ICLR
+        2025 Workshop MLMP","fromEmail":"iclr2025workshopmlmp-notifications@openreview.net"}},"location":{"value":"Singapore"},"instructions":{"value":""},"start_date":{"value":"Jan
+        11 2025"},"date":{"value":"Submission Start: Jan 13 2025 12:00PM UTC-0, Submission
+        Deadline: Feb 26 2025 10:00AM UTC-0"},"program_chairs_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Program_Chairs"},"reviewers_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers"},"reviewers_name":{"value":"Reviewers"},"reviewers_anon_name":{"value":"Reviewer_"},"reviewers_submitted_name":{"value":"Submitted"},"reviewers_custom_max_papers_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Custom_Max_Papers"},"reviewers_affinity_score_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Affinity_Score"},"reviewers_conflict_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Conflict"},"reviewers_assignment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Assignment"},"reviewers_invite_assignment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Invite_Assignment"},"reviewers_proposed_assignment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Proposed_Assignment"},"reviewers_recruitment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Recruitment"},"authors_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Authors"},"authors_accepted_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Authors/Accepted"},"authors_name":{"value":"Authors"},"withdrawn_submission_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Withdrawn_Submission"},"withdraw_expiration_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Withdraw_Expiration"},"withdraw_reversion_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Withdrawal_Reversion"},"withdraw_committee":{"value":["ICLR.cc/2025/Workshop/MLMP/Program_Chairs","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Area_Chairs","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Reviewers","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Authors"]},"withdrawal_name":{"value":"Withdrawal"},"withdrawal_email_pcs":{"value":false},"withdrawn_submission_reveal_authors":{"value":false},"desk_rejected_submission_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Desk_Rejected_Submission"},"desk_reject_expiration_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Desk_Reject_Expiration"},"desk_rejection_reversion_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Desk_Rejection_Reversion"},"desk_reject_committee":{"value":["ICLR.cc/2025/Workshop/MLMP/Program_Chairs","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Area_Chairs","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Reviewers","ICLR.cc/2025/Workshop/MLMP/Submission{number}/Authors"]},"desk_rejection_name":{"value":"Desk_Rejection"},"desk_rejection_email_pcs":{"value":false},"desk_rejected_submission_reveal_authors":{"value":false},"deletion_expiration_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Deletion_Expiration"},"automatic_reviewer_assignment":{"value":false},"reviewers_message_submission_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Submission{number}/-/Message"},"reviewers_message_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Reviewers/-/Message"},"area_chairs_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs"},"area_chairs_name":{"value":"Area_Chairs"},"area_chairs_anon_name":{"value":"Area_Chair_"},"area_chairs_custom_max_papers_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Custom_Max_Papers"},"area_chairs_affinity_score_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Affinity_Score"},"area_chairs_conflict_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Conflict"},"area_chairs_recruitment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Recruitment"},"area_chairs_assignment_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Assignment"},"area_chairs_message_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Area_Chairs/-/Message"},"area_chairs_message_submission_id":{"value":"ICLR.cc/2025/Workshop/MLMP/Submission{number}/Area_Chairs/-/Message"},"review_name":{"value":"Official_Review"},"review_rating":{"value":"rating"},"review_confidence":{"value":"confidence"},"review_email_pcs":{"value":false},"meta_review_recommendation":{"value":"recommendation"},"meta_review_name":{"value":"Meta_Review"},"decision_name":{"value":"Decision"},"decision_email_authors":{"value":false},"decision_field_name":{"value":"decision"},"accept_decision_options":{"value":""},"submission_revision_accepted":{"value":true},"request_form_id":{"value":"swMhnLdKOT"},"comment_mandatory_readers":{"value":["ICLR.cc/2025/Workshop/MLMP/Program_Chairs"]},"comment_email_pcs":{"value":false},"comment_email_sacs":{"value":false},"reviewers_conflict_policy":{"value":"Default"},"area_chairs_conflict_policy":{"value":"Default"},"area_chairs_conflict_n_years":{"value":5},"decision_heading_map":{"value":{"ICLR
+        2025 Workshop MLMP Oral":"Accept (Oral)","ICLR 2025 Workshop MLMP Poster":"Accept
+        (Poster)","Submitted to ICLR 2025 Workshop MLMP":"Reject"}},"direct_comment_email_pcs":{"value":false},"rebuttal_name":{"value":"Rebuttal"},"reviewer_roles":{"value":["Reviewers"]},"article_endorsement_id":{"value":"ICLR.cc/2025/Workshop/MLMP/-/Article_Endorsement"},"area_chair_roles":{"value":["Area_Chairs"]}},"id":"ICLR.cc/2025/Workshop/MLMP","members":["ICLR.cc/2025/Workshop/MLMP/Program_Chairs"],"signatures":["~Super_User1"],"signatories":["ICLR.cc/2025/Workshop/MLMP"],"nonreaders":[],"readers":["everyone"],"writers":["ICLR.cc/2025/Workshop/MLMP"],"invitations":["OpenReview.net/-/Edit","ICLR.cc/2025/Workshop/MLMP/-/Edit"],"domain":"ICLR.cc/2025/Workshop/MLMP","parent":"ICLR.cc/2025/Workshop","tcdate":1736531097018,"cdate":1736531097018,"tmdate":1759825079164,"mdate":1759825079164,"web":"//
+        Webfield component\nconst tabs = [{\n  name: ''Your Consoles'',\n  type: ''consoles''\n}]\n\nconst
+        decisionHeadingMap = domain.content.decision_heading_map?.value\n\nif (decisionHeadingMap)
+        {\n  for (const [venue, tabName] of Object.entries(decisionHeadingMap)) {\n    tabs.push({\n      name:tabName,\n      query:
+        {\n        ''content.venue'': venue,\n        ''invitation'': domain.content.submission_id?.value\n      },\n      options:
+        {\n        hideWhenEmpty: true,\n        enableSearch: true\n      }\n    })\n  }\n}\n\nif
+        (domain.content.public_submissions.value && !decisionHeadingMap) {\n  tabs.push({\n    name:
+        ''Active Submissions'',\n    query: {\n      ''content.venueid'': domain.content.submission_venue_id?.value\n    },\n    options:
+        {\n      enableSearch: true\n    }\n  })\n}\n\nif (domain.content.public_withdrawn_submissions?.value)
+        {\n  tabs.push({\n    name: ''Withdrawn Submissions'',\n    query: {\n      ''content.venueid'':
+        domain.content.withdrawn_venue_id?.value\n    },\n    options: {\n      hideWhenEmpty:
+        true\n    }\n  })\n}\n\nif (domain.content.public_desk_rejected_submissions?.value)
+        {\n  tabs.push({\n    name: ''Desk Rejected Submissions'',\n    query: {\n      ''content.venueid'':
+        domain.content.desk_rejected_venue_id?.value\n    },\n    options: {\n      hideWhenEmpty:
+        true\n    }\n  })\n}\n\ntabs.push({\n  name: ''Recent Activity'',\n  type:
+        ''activity''\n})\n\nreturn {\n  component: ''VenueHomepage'',\n  version:
+        1,\n  properties: {\n    header: {\n      title: domain.content.title?.value,\n      subtitle:
+        domain.content.subtitle?.value,\n      website: domain.content.website?.value,\n      contact:
+        domain.content.contact?.value,\n      location: domain.content.location.value,\n      instructions:
+        domain.content.instructions.value,\n      date: domain.content.start_date.value,\n      deadline:
+        domain.content.date.value\n    },\n    submissionId: domain.content.submission_id?.value,\n    parentGroupId:
+        domain.parent,\n    tabs: tabs\n  }\n}\n","host":"ICLR.cc","description":"Set
+        up and customize the peer review process for your venue. As a program chair,
+        you can define key aspects of the reviewing workflow, including reviewer assignment,
+        review forms, conflict policies, deadlines, and decision criteria. You can
+        find more information [here](https://docs.openreview.net/new-venue-ui-beta/overview).","details":{"writable":false}}],"count":1,"fromCache":true}'
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-store, no-cache, must-revalidate, proxy-revalidate
+      content-length:
+      - '9393'
+      content-security-policy:
+      - 'default-src ''self''; worker-src ''self'' blob:; style-src ''self'' ''unsafe-inline''
+        https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        script-src ''self'' ''unsafe-inline'' ''unsafe-eval'' https://unpkg.com https://challenges.cloudflare.com/turnstile/v0/api.js
+        https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.googletagmanager.com
+        https://*.google-analytics.com https://www.paypalobjects.com/ https://www.paypal.com/
+        https://js.stripe.com/v3/buy-button.js; font-src ''self'' https://cdn.jsdelivr.net
+        https://fonts.gstatic.com; connect-src ''self'' https://*.google-analytics.com
+        https://api.openreview.net https://api2.openreview.net wss://api2.openreview.net
+        https://arxiv.org https://export.arxiv.org https://dblp.org https://dblp.uni-trier.de
+        https://huggingface.co https://pub.orcid.org; img-src ''self'' https://t.paypal.com/
+        data: https://*.google-analytics.com; frame-src ''self'' https://challenges.cloudflare.com/
+        https://api.draftable.com https://js.stripe.com/; frame-ancestors ''self'';
+        base-uri ''self''; form-action ''self'' http://127.0.0.1:* https://ecopyright.ieee.org/ECTT/IntroPage.jsp'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 31 May 2026 15:31:43 GMT
+      etag:
+      - W/"24b1-tazNHFoB7Wux67799DtRkiSducY"
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      ratelimit-limit:
+      - '100'
+      ratelimit-policy:
+      - 100;w=60
+      ratelimit-remaining:
+      - '99'
+      ratelimit-reset:
+      - '60'
+      server:
+      - nginx
+      set-cookie:
+      - GCILB="7efb84ba8ee6e329"; Path=/; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubdomains; preload
+      surrogate-control:
+      - no-store
+      via:
+      - 1.1 google, 1.1 google
+      x-content-type-options:
+      - nosniff
+      x-dns-prefetch-control:
+      - 'off'
+      x-download-options:
+      - noopen
+      x-frame-options:
+      - SAMEORIGIN
+      x-ratelimit-limit:
+      - '100'
+      x-ratelimit-remaining:
+      - '99'
+      x-ratelimit-reset:
+      - '1780241564'
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - openreview-py/2.2.1 (Python/3.12)
+    method: GET
+    uri: https://api2.openreview.net/notes?invitation=ICLR.cc%2F2025%2FWorkshop%2FMLMP%2F-%2FSubmission&stream=true
+  response:
+    body:
+      string: "{\"notes\":[{\"content\":{\"title\":{\"value\":\"DoMiNO: Down-scaling
+        Molecular Dynamics with Neural Graph Ordinary Differential Equations\"},\"authors\":{\"value\":[\"Fang
+        Sun\",\"Zijie Huang\",\"Yadi Cao\",\"Xiao Luo\",\"Wei Wang\",\"Yizhou Sun\"]},\"authorids\":{\"value\":[\"~Fang_Sun3\",\"~Zijie_Huang1\",\"~Yadi_Cao1\",\"~Xiao_Luo3\",\"~Wei_Wang13\",\"~Yizhou_Sun1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Multi-scale Modeling; Molecular
+        Dynamics; Neural ODE\"]},\"abstract\":{\"value\":\"Molecular dynamics (MD)
+        simulations are crucial for understanding and predicting the behavior of molecular
+        systems in biology and chemistry. However, their wide adoption is hindered
+        by two main challenges: (1) computational cost, because fine-grained simulations
+        often require millions of small timesteps, and (2) lack of flexibility, as
+        existing machine-learning-based surrogates typically operate at either a single
+        small or single large timestep. These approaches either accumulate significant
+        rollout errors or lose the ability to produce finegrained results if the timestep
+        is large. To address these issues, we propose DoMiNO: Down-scaling Molecular
+        Dynamics with Neural Graph Ordinary Differential Equations, a hierarchical
+        framework that models multi-scale dynamics. Specifically, DoMiNO performs
+        down-scaling by progressively up-sampling the trajectory across multiple temporal
+        resolutions, equipping each level with a Neural Graph ODE to capture that
+        scale's dominant behavior. At inference, DoMiNO flexibly combines different
+        timestep sizes to predict both short- and longrange dynamics with high fidelity.
+        Empirical results on challenging MD bench-marks-ranging from small molecules
+        to proteins-demonstrate the method's longterm stability, flexibility, and
+        accuracy. Our implementation is available at https://github.com/FrancoTSolis/domino-code.\"},\"pdf\":{\"value\":\"/pdf/498492aa93f1048352c80e4766fcfa49628f708d.pdf\"},\"Presenter\":{\"value\":\"~Yizhou_Sun1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Oral\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nsun2025domino,\\ntitle={DoMi{NO}:
+        Down-scaling Molecular Dynamics with Neural Graph Ordinary Differential Equations},\\nauthor={Fang
+        Sun and Zijie Huang and Yadi Cao and Xiao Luo and Wei Wang and Yizhou Sun},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=T86jIuSi5A}\\n}\"},\"paperhash\":{\"value\":\"sun|domino_downscaling_molecular_dynamics_with_neural_graph_ordinary_differential_equations\"}},\"id\":\"T86jIuSi5A\",\"forum\":\"T86jIuSi5A\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission40/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission40/Authors\"],\"number\":40,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission40/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740560824665,\"cdate\":1740560824665,\"tmdate\":1744334591398,\"mdate\":1744334591398,\"pdate\":1741248197165,\"odate\":1741248197165},{\"content\":{\"title\":{\"value\":\"Towards
+        Interpretable Structure Prediction With Sparse Autoencoders\"},\"authors\":{\"value\":[\"Nithin
+        Parsan\",\"David J Yang\",\"John Jingxuan Yang\"]},\"authorids\":{\"value\":[\"~Nithin_Parsan1\",\"~David_J_Yang1\",\"~John_Jingxuan_Yang1\"]},\"Track\":{\"value\":\"Findings
+        and open challenges\"},\"keywords\":{\"value\":[\"protein language models\",\"sparse
+        autoencoders\",\"ESM2-3B\",\"ESMFold\",\"mechanistic interpretability\",\"Matryoshka
+        architecture\",\"hierarchical features\",\"structure prediction\",\"contact
+        map prediction\",\"model steering\",\"solvent accessibility\",\"biological
+        concept discovery\",\"feature representation\",\"high-dimensional space\",\"linear
+        representations\"]},\"TLDR\":{\"value\":\"We scale sparse autoencoders to
+        ESM2-3B (ESMFold's base model) and introduce Matryoshka SAEs that learn multiscale
+        hierarchical features, enabling interpretability and steering of protein structure
+        predictions while maintaining performance.\"},\"abstract\":{\"value\":\"Protein
+        language models have revolutionized structure prediction, but their nonlinear
+        nature obscures how sequence representations inform structure prediction.
+        While sparse autoencoders (SAEs) offer a path to interpretability here by
+        learning linear representations in high-dimensional space, their application
+        has been limited to smaller protein language models unable to perform structure
+        prediction. In this work, we make two key advances: (1) we scale SAEs to ESM2-3B,
+        the base model for ESMFold, enabling mechanistic interpretability of protein
+        structure prediction for the first time, and (2) we adapt Matryoshka SAEs
+        for protein language models, which learn hierarchically organized features
+        by forcing nested groups of latents to reconstruct inputs independently. We
+        demonstrate that our Matryoshka SAEs achieve comparable or better performance
+        than standard architectures. Through comprehensive evaluations, we show that
+        SAEs trained on ESM2-3B significantly outperform those trained on smaller
+        models for both biological concept discovery and contact map prediction. Finally,
+        we present an initial case study demonstrating how our approach enables targeted
+        steering of ESMFold predictions, increasing structure solvent accessibility
+        while fixing the input sequence. To facilitate further investigation by the
+        broader community, we open-source our code, dataset, pretrained models, and
+        visualizer.\"},\"pdf\":{\"value\":\"/pdf/e7ca447628fd5a5e7fc44b4f4bd8e5b83e155735.pdf\"},\"Presenter\":{\"value\":\"~John_Jingxuan_Yang1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nparsan2025towards,\\ntitle={Towards
+        Interpretable Structure Prediction With Multiscale Sparse Autoencoders},\\nauthor={Nithin
+        Parsan and David J Yang and John Jingxuan Yang},\\nbooktitle={ICLR 2025 Workshop
+        on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=i8vGPXrDMa}\\n}\"},\"Supplementary\":{\"value\":\"https://github.com/johnyang101/reticular-sae\"},\"paperhash\":{\"value\":\"parsan|towards_interpretable_structure_prediction_with_sparse_autoencoders\"}},\"id\":\"i8vGPXrDMa\",\"forum\":\"i8vGPXrDMa\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission39/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission39/Authors\"],\"number\":39,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission39/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740530906784,\"cdate\":1740530906784,\"tmdate\":1744172570146,\"mdate\":1744172570146,\"pdate\":1741248197088,\"odate\":1741248197088},{\"content\":{\"title\":{\"value\":\"Physics-Transfer
+        Learning: A Framework to Address the Accuracy-Performance Dilemma in Modeling
+        Morphological Complexities in Brain Development\"},\"authors\":{\"value\":[\"Yingjie
+        Zhao\",\"Zhiping Xu\"]},\"authorids\":{\"value\":[\"~Yingjie_Zhao2\",\"~Zhiping_Xu1\"]},\"Track\":{\"value\":\"Engineering\"},\"keywords\":{\"value\":[\"Physics-Transfer
+        Learning; Accuracy-Performance Dilemma; Morphological Complexity; Brain Development;
+        \ Digital libraries\"]},\"abstract\":{\"value\":\"The development of theoretical
+        science follows an observation-assumption-model approach, effective for simple
+        systems but hindered by complexity in engineering. Artificial intelligence
+        (AI) and machine learning (ML) offer a data-driven alternative for making
+        inferences when direct solutions are elusive. Feature engineering extends
+        dimensional analysis, revealing hidden physics from data. We present a physics-transfer
+        (PT) framework to predict physics across digitally varied models, addressing
+        the accuracy-performance trade-off in multiscale challenges. This is exemplified
+        in modeling brain morphology development, essential for disease diagnosis
+        and prognosis. Nonlinear deformation physics from basic geometries is encoded
+        into a neural network and applied to complex brain models. Results agree with
+        longitudinal magnetic resonance imaging (MRI) data, and learned variables
+        correlate with physical descriptors, such as undetectable stress states and
+        submicroscopic characteristics, demonstrating the effectiveness of PT in understanding
+        multiscale problems.\"},\"pdf\":{\"value\":\"/pdf/a775a107727c676aca749ffea589de5ae7dcb807.pdf\"},\"Presenter\":{\"value\":\"~Yingjie_Zhao2\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nzhao2025physicstransfer,\\ntitle={Physics-Transfer
+        Learning: A Framework to Address the Accuracy-Performance Dilemma in Modeling
+        Morphological Complexities in Brain Development},\\nauthor={Yingjie Zhao and
+        Zhiping Xu},\\nbooktitle={ICLR 2025 Workshop on Machine Learning Multiscale
+        Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=lRVhXYoKQ7}\\n}\"},\"paperhash\":{\"value\":\"zhao|physicstransfer_learning_a_framework_to_address_the_accuracyperformance_dilemma_in_modeling_morphological_complexities_in_brain_development\"}},\"id\":\"lRVhXYoKQ7\",\"forum\":\"lRVhXYoKQ7\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission37/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission37/Authors\"],\"number\":37,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission37/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740397164845,\"cdate\":1740397164845,\"tmdate\":1744172570081,\"mdate\":1744172570081,\"pdate\":1741248196922,\"odate\":1741248196922},{\"content\":{\"title\":{\"value\":\"PRISM:
+        Enhancing Protein Inverse Folding through Fine-Grained Retrieval on Structure-Sequence
+        Multimodal Representations\"},\"authors\":{\"value\":[\"Sazan Mahbub\",\"Souvik
+        Kundu\",\"Eric P. Xing\"]},\"authorids\":{\"value\":[\"~Sazan_Mahbub1\",\"~Souvik_Kundu2\",\"~Eric_Xing1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Retrieval Augmented Generation\",\"Protein
+        Inverse Folding\",\"Protein Sequence Design\",\"Multimodal Representation\"]},\"TLDR\":{\"value\":\"We
+        present PRISM, a multimodal retrieval-augmented generation framework that
+        enhances protein inverse folding by dynamically integrating fine-grained structure-sequence
+        multimodal representations from a larger protein database.\"},\"abstract\":{\"value\":\"3D
+        structure-conditioned protein sequence generation, also known as protein inverse
+        folding, is a key challenge in computational biology. While large language
+        models for proteins have made significant strides, they cannot dynamically
+        integrate rich multimodal representations from existing datasets, specifically
+        the combined information of 3D structure and 1D sequence. Additionally, as
+        datasets grow, these models require retraining, leading to inefficiencies.
+        In this paper, we introduce PRISM, a novel retrieval-augmented generation
+        (RAG) framework that enhances protein sequence design by dynamically incorporating
+        fine-grained multimodal representations from a larger set of known structure-sequence
+        pairs. Our experiments demonstrate that PRISM significantly outperforms state-of-the-art
+        techniques in sequence recovery, emphasizing the advantages of incorporating
+        fine-grained, multimodal retrieval-augmented generation in protein design.\"},\"pdf\":{\"value\":\"/pdf/53223dad800dcafdbeceb4ebcef5f2b31d934342.pdf\"},\"Presenter\":{\"value\":\"~Sazan_Mahbub1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nmahbub2025textbfprism,\\ntitle={\\\\${\\\\textbackslash}textbf\\\\{{PRISM}:\\\\}\\\\$
+        Enhancing \\\\${\\\\textbackslash}textbf\\\\{{PR}\\\\}\\\\$otein \\\\${\\\\textbackslash}textbf\\\\{S\\\\}\\\\$equence
+        Design through Fine-Grained Retr\\\\${\\\\textbackslash}textbf\\\\{I\\\\}\\\\$eval
+        on Structure-Sequence \\\\${\\\\textbackslash}textbf\\\\{M\\\\}\\\\$ultimodal
+        Representations},\\nauthor={Sazan Mahbub and Souvik Kundu and Eric P. Xing},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=3pj6salA3Y}\\n}\"},\"paperhash\":{\"value\":\"mahbub|prism_enhancing_protein_inverse_folding_through_finegrained_retrieval_on_structuresequence_multimodal_representations\"}},\"id\":\"3pj6salA3Y\",\"forum\":\"3pj6salA3Y\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission36/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission36/Authors\"],\"number\":36,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission36/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740394787593,\"cdate\":1740394787593,\"tmdate\":1744172570055,\"mdate\":1744172570055,\"pdate\":1741248196920,\"odate\":1741248196920},{\"content\":{\"title\":{\"value\":\"Connecting
+        Scales: Learning Dynamics for Efficient Ionic Conductivity Predictions with
+        Graphs\"},\"authors\":{\"value\":[\"Volha Turchyna\",\"Artem Maevskiy\",\"Alexandra
+        Carvalho\",\"Andrey E Ustyuzhanin\"]},\"authorids\":{\"value\":[\"~Volha_Turchyna1\",\"~Artem_Maevskiy1\",\"carvalho@nus.edu.sg\",\"~Andrey_E_Ustyuzhanin1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Solid Electrolytes\",\"Ionic Conductivity\",\"Accelerated
+        Material Discovery\",\"Equivariant Graph Neural Networks\"]},\"TLDR\":{\"value\":\"This
+        study explores the use of graph neural networks to link micro-scale interactions
+        with macro-scale ionic conductivity, highlighting its potential utility for
+        solid electrolyte discovery.\"},\"abstract\":{\"value\":\"Multiscale approaches
+        are crucial for advancing our understanding of material properties, particularly
+        in the search for novel solid electrolytes essential for solid-state batteries.
+        Estimating ionic conductivity through traditional molecular dynamics (MD)
+        simulations is computationally intensive, requiring significant time to capture
+        macro-scale behavior from micro-scale interatomic interactions. This work
+        addresses the challenge of connecting micro-scale interatomic potentials with
+        macro-scale conductivity measurements. We propose using equivariant graph
+        neural networks to develop a faster mapping between these scales, significantly
+        enhancing the efficiency of ionic diffusion predictions. This proof-of-concept
+        demonstrates the potential to accelerate material discovery for solid electrolytes,
+        addressing a critical need in energy storage technology.\"},\"pdf\":{\"value\":\"/pdf/65ec39933f08ed958d15936efceed61b67a3f5b8.pdf\"},\"Presenter\":{\"value\":\"~Volha_Turchyna1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nturchyna2025connecting,\\ntitle={Connecting
+        Scales: Learning Dynamics for Efficient Ionic Conductivity Predictions with
+        Graphs},\\nauthor={Volha Turchyna and Artem Maevskiy and Alexandra Carvalho
+        and Andrey E Ustyuzhanin},\\nbooktitle={ICLR 2025 Workshop on Machine Learning
+        Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=02VgrmjZwd}\\n}\"},\"paperhash\":{\"value\":\"turchyna|connecting_scales_learning_dynamics_for_efficient_ionic_conductivity_predictions_with_graphs\"}},\"id\":\"02VgrmjZwd\",\"forum\":\"02VgrmjZwd\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission35/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission35/Authors\"],\"number\":35,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission35/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740394473442,\"cdate\":1740394473442,\"tmdate\":1744172569847,\"mdate\":1744172569847,\"pdate\":1741248196882,\"odate\":1741248196882},{\"content\":{\"title\":{\"value\":\"Improved
+        Sampling of Diffusion Models in Fluid Dynamics with Tweedie's Formula\"},\"authors\":{\"value\":[\"Youssef
+        Shehata\",\"Benjamin Holzschuh\",\"Nils Thuerey\"]},\"authorids\":{\"value\":[\"~Youssef_Shehata1\",\"~Benjamin_Holzschuh1\",\"~Nils_Thuerey1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"fluid dynamics\",\"diffusion
+        models\"]},\"TLDR\":{\"value\":\"We propose two sampling strategies for diffusion
+        models that achieve improved performance for fluid dynamics\"},\"abstract\":{\"value\":\"Denoising
+        Diffusion Probabilistic Models (DDPMs), while powerful, require extensive
+        sampling due to a high number of function evaluations (NFEs) for accurate
+        predictions, hindering their use in long-term spatio-temporal physics predictions.
+        \ We address this limitation by introducing two novel sampling strategies:
+        1) Truncated Sampling Models, which achieve high-fidelity single/few-step
+        sampling by truncating the diffusion process, bridging the gap with deterministic
+        methods; and 2) Iterative Refinement, a reformulation of DDPM sampling as
+        a few-step refinement process. We demonstrate that both methods significantly
+        improve accuracy over DDPMs, DDIMs, and EDMs with NFEs $\\\\leq$ 10 for compressible
+        transonic flows over a cylinder and provide stable long-term predictions.\"},\"pdf\":{\"value\":\"/pdf/4f914c3f23c5300e1c5362896baf930f7a2fe3d5.pdf\"},\"Presenter\":{\"value\":\"~Youssef_Shehata1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nshehata2025improved,\\ntitle={Improved
+        Sampling of Diffusion Models in Fluid Dynamics with Tweedie's Formula},\\nauthor={Youssef
+        Shehata and Benjamin Holzschuh and Nils Thuerey},\\nbooktitle={ICLR 2025 Workshop
+        on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=WNwRteM7H9}\\n}\"},\"paperhash\":{\"value\":\"shehata|improved_sampling_of_diffusion_models_in_fluid_dynamics_with_tweedies_formula\"}},\"id\":\"WNwRteM7H9\",\"forum\":\"WNwRteM7H9\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission34/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission34/Authors\"],\"number\":34,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission34/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740394088274,\"cdate\":1740394088274,\"tmdate\":1744172569820,\"mdate\":1744172569820,\"pdate\":1741248196822,\"odate\":1741248196822},{\"content\":{\"title\":{\"value\":\"FreeFlow:
+        Latent Flow Matching for Free Energy Difference Estimation\"},\"authors\":{\"value\":[\"Ege
+        Erdogan\",\"Radoslav Ralev\",\"Mika Rebensburg\",\"C\xE9line Marquet\",\"Leon
+        Klein\",\"Hannes Stark\"]},\"authorids\":{\"value\":[\"~Ege_Erdogan1\",\"~Radoslav_Ralev1\",\"~Mika_Rebensburg1\",\"~C\xE9line_Marquet1\",\"~Leon_Klein1\",\"~Hannes_Stark1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"free energy\",\"flow matching\",\"free
+        energy perturbation\",\"computational biology\"]},\"TLDR\":{\"value\":\"We
+        estimate free energy differences via a neural mapping that is based on flow
+        matching between the Boltzmann distributions of two molecular systems with
+        different dimensionalities.\"},\"abstract\":{\"value\":\"Estimating free energy
+        differences between molecular systems is fundamental for understanding molecular
+        interactions and accelerating drug discovery. Current techniques use molecular
+        dynamics to sample the Boltzmann distributions of the two systems and of several
+        intermediate \\\"alchemical\\\" distributions that interpolate between them.
+        From the resulting ensembles, free energy differences can be estimated by
+        averaging importance weight analogs for multiple distributions. We replace
+        slow alchemical simulations with a fast-to-train flow model bridging two systems.
+        After training, we obtain free energy differences by integrating the flow's
+        instantaneous change of variables when transporting samples between the two
+        distributions. To map between molecular systems with different numbers of
+        atoms, we replace the previous solutions of simulating auxiliary \\\"dummy
+        atoms\\\" by additionally training two autoencoders that project the systems
+        to a same-dimensional latent space in which our flow operates. A generalized
+        change of variables formula for trans-dimensional mappings motivates the use
+        of autoencoders in our free energy estimation pipeline. We validate our approach
+        on pharmaceutically relevant ligands in solvent and results show strong agreement
+        with reference values.\"},\"pdf\":{\"value\":\"/pdf/88c59cd1629292f69844db1c7111951c6b53f1dc.pdf\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nerdogan2025freeflow,\\ntitle={FreeFlow:
+        Latent Flow Matching for Free Energy Difference Estimation},\\nauthor={Ege
+        Erdogan and Radoslav Ralev and Mika Rebensburg and C{\\\\'e}line Marquet and
+        Leon Klein and Hannes Stark},\\nbooktitle={ICLR 2025 Workshop on Machine Learning
+        Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=VTKPOXKXlx}\\n}\"},\"paperhash\":{\"value\":\"erdogan|freeflow_latent_flow_matching_for_free_energy_difference_estimation\"}},\"id\":\"VTKPOXKXlx\",\"forum\":\"VTKPOXKXlx\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission33/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission33/Authors\"],\"number\":33,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission33/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740390602642,\"cdate\":1740390602642,\"tmdate\":1745400311251,\"mdate\":1745400311251,\"pdate\":1741248196790,\"odate\":1741248196790},{\"content\":{\"title\":{\"value\":\"Symbolic
+        Regression for Learning Scale Transition Equations in Synthetic Fractal Surface
+        Roughness\"},\"authors\":{\"value\":[\"Aneesh Chatrathi\",\"Zayan Hasan\"]},\"authorids\":{\"value\":[\"~Aneesh_Chatrathi1\",\"~Zayan_Hasan2\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Symbolic Regression\",\"Surface Roughness\",\"Fractal
+        Geometry\",\"Coarse Graining\",\"Multiscale Modeling\",\"Machine Learning\",\"Uncertainty
+        Quantification\"]},\"TLDR\":{\"value\":\"We use symbolic regression to derive
+        interpretable scale-transition equations from synthetic fractal surface roughness
+        data, enabling accurate and explainable multiscale modeling.\"},\"abstract\":{\"value\":\"Modeling
+        surface roughness in materials science is a challenging multiscale problem,
+        as surface textures often exhibit hierarchical (fractal-like) structure across
+        multiple scales. In this work, we present a synthetic data-driven approach
+        to studying scale transitions in surface roughness using fractal data generation
+        and symbolic regression. We construct coarse-grained representations of synthetic
+        fractal surfaces and apply symbolic regression to derive interpretable mathematical
+        expressions that map fine-scale features to coarse-scale behavior. On controlled
+        synthetic data, our approach achieves high predictive accuracy (R\xB2 near
+        1, low MSE), serving as a baseline validation. While the data is idealized,
+        these results suggest that symbolic regression can capture scale-transition
+        relationships in hierarchical surface structures and may also be able to support
+        future efforts in data-driven multiscale modeling. This work highlights the
+        potential of symbolic learning in accelerating modeling workflows for complex
+        physical systems.\"},\"pdf\":{\"value\":\"/pdf/2f0616cbe9fc1455c3741c0ae5393f4458122735.pdf\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"Supplementary\":{\"value\":\"https://constructor.app/platform/research/public/project/mlmp-v3mg\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nchatrathi2025symbolic,\\ntitle={Symbolic
+        Regression for Learning Scale Transition Equations in Synthetic Fractal Surface
+        Roughness},\\nauthor={Aneesh Chatrathi and Zayan Hasan},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=MjhOqgiDju}\\n}\"},\"paperhash\":{\"value\":\"chatrathi|symbolic_regression_for_learning_scale_transition_equations_in_synthetic_fractal_surface_roughness\"}},\"id\":\"MjhOqgiDju\",\"forum\":\"MjhOqgiDju\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission31/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission31/Authors\"],\"number\":31,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission31/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740382492304,\"cdate\":1740382492304,\"tmdate\":1745564013535,\"mdate\":1745564013535,\"pdate\":1741248196774,\"odate\":1741248196774},{\"content\":{\"title\":{\"value\":\"Analysis
+        of Neural ODE Performance in Long-term PDE Sequence Modeling\"},\"authors\":{\"value\":[\"Fang
+        Sun\",\"Maxwell Dalton\",\"Yizhou Sun\"]},\"authorids\":{\"value\":[\"~Fang_Sun3\",\"~Maxwell_Dalton1\",\"~Yizhou_Sun1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"PDE Simulation; Long Timescale Prediction;
+        Neural ODE\"]},\"abstract\":{\"value\":\"Predicting solutions to partial differential
+        equations (PDEs) from limited snapshots is central to many scientific and
+        engineering disciplines. However, standard autoregressive neural models often
+        suffer from compounding errors when rolled out over large time scales. In
+        this paper, we investigate Neural Ordinary Differential Equations (Neural
+        ODEs) as an alternative to purely discrete, stepwise approaches for PDE sequence
+        modeling. We propose a continuous-time neural solver architecture that combines
+        a graph encoder to process local spatial features, a learned ODE network to
+        integrate node embeddings forward in time, and a decoder that produces PDE
+        field predictions at future timesteps. We compare this Neural ODE solver to
+        a baseline autoregressive GNN on a long-horizon sequence-to-sequence prediction
+        task for Burgers' equation without diffusion. Empirical results indicate that
+        our Neural ODE approach significantly reduces error growth over extended time
+        scale and achieves improved stability. These findings highlight the promise
+        of continuous-time neural modeling for robust PDE simulation and pave the
+        way for applying learned surrogates to complex scientific systems. Our implementation
+        is available at https://github.com/FrancoTSolis/neural-ode-pde.\"},\"pdf\":{\"value\":\"/pdf/db99959e305a8ac69a13b4b178d19543cd88f358.pdf\"},\"Presenter\":{\"value\":\"~Maxwell_Dalton1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nsun2025analysis,\\ntitle={Analysis
+        of Neural {ODE} Performance in Long-term {PDE} Sequence Modeling},\\nauthor={Fang
+        Sun and Maxwell Dalton and Yizhou Sun},\\nbooktitle={ICLR 2025 Workshop on
+        Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=rnxAKI2kRD}\\n}\"},\"paperhash\":{\"value\":\"sun|analysis_of_neural_ode_performance_in_longterm_pde_sequence_modeling\"}},\"id\":\"rnxAKI2kRD\",\"forum\":\"rnxAKI2kRD\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission30/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission30/Authors\"],\"number\":30,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission30/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740371215019,\"cdate\":1740371215019,\"tmdate\":1744172569407,\"mdate\":1744172569407,\"pdate\":1741248196691,\"odate\":1741248196691},{\"content\":{\"title\":{\"value\":\"Multi-Scale
+        Modeling of Financial Systems Using Neural Differential Equations: Applications
+        to High-Frequency Trading, Regime Switching, and Portfolio Optimization\"},\"authors\":{\"value\":[\"Tao
+        Qiu\"]},\"authorids\":{\"value\":[\"~Tao_Qiu1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Neural Differential Equations\",\"Multi-Scale
+        Modeling\",\"High-Frequency Trading\",\"Regime Switching. Portfolio Optimization\"]},\"TLDR\":{\"value\":\"This
+        paper proposes a neural differential equation (NDE) framework for multi-scale
+        financial modeling, excelling in high-frequency trading, regime switching,
+        and portfolio optimization over traditional methods.\"},\"abstract\":{\"value\":\"This
+        paper explores the application of neural differential equations (NDEs) to
+        model the multi-scale dynamics of financial systems, with a focus on high-frequency
+        trading, regime-switching asset prices, and portfolio optimization. We propose
+        a novel framework that integrates stochastic volatility and hierarchical architectures
+        to capture both short-term fluctuations and long-term trends. e demonstrate
+        the effectiveness of NDEs in predicting prices, identifying regime transitions,
+        and optimizing portfolios across multiple time scales. The framework is compared
+        with traditional methods such as GARCH and LSTMs, showing superior performance
+        in terms of predictive accuracy, computational efficiency, and risk-adjusted
+        returns. The results highlight the potential of NDEs for real-time applications
+        in financial markets, offering a scalable and interpretable solution for modeling
+        complex systems.\"},\"pdf\":{\"value\":\"/pdf/540189a3dc9a649a478b2b54f4a0a931109ec232.pdf\"},\"Presenter\":{\"value\":\"~Tao_Qiu1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nqiu2025multiscale,\\ntitle={Multi-Scale
+        Modeling of Financial Systems Using Neural Differential Equations: Applications
+        to High-Frequency Trading, Regime Switching, and Portfolio Optimization},\\nauthor={Tao
+        Qiu},\\nbooktitle={ICLR 2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=9niAAZES5o}\\n}\"},\"paperhash\":{\"value\":\"qiu|multiscale_modeling_of_financial_systems_using_neural_differential_equations_applications_to_highfrequency_trading_regime_switching_and_portfolio_optimization\"}},\"id\":\"9niAAZES5o\",\"forum\":\"9niAAZES5o\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission29/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission29/Authors\"],\"number\":29,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission29/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740371120502,\"cdate\":1740371120502,\"tmdate\":1744172569364,\"mdate\":1744172569364,\"pdate\":1741248196667,\"odate\":1741248196667},{\"content\":{\"title\":{\"value\":\"Leveraging
+        LLM-based sentiment analysis for portfolio allocation with proximal policy
+        optimization\"},\"authors\":{\"value\":[\"Kemal Kirtac\",\"Guido Germano\"]},\"authorids\":{\"value\":[\"~Kemal_Kirtac1\",\"~Guido_Germano1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Deep reinforcement learning\",\"stock
+        return forecasting\",\"large language models\",\"portfolio allocation\"]},\"abstract\":{\"value\":\"Portfolio
+        optimization requires adaptive strategies to maximize returns while managing
+        risk. Reinforcement learning (RL) has gained traction in financial decision-making,
+        and proximal policy optimization (PPO) has demonstrated strong performance
+        in dynamic asset allocation. However, traditional PPO relies solely on historical
+        price data, ignoring market sentiment, which plays a crucial role in asset
+        movements. We propose a sentiment-augmented PPO (SAPPO) model that integrates
+        daily financial news sentiment extracted from Refinitiv using LLaMA 3.3, a
+        large language model optimized for financial text analysis. The sentiment
+        layer refines portfolio allocation by incorporating real-time market sentiment
+        alongside price movements. We evaluate both PPO and SAPPO on a three-stock
+        portfolio consisting of Google, Microsoft and Meta, and we compare performance
+        against standard market benchmarks. Results show that SAPPO improves risk-adjusted
+        returns with a superior Sharpe ratio and reduced drawdowns. Our findings highlight
+        the value of integrating sentiment analysis into RL-driven portfolio management.\"},\"pdf\":{\"value\":\"/pdf/ab807e358b9a8a5beda992be4a2fb0804c04b09b.pdf\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nkirtac2025leveraging,\\ntitle={Leveraging
+        {LLM}-based sentiment analysis for portfolio allocation with proximal policy
+        optimization},\\nauthor={Kemal Kirtac and Guido Germano},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=n64e2mKzTg}\\n}\"},\"paperhash\":{\"value\":\"kirtac|leveraging_llmbased_sentiment_analysis_for_portfolio_allocation_with_proximal_policy_optimization\"}},\"id\":\"n64e2mKzTg\",\"forum\":\"n64e2mKzTg\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission28/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission28/Authors\"],\"number\":28,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740225858072,\"cdate\":1740225858072,\"tmdate\":1745399569686,\"mdate\":1745399569686,\"pdate\":1741248196609,\"odate\":1741248196609},{\"content\":{\"title\":{\"value\":\"Boosting
+        Protein Graph Representations through Static-Dynamic Fusion\"},\"authors\":{\"value\":[\"Pengkang
+        Guo\",\"Bruno Correia\",\"Pierre Vandergheynst\",\"Daniel Probst\"]},\"authorids\":{\"value\":[\"~Pengkang_Guo1\",\"~Bruno_Correia1\",\"~Pierre_Vandergheynst1\",\"~Daniel_Probst3\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Graph Neural Networks\",\"Protein
+        Modeling\",\"Molecular Dynamics\",\"Heterogeneous Graph\"]},\"abstract\":{\"value\":\"Machine
+        learning for protein modeling faces significant challenges due to proteins'
+        inherently dynamic nature, yet most graph-based machine learning methods rely
+        solely on static structural information. Recently, the growing availability
+        of molecular dynamics trajectories provides new opportunities for understanding
+        the dynamic behavior of proteins; however, computational methods for utilizing
+        this dynamic information remain limited. We propose a novel graph representation
+        that integrates both static structural information and dynamic correlations
+        from molecular dynamics trajectories, enabling more comprehensive modeling
+        of proteins. By applying relational graph neural networks (RGNNs) to process
+        this heterogeneous representation, we demonstrate significant improvements
+        over structure-based approaches across three distinct tasks: atomic adaptability
+        prediction, binding site detection, and binding affinity prediction. Our results
+        validate that combining static and dynamic information provides complementary
+        signals for understanding protein-ligand interactions, offering new possibilities
+        for drug design and structural biology applications.\"},\"pdf\":{\"value\":\"/pdf/c0a24e416bc09e9ab819e2ccaa4e65f271831b91.pdf\"},\"Presenter\":{\"value\":\"~Pengkang_Guo1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nguo2025boosting,\\ntitle={Boosting
+        Protein Graph Representations through Static-Dynamic Fusion},\\nauthor={Pengkang
+        Guo and Bruno Correia and Pierre Vandergheynst and Daniel Probst},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=MByFkdS8SI}\\n}\"},\"paperhash\":{\"value\":\"guo|boosting_protein_graph_representations_through_staticdynamic_fusion\"}},\"id\":\"MByFkdS8SI\",\"forum\":\"MByFkdS8SI\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission27/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission27/Authors\"],\"number\":27,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission27/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740157084013,\"cdate\":1740157084013,\"tmdate\":1744172569020,\"mdate\":1744172569020,\"pdate\":1741248196561,\"odate\":1741248196561},{\"content\":{\"title\":{\"value\":\"Unifying
+        Renormalization with Markov Categories\"},\"authors\":{\"value\":[\"Paolo
+        Perrone\",\"Andrey E Ustyuzhanin\"]},\"authorids\":{\"value\":[\"~Paolo_Perrone1\",\"~Andrey_E_Ustyuzhanin1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Renormalization\",\"scaling\",\"Markov
+        categories\",\"category theory\"]},\"TLDR\":{\"value\":\"We employ techniques
+        from abstract mathematics to express renormalization in a unified way.\"},\"abstract\":{\"value\":\"This
+        paper explores a novel approach for modeling renormalization processes using
+        Markov categories, a formalism rooted in category theory. By leveraging the
+        abstraction provided by Markov categories, we aim to provide a coherent framework
+        that bridges stochastic processes with renormalization theory, potentially
+        enhancing the interpretability and application of these crucial transformations.
+        Our study elucidates theoretical insights, outlines computational benefits,
+        and suggests interdisciplinary applications, espe cially in conjunction with
+        machine learning methodologies. Key comparisons with existing models highlight
+        the advantages in terms of flexibility and abstraction.\"},\"pdf\":{\"value\":\"/pdf/ba2c9a8da1373bd96863400ab5593fd1ac6227d8.pdf\"},\"Presenter\":{\"value\":\"~Paolo_Perrone1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nperrone2025unifying,\\ntitle={Unifying
+        Renormalization with Markov Categories},\\nauthor={Paolo Perrone and Andrey
+        E Ustyuzhanin},\\nbooktitle={ICLR 2025 Workshop on Machine Learning Multiscale
+        Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=ck3vM17ckg}\\n}\"},\"paperhash\":{\"value\":\"perrone|unifying_renormalization_with_markov_categories\"}},\"id\":\"ck3vM17ckg\",\"forum\":\"ck3vM17ckg\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission26/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission26/Authors\"],\"number\":26,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission26/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1740052598994,\"cdate\":1740052598994,\"tmdate\":1744172569026,\"mdate\":1744172569026,\"pdate\":1741248196544,\"odate\":1741248196544},{\"content\":{\"title\":{\"value\":\"Scalable
+        and Efficient Multi-Weather Classification for Autonomous Driving with Coresets,
+        Pruning, and Resolution Scaling\"},\"authors\":{\"value\":[\"Tushar Shinde\",\"AVINASH
+        KUMAR SHARMA\"]},\"authorids\":{\"value\":[\"~Tushar_Shinde1\",\"~AVINASH_KUMAR_SHARMA1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Multi-weather classification\",\"coreset
+        selection\",\"resolution scaling\",\"pruning\",\"model compression\"]},\"abstract\":{\"value\":\"Autonomous
+        vehicles require robust perception systems capable of operating in diverse
+        weather conditions, including snow, rain, fog, and storms. In this work, we
+        present a scalable and efficient approach for multi-weather classification
+        in autonomous driving, leveraging the WEDGE (WEather images by DALL-E GEneration)
+        dataset. Our study investigates three complementary techniques to enhance
+        classification performance and efficiency: Coreset Selection, Resolution Scaling,
+        and Model Compression via Adaptive Pruning and Quantization. Specifically,
+        we evaluate the impact of coreset selection methods (random and margin-based)
+        at varying data fractions (e.g., 1, 0.75, 0.5, 0.25, 0.1), assess model robustness
+        under low-resolution settings (224x224, 112x112, 56x56), and demonstrate that
+        adaptive pruning combined with 8-bit quantization can reduce model size by
+        up to 85% while maintaining competitive classification accuracy. Experimental
+        results validate the effectiveness of our integrated approach, providing a
+        scalable and robust solution for multi-weather classification. This work advances
+        the feasibility of deploying perception models in real-world autonomous driving
+        systems operating under adverse weather conditions and limited computational
+        resources.\"},\"pdf\":{\"value\":\"/pdf/816c6cd10ff28945a6de074ebbf0a7ea7327714b.pdf\"},\"Presenter\":{\"value\":\"~AHMED_SILIMA_VUAI1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nshinde2025scalable,\\ntitle={Scalable
+        and Efficient Multi-Weather Classification for Autonomous Driving with Coresets,
+        Pruning, and Resolution Scaling},\\nauthor={Tushar Shinde and AVINASH KUMAR
+        SHARMA},\\nbooktitle={ICLR 2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=xnHjZt21BS}\\n}\"},\"paperhash\":{\"value\":\"shinde|scalable_and_efficient_multiweather_classification_for_autonomous_driving_with_coresets_pruning_and_resolution_scaling\"}},\"id\":\"xnHjZt21BS\",\"forum\":\"xnHjZt21BS\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission25/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission25/Authors\"],\"number\":25,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission25/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739276657667,\"cdate\":1739276657667,\"tmdate\":1759825089050,\"mdate\":1759825089050,\"pdate\":1741248196476,\"odate\":1741248196476},{\"content\":{\"title\":{\"value\":\"ViNE-GATr:
+        scaling geometric algebra transformers with virtual nodes embeddings\"},\"authors\":{\"value\":[\"Julian
+        Suk\",\"Thomas Hehn\",\"Arash Behboodi\",\"Gabriele Cesa\"]},\"authorids\":{\"value\":[\"~Julian_Suk1\",\"~Thomas_Hehn1\",\"~Arash_Behboodi1\",\"~Gabriele_Cesa1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Geometric deep learning\",\"Transformers\",\"Virtual
+        nodes learning\",\"Equivariance\"]},\"abstract\":{\"value\":\"Equivariant
+        neural networks can effectively model physical systems by naturally handling
+        the underlying geometric quantities and preserving their symmetries, but scaling
+        them to large geometric data remains challenging. Naive downsampling typically
+        disrupts features\u2019 transformation laws, limiting their applicability
+        in large scale settings. In this work, we propose a scalable equivariant transformer
+        that efficiently processes geometric data in a coarse-grained latent space
+        while preserving E(3) symmetries of the problem. In particular, by building
+        on the Geometric Algebra Transformer (GATr) and PerceiverIO architectures,
+        our method learns equivariant latent tokens which allow us to decouple the
+        processing complexity from the input data representation while maintaining
+        global equivariance.\"},\"pdf\":{\"value\":\"/pdf/3ca078f066bf9b26ebed25b77d1968f017794ac4.pdf\"},\"Presenter\":{\"value\":\"~Thomas_Hehn1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nsuk2025vinegatr,\\ntitle={Vi{NE}-{GAT}r:
+        scaling geometric algebra transformers with virtual nodes embeddings},\\nauthor={Julian
+        Suk and Gabriele Cesa and Thomas Hehn and Arash Behboodi},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=Eb7fQBdA3D}\\n}\"},\"paperhash\":{\"value\":\"suk|vinegatr_scaling_geometric_algebra_transformers_with_virtual_nodes_embeddings\"}},\"id\":\"Eb7fQBdA3D\",\"forum\":\"Eb7fQBdA3D\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission23/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission23/Authors\"],\"number\":23,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission23/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739274312406,\"cdate\":1739274312406,\"tmdate\":1744172568732,\"mdate\":1744172568732,\"pdate\":1741248196410,\"odate\":1741248196410},{\"content\":{\"title\":{\"value\":\"On
+        Learning Quasi-Lagrangian Turbulence\"},\"authors\":{\"value\":[\"Artur P.
+        Toshev\",\"Teodor Kalinov\",\"Nicholas Gao\",\"Stephan G\xFCnnemann\",\"Nikolaus
+        A. Adams\"]},\"authorids\":{\"value\":[\"~Artur_P._Toshev1\",\"~Teodor_Kalinov1\",\"~Nicholas_Gao1\",\"~Stephan_G\xFCnnemann1\",\"~Nikolaus_A._Adams1\"]},\"Track\":{\"value\":\"Findings
+        and open challenges\"},\"keywords\":{\"value\":[\"fluid mechanics\",\"Lagrangian\",\"particle-based\",\"graph
+        neural networks\"]},\"TLDR\":{\"value\":\"We investigate different approaches
+        to learning weakly-compressible quasi-Lagrangian turbulence using graph neural
+        networks, demonstrating that learned solvers can capture turbulence statistics
+        more accurately than classical ones.\"},\"abstract\":{\"value\":\"Lagrangian,
+        or particle-based, fluid mechanics methods are the dominant numerical tool
+        for simulating complex boundaries, solid-fluid interactions, and multi-phase
+        flows. While their counterpart, the Eulerian framework, has seen significant
+        progress in learning turbulence closures \u2013 such as large eddy simulation
+        (LES) modeling \u2013 turbulence modeling in the Lagrangian framework has
+        been far less successful. In this paper, we first explain why preserving the
+        correct energy spectrum, crucial for analyzing turbulence, is fundamentally
+        impossible in a fully Lagrangian description. This limitation necessitates
+        using quasi-Lagrangian schemes \u2013 methods that adjust the evolution of
+        fluid particle positions beyond their physical velocity to improve accuracy.
+        However, manually designing such corrections is challenging, motivating data-driven
+        approaches. To this end, we are the first to investigate machine-learned quasi-Lagrangian
+        fluid dynamics surrogates. Our experiments are on a new quasi-Lagrangian 2D
+        turbulent Kolmogorov dataset, where velocities from a high-fidelity direct
+        numerical simulation (DNS) solver are spectrally interpolated onto fluid particles,
+        interleaved with particle relaxations to achieve weakly compressible fluid
+        dynamics. We compare six machine-learning parametrizations for evolving the
+        positions and velocities of particles. Our results show that learning simple
+        unconstrained correction terms yields coarse-grained simulations that align
+        well with the reference high-fidelity simulation.\"},\"pdf\":{\"value\":\"/pdf/8442826b51eb8e5cabc2faeff5f8cfd0248f87a7.pdf\"},\"Presenter\":{\"value\":\"~Nicholas_Gao1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\ntoshev2025on,\\ntitle={On
+        Learning Quasi-Lagrangian Turbulence},\\nauthor={Artur P. Toshev and Teodor
+        Kalinov and Nicholas Gao and Stephan G{\\\\\\\"u}nnemann and Nikolaus A. Adams},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=R1Lrk1EffC}\\n}\"},\"paperhash\":{\"value\":\"toshev|on_learning_quasilagrangian_turbulence\"}},\"id\":\"R1Lrk1EffC\",\"forum\":\"R1Lrk1EffC\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission22/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission22/Authors\"],\"number\":22,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission22/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739273541068,\"cdate\":1739273541068,\"tmdate\":1744172568663,\"mdate\":1744172568663,\"pdate\":1741248196360,\"odate\":1741248196360},{\"content\":{\"title\":{\"value\":\"Scaling
+        Dynamic Mode Decomposition For Real Time Analysis Of Infant Movements\"},\"authors\":{\"value\":[\"Navya
+        Annapareddy\",\"Lisa Letzkus\",\"Santina Zanelli\",\"Stephen Baek\"]},\"authorids\":{\"value\":[\"~Navya_Annapareddy1\",\"lmc8c@uvahealth.org\",\"sz5d@uvahealth.org\",\"~Stephen_Baek1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Computer Vision\",\"Digital Twin\",\"Healthcare\",\"Machine
+        Learning\",\"Pose Estimation\",\"Dynamical Systems\",\"ODE\"]},\"TLDR\":{\"value\":\"We
+        apply dynamic mode decomposition (DMD) as novel way to analyze characteristic
+        motions in infant motion data in a more interpretable, efficient, and scalable
+        manner than existing methods.\"},\"abstract\":{\"value\":\"The analysis of
+        characteristic motions in infants plays a pivotal role in quantifying developmental
+        progress and clinical risk for neurodevelopmental and musculoskeletal abnormalities.
+        Traditional methods often rely on resource intensive\\nmanual motion assessments
+        carried out by clinicians while computer assisted approaches frequently utilize
+        computationally expensive simulations or black-box\\nclassification models.
+        These approaches struggle to efficiently to both capture\\nand differentiate
+        the highly correlated dynamics of infant motion, limiting their\\nability
+        to deliver actionable insights in a clinically viable decision time frame.
+        In\\nresponse to these challenges, we introduce the use of Dynamic Mode Decomposition
+        (DMD) as a transformative approach for decomposing complex infant motion\\ninto
+        interpretable, independent components that are linearly additive in nature.\\nDMD
+        not only enables extraction of large scale clinically meaningful patterns\\nbut
+        also can integrate with existing computer assisted interventions with regard\\nto
+        standardized motion features. We assess an optimized DMD formulation on\\n275,000
+        frames of infant motion in clinical settings that have undergone manual\\nmotion
+        assessment by clinicians. Our experimental results show that using DMD\\nmodes
+        as predictive components not only result in equal or superior accuracy in\\npredicting
+        abnormal clinical motion assessments compared to traditional manual\\nor computer
+        assisted methods but serve as highly data rich features themselves\\nthat
+        can be used as a novel basis for personalized clinical analysis and uncertainty\\nquantification
+        at scale.\"},\"pdf\":{\"value\":\"/pdf/d0523bd5b23cebb2832ede3c498bb249f45d11c3.pdf\"},\"Presenter\":{\"value\":\"~Navya_Annapareddy1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nannapareddy2025scaling,\\ntitle={Scaling
+        Dynamic Mode Decomposition For Real Time Analysis Of Infant Movements},\\nauthor={Navya
+        Annapareddy and Lisa Letzkus and Santina Zanelli and Stephen Baek},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=wzt7hZo82u}\\n}\"},\"paperhash\":{\"value\":\"annapareddy|scaling_dynamic_mode_decomposition_for_real_time_analysis_of_infant_movements\"}},\"id\":\"wzt7hZo82u\",\"forum\":\"wzt7hZo82u\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission21/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission21/Authors\"],\"number\":21,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission21/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739272644248,\"cdate\":1739272644248,\"tmdate\":1744172568636,\"mdate\":1744172568636,\"pdate\":1741248196266,\"odate\":1741248196266},{\"content\":{\"title\":{\"value\":\"A
+        Joint Space-Time Encoder for Geographic Time-Series Data\"},\"authors\":{\"value\":[\"David
+        Mickisch\",\"Konstantin Klemmer\",\"M\xE9lisande Teng\",\"David Rolnick\"]},\"authorids\":{\"value\":[\"~David_Mickisch1\",\"~Konstantin_Klemmer1\",\"~M\xE9lisande_Teng1\",\"~David_Rolnick1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"climate and weather\",\"surrogate modelling\",\"geographic
+        time series\",\"location encodings\",\"deep learning regularization\"]},\"TLDR\":{\"value\":\"We
+        investigate and evaluate methods to improve the use of spatio-temporal coordinates
+        for neural networks.\"},\"abstract\":{\"value\":\"Many real-world processes
+        are characterized by complex spatio-temporal dependencies, from climate dynamics
+        to disease spread. Here, we introduce a new neural network architecture to
+        model such dynamics at scale: the \\\\emph{Space-Time Encoder}. Building on
+        recent advances in \\\\emph{location encoders}, models that take as inputs
+        geographic coordinates, we develop a method that takes in geographic and temporal
+        information simultaneously and learns smooth, continuous functions in both
+        space and time. The inputs are first transformed using positional encoding
+        functions and then fed into neural networks that allow the learning of complex
+        functions. We implement a prototype of the \\\\emph{Space-Time Encoder}, discuss
+        the design choices of the novel temporal encoding, and demonstrate its utility
+        in climate model emulation. We discuss the potential of the method across
+        use cases, as well as promising avenues for further methodological innovation.\"},\"pdf\":{\"value\":\"/pdf/59feaa30cd0f6b12a5c128ec621e48a136a5c3f7.pdf\"},\"Presenter\":{\"value\":\"~David_Mickisch1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nmickisch2025a,\\ntitle={A
+        Joint Space-Time Encoder for Geographic Time-Series Data},\\nauthor={David
+        Mickisch and Konstantin Klemmer and M{\\\\'e}lisande Teng and David Rolnick},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=BrsPVXO6f5}\\n}\"},\"paperhash\":{\"value\":\"mickisch|a_joint_spacetime_encoder_for_geographic_timeseries_data\"}},\"id\":\"BrsPVXO6f5\",\"forum\":\"BrsPVXO6f5\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission20/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission20/Authors\"],\"number\":20,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission20/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739271752467,\"cdate\":1739271752467,\"tmdate\":1744221395104,\"mdate\":1744221395104,\"pdate\":1741248196260,\"odate\":1741248196260},{\"content\":{\"title\":{\"value\":\"Generating
+        $\\\\pi$-Functional Molecules Using STGG+ with Active Learning\"},\"authors\":{\"value\":[\"Alexia
+        Jolicoeur-Martineau\",\"Yan Zhang\",\"Boris Knyazev\",\"Aristide Baratin\",\"Cheng-Hao
+        Liu\"]},\"authorids\":{\"value\":[\"~Alexia_Jolicoeur-Martineau1\",\"~Yan_Zhang1\",\"~Boris_Knyazev1\",\"~Aristide_Baratin1\",\"~Cheng-Hao_Liu1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Active learning\",\"Molecular
+        Design\",\"Optoelectronics\",\"DFT\"]},\"TLDR\":{\"value\":\"STGG+ with active
+        learning generates realistic, out-of-distribution electrionically-active molecules\"},\"abstract\":{\"value\":\"Generating
+        novel molecules with out-of-distribution properties is a major challenge in
+        molecular discovery. While supervised learning methods generate high-quality
+        molecules similar to those in a dataset, they struggle to generalize to out-of-distribution
+        properties. Reinforcement learning can explore novel spaces but often conducts
+        'reward-hacking' and generates non-synthesizable molecules. In this work,
+        we address this problem by integrating a state-of-the-art supervised learning
+        method, STGG+, in an active learning loop. Our approach iteratively generates,
+        evaluates, and fine-tunes STGG+ to continuously expand its knowledge. We apply
+        this method to the design of organic $\\\\pi$-functional materials, specifically
+        two challenging tasks: 1) generating highly absorptive molecules characterized
+        by a large oscillator strength and 2) designing absorptive molecules with
+        reasonable oscillator strength in the near-infrared range. The generated molecules
+        are validated and rationalized \\\\textit{in-silico} with time-dependent density
+        functional theory. Our results demonstrate that our method is highly effective
+        in generating novel molecules with high oscillator strength, contrary to existing
+        methods such as reinforcement learning (RL) methods.\"},\"pdf\":{\"value\":\"/pdf/ac962a44cc0a7492e474b91858bda3c838e776ae.pdf\"},\"Presenter\":{\"value\":\"~Alexia_Jolicoeur-Martineau1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\njolicoeur-martineau2025generating,\\ntitle={Generating
+        \\\\${\\\\textbackslash}pi\\\\$-Functional Molecules Using {STGG}+ with Active
+        Learning},\\nauthor={Alexia Jolicoeur-Martineau and Yan Zhang and Boris Knyazev
+        and Aristide Baratin and Cheng-Hao Liu},\\nbooktitle={ICLR 2025 Workshop on
+        Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=dGhfVsgs01}\\n}\"},\"paperhash\":{\"value\":\"jolicoeurmartineau|generating_\\\\pifunctional_molecules_using_stgg_with_active_learning\"}},\"id\":\"dGhfVsgs01\",\"forum\":\"dGhfVsgs01\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission18/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission18/Authors\"],\"number\":18,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission18/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739265751135,\"cdate\":1739265751135,\"tmdate\":1744172568207,\"mdate\":1744172568207,\"pdate\":1741248196220,\"odate\":1741248196220},{\"content\":{\"title\":{\"value\":\"LOGLO-FNO:
+        Efficient Learning of Local and Global Features in Fourier Neural Operators\"},\"authors\":{\"value\":[\"Marimuthu
+        Kalimuthu\",\"David Holzm\xFCller\",\"Mathias Niepert\"]},\"authorids\":{\"value\":[\"~Marimuthu_Kalimuthu1\",\"~David_Holzm\xFCller1\",\"~Mathias_Niepert1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Fourier Neural Operators\",\"Multi-Scale
+        Modeling\",\"High-Frequency Modeling\",\"Partial Differential Equations\",\"Spectral
+        Loss\",\"Operator Learning\"]},\"TLDR\":{\"value\":\"Improving the FNO architecture
+        through parallel branches for learning localized features and high-frequencies\"},\"abstract\":{\"value\":\"Modeling
+        high-frequency information is a critical challenge in scientific machine learning.
+        For instance, fully turbulent flow simulations of Navier-Stokes equations
+        at Reynolds numbers 3500 and above can generate high-frequency signals due
+        to swirling fluid motions caused by eddies and vortices. Faithfully modeling
+        such signals using neural networks depends on the accurate reconstruction
+        of moderate to high frequencies. However, it has been well known that deep
+        neural nets exhibit the so-called spectral bias toward learning low-frequency
+        components. Meanwhile, Fourier Neural Operators (FNOs) have emerged as a popular
+        class of data-driven models in recent years for solving Partial Differential
+        Equations (PDEs) and for surrogate modeling in general. Although impressive
+        results have been achieved on several PDE benchmark problems, FNOs often perform
+        poorly in learning non-dominant frequencies characterized by local features.
+        This limitation stems from the spectral bias inherent in neural networks and
+        the explicit exclusion of high-frequency modes in FNOs and their variants.
+        Therefore, to mitigate these issues and improve FNO's spectral learning capabilities
+        to represent a broad range of frequency components, we propose two key architectural
+        enhancements: (i) a parallel branch performing local spectral convolutions
+        and (ii) a high-frequency propagation module. Moreover, we propose a novel
+        frequency-sensitive loss term based on radially binned spectral errors. This
+        introduction of a parallel branch for local convolutions reduces the number
+        of trainable parameters by up to 50% while achieving the accuracy of baseline
+        FNO that relies solely on global convolutions. Experiments on three challenging
+        PDE problems in fluid mechanics and biological pattern formation, and the
+        qualitative and spectral analysis of predictions show the effectiveness of
+        our method over the state-of-the-art neural operator baselines.\"},\"pdf\":{\"value\":\"/pdf/343ad139b82699e6e171af675eb975f5c84274be.pdf\"},\"Presenter\":{\"value\":\"~Daniel_Musekamp1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Oral\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nkalimuthu2025loglofno,\\ntitle={{LOGLO}-{FNO}:
+        Efficient Learning of Local and Global Features in Fourier Neural Operators},\\nauthor={Marimuthu
+        Kalimuthu and David Holzm{\\\\\\\"u}ller and Mathias Niepert},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=OCM7OkVg9C}\\n}\"},\"paperhash\":{\"value\":\"kalimuthu|loglofno_efficient_learning_of_local_and_global_features_in_fourier_neural_operators\"}},\"id\":\"OCM7OkVg9C\",\"forum\":\"OCM7OkVg9C\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission17/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission17/Authors\"],\"number\":17,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission17/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739261322222,\"cdate\":1739261322222,\"tmdate\":1759825088533,\"mdate\":1759825088533,\"pdate\":1741248196149,\"odate\":1741248196149},{\"content\":{\"title\":{\"value\":\"SpectralFlowNet:
+        Resolution-Invariant Continuous Neural Dynamics for Mesh-Based PDE Modeling\"},\"authors\":{\"value\":[\"Tianrun
+        Yu\",\"Fang Sun\",\"Haixin Wang\",\"Xiao Luo\",\"Yizhou Sun\"]},\"authorids\":{\"value\":[\"~Tianrun_Yu1\",\"~Fang_Sun3\",\"~Haixin_Wang3\",\"~Xiao_Luo3\",\"~Yizhou_Sun1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Multiscale Modeling\",\"Graph Fourier
+        Transform\",\"Neural Ordinary Differential Equations\"]},\"abstract\":{\"value\":\"Accurate
+        mesh-based simulation is central to modeling phenomena governed by PDEs, such
+        as flow, elasticity, and climate. Recent machine learning solutions, including
+        Graph Neural Networks (GNNs) and Fourier Neural Operators (FNOs), enable faster
+        approximations but can struggle with long-range interactions, irregular mesh
+        topologies, or fixed time steps. \\nTo address the above challenges, we introduce
+        SpectralFlowNet, a unified framework for mesh-based PDE simulation that marries
+        graph spectral methods with continuous-time neural dynamics. By projecting
+        mesh data onto an intrinsic spectral basis via the Graph Fourier Transform
+        (GFT) and evolving these spectral coefficients using Neural Ordinary Differential
+        Equations (ODEs), our model naturally handles multiscale spatial structures
+        and temporal dynamics. This resolution-invariant, multiscale approach achieves
+        state-of-the-art performance on plastic deformation tasks and demonstrates
+        robust zero-shot transfer across resolutions.\"},\"pdf\":{\"value\":\"/pdf/8144778451b55f02ac4e174c26109e0054863fd3.pdf\"},\"Presenter\":{\"value\":\"~Tianrun_Yu1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"Supplementary\":{\"value\":\"https://constructor.app/platform/research/public/project/mlmp-12md\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nyu2025spectralflownet,\\ntitle={SpectralFlowNet:
+        Resolution-Invariant Continuous Neural Dynamics for Mesh-Based {PDE} Modeling},\\nauthor={Tianrun
+        Yu and Fang Sun and Haixin Wang and Xiao Luo and Yizhou Sun},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=z3H20lc5tR}\\n}\"},\"paperhash\":{\"value\":\"yu|spectralflownet_resolutioninvariant_continuous_neural_dynamics_for_meshbased_pde_modeling\"}},\"id\":\"z3H20lc5tR\",\"forum\":\"z3H20lc5tR\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission16/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission16/Authors\"],\"number\":16,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission16/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739255869383,\"cdate\":1739255869383,\"tmdate\":1744442144516,\"mdate\":1744442144516,\"pdate\":1741248196080,\"odate\":1741248196080},{\"content\":{\"title\":{\"value\":\"Generative
+        subgrid-scale modeling\"},\"authors\":{\"value\":[\"Jiaxi Zhao\",\"Sohei Arisaka\",\"Qianxiao
+        Li\"]},\"authorids\":{\"value\":[\"~Jiaxi_Zhao1\",\"~Sohei_Arisaka1\",\"~Qianxiao_Li1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Subgrid-scale model\",\"generative
+        model\",\"chaotic system\"]},\"TLDR\":{\"value\":\"We explain the mismatch
+        between a-priori and a-posteriori error in subgrid-scale modeling and propose
+        a generative model to resolve it.\"},\"abstract\":{\"value\":\"The mismatch
+        between the a-priori and a-posteriori error is ubiquitous in data-driven subgrid-scale
+        (SGS) modeling, which is an important ingredient in large eddy simulations.
+        In this work, we investigate the cause of this mismatch in depth and attribute
+        it to two issues: data imbalance and multi-valuedness. Based on this understanding,
+        we propose a generative modeling approach for the SGS stresses that resolves
+        the issue of multi-valuedness and demonstrate its effectiveness in the Kuramoto-Sivashinsky
+        equation.\"},\"pdf\":{\"value\":\"/pdf/294ab025fb3c13992c80a3f9ec467a702bcfb918.pdf\"},\"Presenter\":{\"value\":\"~Jiaxi_Zhao1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nzhao2025generative,\\ntitle={Generative
+        subgrid-scale modeling},\\nauthor={Jiaxi Zhao and Sohei Arisaka and Qianxiao
+        Li},\\nbooktitle={ICLR 2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=8y57m1AEiQ}\\n}\"},\"paperhash\":{\"value\":\"zhao|generative_subgridscale_modeling\"}},\"id\":\"8y57m1AEiQ\",\"forum\":\"8y57m1AEiQ\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission15/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission15/Authors\"],\"number\":15,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission15/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739255141753,\"cdate\":1739255141753,\"tmdate\":1744172567802,\"mdate\":1744172567802,\"pdate\":1741248196031,\"odate\":1741248196031},{\"content\":{\"title\":{\"value\":\"AdS-GNN
+        - a Conformally Equivariant Graph Neural Network\"},\"authors\":{\"value\":[\"Maksim
+        Zhdanov\",\"Nabil Iqbal\",\"Erik J Bekkers\",\"Patrick Forr\xE9\"]},\"authorids\":{\"value\":[\"~Maksim_Zhdanov1\",\"~Nabil_Iqbal1\",\"~Erik_J_Bekkers1\",\"~Patrick_Forr\xE91\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"scale-equivariance; conformal group; equivariance\"]},\"TLDR\":{\"value\":\"We
+        propose conformal group equivariant graph neural network by lifting data to
+        Anti de Sitter space and condition messages on the proper distance.\"},\"abstract\":{\"value\":\"Conformal
+        symmetries, i.e. coordinate transformations that preserve angles, play a key
+        role in many fields, including physics, mathematics, computer vision and (geometric)
+        machine learning. Here we build a neural network that is equivariant under
+        general conformal transformations. To achieve this, we lift data from flat
+        Euclidean space to Anti de Sitter (AdS) space. This allows us to exploit a
+        known correspondence between conformal transformations of flat space and isometric
+        transformations on the Anti de Sitter space. We then build upon the fact that
+        such isometric transformations have been extensively studied on general geometries
+        in the geometric deep learning literature. In particular, we then employ message-passing
+        layers conditioned on the proper distance, yielding a computationally efficient
+        framework. We validate our model on point cloud classification (SuperPixel
+        MNIST) and semantic segmentation (PascalVOC-SP).\"},\"pdf\":{\"value\":\"/pdf/3dd5670566a36c838f4051326c6d77c317650b61.pdf\"},\"Presenter\":{\"value\":\"~Maksim_Zhdanov1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nzhdanov2025adsgnn,\\ntitle={AdS-{GNN}
+        - a Conformally Equivariant Graph Neural Network},\\nauthor={Maksim Zhdanov
+        and Nabil Iqbal and Erik J Bekkers and Patrick Forr{\\\\'e}},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=8aTDqamK5u}\\n}\"},\"paperhash\":{\"value\":\"zhdanov|adsgnn_a_conformally_equivariant_graph_neural_network\"}},\"id\":\"8aTDqamK5u\",\"forum\":\"8aTDqamK5u\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission14/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission14/Authors\"],\"number\":14,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission14/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739236135299,\"cdate\":1739236135299,\"tmdate\":1744172567806,\"mdate\":1744172567806,\"pdate\":1741248195960,\"odate\":1741248195960},{\"content\":{\"title\":{\"value\":\"Flow
+        Domain Parameterization and Training of Generalized Physics-Informed Neural
+        Networks for Solving Navier-Stokes Equations\"},\"authors\":{\"value\":[\"Ivan
+        Stebakov\",\"Alexei Kornaev\",\"Elena Kornaeva\"]},\"authorids\":{\"value\":[\"~Ivan_Stebakov1\",\"~Alexei_Kornaev1\",\"~Elena_Kornaeva1\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"Navier\u2013Stokes equations\",\"physics-informed
+        neural networks\",\"incompressible fluid\",\"domain parametrization\"]},\"abstract\":{\"value\":\"Physics-informed
+        neural networks (PINNs) have shown promise in solving the Navier-Stokes equations
+        for fluid flow problems, but most existing approaches require retraining for
+        each new flow case, limiting their applicability to a wide range of scenarios.
+        This study addresses the challenge of multi-dimensional parameterization of
+        flow domain geometries, which has not been extensively explored in previous
+        research. We propose an approach for parameterizing the flow domain for solving
+        the stationary Navier-Stokes equations for Newtonian fluid flow using PINNs.
+        The proposed approach allows scaling PINN for new cases not considered in
+        training and significantly reduces computational costs in comparison with
+        the numerical solution.\"},\"pdf\":{\"value\":\"/pdf/54ffd59362d42f577e33bd1295ddbb059ad7e051.pdf\"},\"Presenter\":{\"value\":\"~Ivan_Stebakov1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"TLDR\":{\"value\":\"We
+        propose an approach for parameterizing the flow domain for solving the stationary
+        Navier-Stokes equations for Newtonian fluid flow using PINNs.\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nstebakov2025flow,\\ntitle={Flow
+        Domain Parameterization and Training of Generalized Physics-Informed Neural
+        Networks for Solving Navier-Stokes Equations},\\nauthor={Ivan Stebakov and
+        Alexei Kornaev and Elena Kornaeva},\\nbooktitle={ICLR 2025 Workshop on Machine
+        Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=xqjs2ideRD}\\n}\"},\"paperhash\":{\"value\":\"stebakov|flow_domain_parameterization_and_training_of_generalized_physicsinformed_neural_networks_for_solving_navierstokes_equations\"}},\"id\":\"xqjs2ideRD\",\"forum\":\"xqjs2ideRD\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission13/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission13/Authors\"],\"number\":13,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission13/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739203045724,\"cdate\":1739203045724,\"tmdate\":1744172567884,\"mdate\":1744172567884,\"pdate\":1741248195815,\"odate\":1741248195815},{\"content\":{\"title\":{\"value\":\"On
+        Incorporating Scale into Graph Networks\"},\"authors\":{\"value\":[\"Christian
+        Koke\",\"Yuesong Shen\",\"Abhishek Saroha\",\"Marvin Eisenberger\",\"Bastian
+        Rieck\",\"Michael M. Bronstein\",\"Daniel Cremers\"]},\"authorids\":{\"value\":[\"~Christian_Koke1\",\"~Yuesong_Shen1\",\"~Abhishek_Saroha1\",\"~Marvin_Eisenberger1\",\"~Bastian_Rieck1\",\"~Michael_M._Bronstein1\",\"~Daniel_Cremers1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Generalization\",\"(Resolution-)Scale\",\"Graph
+        Neural Networks\"]},\"TLDR\":{\"value\":\"Standard Graph Neural Networks turn
+        out to not be continuous, which precludes them from consistently incorporating
+        varying (resolution-)scale information.\"},\"abstract\":{\"value\":\"Standard
+        graph neural networks assign vastly different latent embeddings to graphs
+        describing the same physical system at different resolution scales. This precludes
+        consistency in applications and prevents generalization between scales as
+        would fundamentally be needed in many scientific applications. We uncover
+        the underlying obstruction, investigate its origin and show how to overcome
+        it.\"},\"pdf\":{\"value\":\"/pdf/1b7b6968fc6618bd165389fa233460c591703ffd.pdf\"},\"Presenter\":{\"value\":\"~Christian_Koke1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Oral\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nkoke2025on,\\ntitle={On
+        the successful Incorporation of Scale into Graph Neural Networks},\\nauthor={Christian
+        Koke and Yuesong Shen and Abhishek Saroha and Marvin Eisenberger and Bastian
+        Rieck and Michael M. Bronstein and Daniel Cremers},\\nbooktitle={ICLR 2025
+        Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=SRCsyJafgP}\\n}\"},\"paperhash\":{\"value\":\"koke|on_incorporating_scale_into_graph_networks\"}},\"id\":\"SRCsyJafgP\",\"forum\":\"SRCsyJafgP\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission12/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission12/Authors\"],\"number\":12,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission12/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739195043652,\"cdate\":1739195043652,\"tmdate\":1744172567418,\"mdate\":1744172567418,\"pdate\":1741248195772,\"odate\":1741248195772},{\"content\":{\"title\":{\"value\":\"UPT++:
+        Latent Point Set Neural Operators for Modeling System State Transitions\"},\"authors\":{\"value\":[\"Andreas
+        F\xFCrst\",\"Florian Sestak\",\"Artur P. Toshev\",\"Benedikt Alkin\",\"Nikolaus
+        A. Adams\",\"Andreas Mayr\",\"G\xFCnter Klambauer\",\"Johannes Brandstetter\"]},\"authorids\":{\"value\":[\"~Andreas_F\xFCrst1\",\"~Florian_Sestak1\",\"~Artur_P._Toshev1\",\"~Benedikt_Alkin1\",\"~Nikolaus_A._Adams1\",\"~Andreas_Mayr2\",\"~G\xFCnter_Klambauer1\",\"~Johannes_Brandstetter1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"neural operator\",\"navier-stokes\",\"molecular
+        dynamics\",\"latent space\",\"particle simulations\"]},\"TLDR\":{\"value\":\"UPT++
+        is a latent space neural operator, which is designed to map point set representations
+        into a continuous latent space, demonstrating strong performance on fluid
+        dynamics simulations and on the exploration of peptide conformations\"},\"abstract\":{\"value\":\"Particle
+        methods comprise a wide spectrum of numerical algorithms, ranging from computational
+        fluid dynamics governed by the Navier-Stokes equations to molecular dynamics
+        governed by the many-body Schr\xF6dinger equation. At its core, these methods
+        represent the continuum as a collection of discrete particles, on which the
+        respective PDE is solved. We introduce UPT++, a latent point set neural operator
+        for modeling the dynamics of such particle systems by mapping a particle set
+        back to a continuous (latent) representation, instead of operating on the
+        particles directly. We argue via what we call the discretization paradox that
+        continuous modeling is advantageous even if the reference numerical discretization
+        scheme comprises particles. Algorithmically, UPT++ extends Universal Physics
+        Transformers -- a framework for efficiently scaling neural operators -- by
+        novel importance-based encoding and decoding. Furthermore, our encoding and
+        decoding enable outputs that remain consistent across varying input sampling
+        resolutions, i.e., UPT++ is a neural operator. We discuss two types of UPT++
+        operators: (i) time-evolution operator for fluid dynamics, and (ii) sampling
+        operator for molecular dynamics tasks. Experimentally, we demonstrate that
+        our method reliably models complex physics phenomena of fluid dynamics and
+        exhibits beneficial scaling properties, tested on simulations of up to 200k
+        particles. Furthermore, we showcase on molecular dynamics simulations that
+        UPT++ can effectively explore the metastable conformation states of unseen
+        peptide molecules.\"},\"pdf\":{\"value\":\"/pdf/1e647c641df656cdb6ba9dfd375e64a50d124b09.pdf\"},\"Presenter\":{\"value\":\"~Florian_Sestak1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nfurst2025upt,\\ntitle={{UPT}++:
+        Latent Point Set Neural Operators for Modeling System State Transitions},\\nauthor={Andreas
+        F{\\\\\\\"u}rst and Florian Sestak and Artur P. Toshev and Benedikt Alkin
+        and Nikolaus A. Adams and Andreas Mayr and G{\\\\\\\"u}nter Klambauer and
+        Johannes Brandstetter},\\nbooktitle={ICLR 2025 Workshop on Machine Learning
+        Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=u3sEGcYyqw}\\n}\"},\"paperhash\":{\"value\":\"f\xFCrst|upt_latent_point_set_neural_operators_for_modeling_system_state_transitions\"}},\"id\":\"u3sEGcYyqw\",\"forum\":\"u3sEGcYyqw\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission11/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission11/Authors\"],\"number\":11,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission11/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739192074435,\"cdate\":1739192074435,\"tmdate\":1744172567411,\"mdate\":1744172567411,\"pdate\":1741248195736,\"odate\":1741248195736},{\"content\":{\"title\":{\"value\":\"When
+        is Bayesian Optimization Beneficial? A Critical Assessment of Optimization
+        Strategies in High-Throughput Organic Photovoltaic Manufacturing\"},\"authors\":{\"value\":[\"Matthew
+        Osvaldo\",\"Leonard Ng Wei Tat\"]},\"authorids\":{\"value\":[\"matt0049@e.ntu.edu.sg\",\"~Leonard_Ng_Wei_Tat1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Organic photovoltaics\",\"Bayesian
+        optimization\",\"High-throughput manufacturing\",\"Self-Driving Labs\"]},\"TLDR\":{\"value\":\"Environmental
+        control trumps AI optimization in solar cell manufacturing, challenging conventional
+        wisdom about how to improve production efficiency.\"},\"abstract\":{\"value\":\"We
+        present a systematic evaluation of optimization strategies for high-throughput
+        organic photovoltaic (OPV) manufacturing. Analyzing 11,587 PBF-QxF:Y6 devices
+        across 11 manufacturing parameters through 25 optimization iterations, we
+        compared Bayesian Optimization (BO) and Random Search (RS). While BO achieved
+        7.69% PCE versus RS's 7.66%, this 0.03% advantage required 20x more computational
+        overhead. Statistical analysis revealed no significant performance difference
+        between methods (t-stat = 0.53, p > 0.05). Environmental factors, particularly
+        humidity (r = 0.380), showed stronger correlation with performance than optimization
+        strategy choice. Manufacturing process control, rather than algorithmic sophistication,
+        emerges as the critical factor for high-throughput OPV optimization. These
+        findings suggest prioritizing robust process control systems over complex
+        optimization algorithms in manufacturing environments.\"},\"pdf\":{\"value\":\"/pdf/820d5e2eb63d3623a6ab55663004f44db33ad693.pdf\"},\"Supplementary\":{\"value\":\"https://github.com/DuelKings/BO-vs-Random-on-High-Throughput\"},\"Presenter\":{\"value\":\"~Matthew_Osvaldo1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\ntat2025when,\\ntitle={When
+        is Bayesian Optimization Beneficial? A Critical Assessment of Optimization
+        Strategies in High-Throughput Organic Photovoltaic Manufacturing},\\nauthor={Leonard
+        Ng Wei Tat and Matthew Osvaldo},\\nbooktitle={ICLR 2025 Workshop on Machine
+        Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=CvFc81LQcE}\\n}\"},\"paperhash\":{\"value\":\"osvaldo|when_is_bayesian_optimization_beneficial_a_critical_assessment_of_optimization_strategies_in_highthroughput_organic_photovoltaic_manufacturing\"}},\"id\":\"CvFc81LQcE\",\"forum\":\"CvFc81LQcE\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission10/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission10/Authors\"],\"number\":10,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission10/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739166312429,\"cdate\":1739166312429,\"tmdate\":1759825087725,\"mdate\":1759825087725,\"pdate\":1741248195623,\"odate\":1741248195623},{\"content\":{\"title\":{\"value\":\"An
+        Property-prompted Multi-scale Data Augmentation Approach for Crystal Representation\"},\"authors\":{\"value\":[\"Zhongyi
+        Deng\",\"Shuzhou LI\",\"Tong Zhang\",\"C. L. Philip Chen\"]},\"authorids\":{\"value\":[\"~Zhongyi_Deng1\",\"~Shuzhou_LI1\",\"~Tong_Zhang14\",\"~C._L._Philip_Chen1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Crystal Representation\",\"Prompt
+        Learning\",\"Data Enhancement\",\"Generative Language Model\",\"SLICES\"]},\"TLDR\":{\"value\":\"In
+        this study, an attribute-oriented prompt learning scheme is proposed for the
+        inverse design of material, which enhances the crystal representation capabilities
+        of generative language models under specific properties.\"},\"abstract\":{\"value\":\"The
+        inverse design of crystals with multiple objectives represents a significant
+        challenge in materials science. The interplay among various desired properties
+        often results in unbalanced crystal structure generation. In schemes based
+        on generative language models, this issue primarily stems from the models'
+        limited capability to learn continuous property values, compounded by the
+        scarcity of high-quality material data for training. To address these challenges,
+        a property prompt-based scheme has been proposed to achieve multi-scale data
+        augmentation for crystal representation. This scheme constructs learnable
+        prompt templates for the single property and extends them to multiple properties.
+        The property prompt introduces learnable templates that map continuous property
+        values to discrete prompt spaces, enhancing the learning ability of generative
+        language models for discrete property values. Multi-scale data augmentation
+        disentangles the interactions between various material properties and transforms
+        them into mutual promotion through end-to-end pre-training, thereby alleviating
+        the problem of insufficient high-quality material data. The scheme has been
+        validated for key properties that affect the crystal structure composition,
+        including the formation energy and the band gap, as well as their various
+        combinations. Experimental results demonstrate that the proposed model achieves
+        significant performance improvements across multiple target property combinations,
+        showcasing its robust representation and generalization capabilities in the
+        inverse design of crystals with multiple objectives.\"},\"pdf\":{\"value\":\"/pdf/c856a767cd9b04688f946e288cdaff70f4b36b55.pdf\"},\"Presenter\":{\"value\":\"~Zhongyi_Deng1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\ndeng2025an,\\ntitle={An
+        Property-prompted Multi-scale Data Augmentation Approach for Crystal Representation},\\nauthor={Zhongyi
+        Deng and Shuzhou LI and Tong Zhang and C. L. Philip Chen},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=iPoX2qIJaj}\\n}\"},\"paperhash\":{\"value\":\"deng|an_propertyprompted_multiscale_data_augmentation_approach_for_crystal_representation\"}},\"id\":\"iPoX2qIJaj\",\"forum\":\"iPoX2qIJaj\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission9/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission9/Authors\"],\"number\":9,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission9/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739162286338,\"cdate\":1739162286338,\"tmdate\":1744340248643,\"mdate\":1744340248643,\"pdate\":1741248195618,\"odate\":1741248195618},{\"content\":{\"title\":{\"value\":\"Exploring
+        Thermodynamic Behavior of Spin Glasses with Machine Learning\"},\"authors\":{\"value\":[\"Vitalii
+        Kapitan\",\"Dmitrii Kapitan\",\"Petr Andriushchenko\"]},\"authorids\":{\"value\":[\"~Vitalii_Kapitan1\",\"kapitan.diu@dvfu.ru\",\"petr.andriushchenko@uni-heidelberg.de\"]},\"Track\":{\"value\":\"Short
+        paper\"},\"keywords\":{\"value\":[\"spin glass\",\"Ising model\",\"neural
+        network\"]},\"abstract\":{\"value\":\"In this paper, we consider the regression
+        problem of predicting thermodynamic quantities - specifically the average
+        energy $\\\\langle E \\\\rangle$ - as a function of temperature $T$ for spin
+        glasses on a square lattice. The spin glass is represented as a weighted graph,
+        where exchange interactions define the edge weights. We investigate how the
+        spatial distribution of these interactions relates to $\\\\langle E \\\\rangle$,
+        leveraging several machine learning approaches that we specifically developed
+        for this task. While $\\\\langle E \\\\rangle$ is used to demonstrate the
+        approach, our framework is general and can be applicable to the prediction
+        of other thermodynamic characteristics.\"},\"pdf\":{\"value\":\"/pdf/849232354945a82012dc4bdd4cab1305d9464fc7.pdf\"},\"Presenter\":{\"value\":\"~Vitalii_Kapitan1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nkapitan2025exploring,\\ntitle={Exploring
+        Thermodynamic Behavior of Spin Glasses with Machine Learning},\\nauthor={Vitalii
+        Kapitan and Dmitrii Kapitan and Petr Andriushchenko},\\nbooktitle={ICLR 2025
+        Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=WPj94Xn1qx}\\n}\"},\"paperhash\":{\"value\":\"kapitan|exploring_thermodynamic_behavior_of_spin_glasses_with_machine_learning\"}},\"id\":\"WPj94Xn1qx\",\"forum\":\"WPj94Xn1qx\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission8/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission8/Authors\"],\"number\":8,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission8/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739160354318,\"cdate\":1739160354318,\"tmdate\":1744172566992,\"mdate\":1744172566992,\"pdate\":1741248195583,\"odate\":1741248195583},{\"content\":{\"title\":{\"value\":\"5D
+        Neural Surrogates for Nonlinear Gyrokinetic Simulations of Plasma Turbulence\"},\"authors\":{\"value\":[\"Gianluca
+        Galletti\",\"Fabian Paischer\",\"Paul Setinek\",\"William Hornsby\",\"Lorenzo
+        Zanisi\",\"Naomi Carey\",\"Stanislas Pamela\",\"Johannes Brandstetter\"]},\"authorids\":{\"value\":[\"~Gianluca_Galletti1\",\"~Fabian_Paischer1\",\"~Paul_Setinek1\",\"~William_Hornsby1\",\"~Lorenzo_Zanisi1\",\"~Naomi_Carey1\",\"~Stanislas_Pamela1\",\"~Johannes_Brandstetter1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Neural surrogates\",\"Surrogate
+        models\",\"Gyrokinetics\"]},\"TLDR\":{\"value\":\"We develop a neural surrogate
+        for 5D nonlinear gyrokinetic simulations which is two orders of magnitude
+        faster than conventional numerical solvers.\"},\"abstract\":{\"value\":\"Nuclear
+        fusion plays a pivotal role in the quest for reliable and sustainable energy
+        production. A major roadblock to achieving commercially viable fusion power
+        is understanding plasma turbulence, which can significantly degrade plasma
+        confinement. Modelling turbulence is crucial to design performing plasma scenarios
+        for next-generation reactor-class devices and current experimental machines.
+        The nonlinear gyrokinetic equation underpinning turbulence modelling evolves
+        a 5D distribution function over time. Solving this equation numerically is
+        extremely expensive, requiring up to weeks for a single run to converge, making
+        it unfeasible for iterative optimisation and control studies. In this work,
+        we propose a method for training neural surrogates for 5D gyrokinetic simulations.
+        Our method extends a hierarchical vision transformer to five dimensions and
+        is trained on the 5D distribution function for the adiabatic electron approximation.
+        We demonstrate that our model can accurately infer downstream physical quantities
+        such as heat flux time trace and electrostatic potentials for single-step
+        predictions two orders of magnitude faster than numerical codes. Our work
+        paves the way towards neural surrogates for plasma turbulence simulations
+        to accelerate deployment of commercial energy production via nuclear fusion.\"},\"pdf\":{\"value\":\"/pdf/90615c1c6f03f578896bef2de232e6f4275a3289.pdf\"},\"Presenter\":{\"value\":\"~Paul_Setinek1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Oral\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"Supplementary\":{\"value\":\"https://constructor.app/platform/research/public/project/mlmp-r4m3\"},\"_bibtex\":{\"value\":\"@inproceedings{\\ngalletti2025d,\\ntitle={5D
+        Neural Surrogates for Nonlinear Gyrokinetic Simulations of Plasma Turbulence},\\nauthor={Gianluca
+        Galletti and Fabian Paischer and Paul Setinek and William Hornsby and Lorenzo
+        Zanisi and Naomi Carey and Stanislas Pamela and Johannes Brandstetter},\\nbooktitle={ICLR
+        2025 Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=SGg5SSZGu2}\\n}\"},\"paperhash\":{\"value\":\"galletti|5d_neural_surrogates_for_nonlinear_gyrokinetic_simulations_of_plasma_turbulence\"}},\"id\":\"SGg5SSZGu2\",\"forum\":\"SGg5SSZGu2\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission7/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission7/Authors\"],\"number\":7,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission7/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1739013774651,\"cdate\":1739013774651,\"tmdate\":1759825087375,\"mdate\":1759825087375,\"pdate\":1741248195512,\"odate\":1741248195512},{\"content\":{\"title\":{\"value\":\"Compute-Adaptive
+        Surrogate Modeling of Partial Differential Equations\"},\"authors\":{\"value\":[\"Payel
+        Mukhopadhyay\",\"Michael McCabe\",\"Ruben Ohana\",\"Miles Cranmer\"]},\"authorids\":{\"value\":[\"~Payel_Mukhopadhyay1\",\"~Michael_McCabe2\",\"~Ruben_Ohana1\",\"~Miles_Cranmer2\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Vision transformers\",\"convolution
+        kernel modulator\",\"convolution stride modulator\",\"spatio-temporal data\"]},\"abstract\":{\"value\":\"Modeling
+        dynamical systems governed by partial differential equations presents significant
+        challenges for machine learning-based surrogate models. While transformers
+        have shown potential in capturing complex spatial dy- namics, their reliance
+        on fixed-size patches limits flexibility and scalability. In this work, we
+        introduce two convolutional encoder and decoder architec- tural blocks\u2014Convolutional
+        Kernel Modulator (CKM) and Convolutional Stride Modulator (CSM)\u2014designed
+        for patch embedding and reconstruction in autoregressive prediction tasks.
+        These blocks unlock dynamic patching and striding strategies to balance accuracy
+        and computational efficiency during inference. Furthermore, we propose a rollout
+        strategy that adap- tively adjusts patching and striding configurations throughout
+        temporally sequential predictions, mitigating patch artifacts and long-term
+        error accu- mulation while improving the capture of fine-scale structures.
+        We show that our approaches enable dynamic control over patch sizes at inference
+        time without losing accuracy over fixed patch baselines.\"},\"pdf\":{\"value\":\"/pdf/c161faf83a7940b5e88b430a4ef9679a4067b540.pdf\"},\"Supplementary\":{\"value\":\"https://github.com/xyzzxyzz-cloud/ICLR_multiscale_2025\"},\"Presenter\":{\"value\":\"~Alberto_Bietti1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nmukhopadhyay2025computeadaptive,\\ntitle={Compute-Adaptive
+        Surrogate Modeling of Partial Differential Equations},\\nauthor={Payel Mukhopadhyay
+        and Michael McCabe and Ruben Ohana and Miles Cranmer},\\nbooktitle={ICLR 2025
+        Workshop on Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=YM3koX4nHp}\\n}\"},\"paperhash\":{\"value\":\"mukhopadhyay|computeadaptive_surrogate_modeling_of_partial_differential_equations\"}},\"id\":\"YM3koX4nHp\",\"forum\":\"YM3koX4nHp\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission6/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission6/Authors\"],\"number\":6,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission6/-/Camera-Ready_Revision\",\"ICLR.cc/2025/Workshop/MLMP/-/PC_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1738864054981,\"cdate\":1738864054981,\"tmdate\":1759827658980,\"mdate\":1759827658980,\"pdate\":1741248195396,\"odate\":1741248195396},{\"content\":{\"title\":{\"value\":\"Hard-constraining
+        Neumann boundary conditions in physics-informed neural networks via Fourier
+        feature embeddings\"},\"authors\":{\"value\":[\"Christopher Straub\",\"Philipp
+        Brendel\",\"Vlad Medvedev\",\"Andreas Rosskopf\"]},\"authorids\":{\"value\":[\"~Christopher_Straub1\",\"~Philipp_Brendel1\",\"vlad.medvedev@iisb.fraunhofer.de\",\"~Andreas_Rosskopf1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Physics-informed neural networks\",\"hard-constraint\",\"Neumann
+        boundary condition\",\"Fourier feature embedding\"]},\"TLDR\":{\"value\":\"A
+        new method to hard-constrain Neumann boundary conditions into PINNs based
+        on Fourier feature embeddings.\"},\"abstract\":{\"value\":\"We present a novel
+        approach to hard-constrain Neumann boundary conditions in physics-informed
+        neural networks (PINNs) using Fourier feature embeddings. Neumann boundary
+        conditions are used to described critical processes in various application,
+        yet they are more challenging to hard-constrain in PINNs than Dirichlet conditions.
+        Our method employs specific Fourier feature embeddings to directly incorporate
+        Neumann boundary conditions into the neural network's architecture instead
+        of learning them. The embedding can be naturally extended by high frequency
+        modes to better capture high frequency phenomena. We demonstrate the efficacy
+        of our approach through experiments on a diffusion problem, for which our
+        method outperforms existing hard-constraining methods and classical PINNs,
+        particularly in multiscale and high frequency scenarios.\"},\"pdf\":{\"value\":\"/pdf/d2ed34c15fa2be7e57816d1de93a49ec5fbb744d.pdf\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"Supplementary\":{\"value\":\"https://github.com/FhG-IISB-MKI/HC_Neumann_Experiments\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nstraub2025hardconstraining,\\ntitle={Hard-constraining
+        Neumann boundary conditions in physics-informed neural networks via Fourier
+        feature embeddings},\\nauthor={Christopher Straub and Philipp Brendel and
+        Vlad Medvedev and Andreas Rosskopf},\\nbooktitle={ICLR 2025 Workshop on Machine
+        Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=jKdZsWdRLZ}\\n}\"},\"paperhash\":{\"value\":\"straub|hardconstraining_neumann_boundary_conditions_in_physicsinformed_neural_networks_via_fourier_feature_embeddings\"}},\"id\":\"jKdZsWdRLZ\",\"forum\":\"jKdZsWdRLZ\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission5/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission5/Authors\"],\"number\":5,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission5/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1738587430078,\"cdate\":1738587430078,\"tmdate\":1770643565717,\"mdate\":1770643565717,\"pdate\":1741248195249,\"odate\":1741248195249},{\"content\":{\"title\":{\"value\":\"NeuralDEM:
+        Real-time Simulation of Industrial Particulate Flows\"},\"authors\":{\"value\":[\"Benedikt
+        Alkin\",\"Tobias Kronlachner\",\"Samuele Papa\",\"Stefan Pirker\",\"Thomas
+        Lichtenegger\",\"Johannes Brandstetter\"]},\"authorids\":{\"value\":[\"~Benedikt_Alkin1\",\"~Tobias_Kronlachner1\",\"~Samuele_Papa1\",\"~Stefan_Pirker1\",\"~Thomas_Lichtenegger1\",\"~Johannes_Brandstetter1\"]},\"Track\":{\"value\":\"New
+        scientific result\"},\"keywords\":{\"value\":[\"Particle Simulation\",\"Neural
+        Operator\",\"Industrial Simulation\"]},\"TLDR\":{\"value\":\"We propose a
+        methodology to train ML models to simulate large-scale particle and multi-physics
+        systems, which exhibit inherent multi-scale behavior.\"},\"abstract\":{\"value\":\"Advancements
+        in computing power have made it possible to numerically simulate large-scale
+        fluid-mechanical and/or particulate systems, many of which are integral to
+        core industrial processes. The discrete element method (DEM) provides one
+        of the most accurate representations of a wide range of physical systems involving
+        granular materials. Additionally, DEM can be integrated with grid-based computational
+        fluid dynamics (CFD) methods, enabling the simulation of chemical processes
+        taking place, e.g., in fluidized beds.\\nHowever, DEM is computationally intensive
+        because of the intrinsic multiscale nature of particulate systems, restricting
+        either the duration of simulations or the number of particles that can be
+        simulated. Towards this end, NeuralDEM presents a first end-to-end approach
+        to replace slow and computationally demanding DEM routines with fast deep
+        learning surrogates.\\nNeuralDEM treats the Lagrangian discretization of DEM
+        as an underlying continuous field, while simultaneously modeling macroscopic
+        behavior directly as additional auxiliary fields using ``multi-branch neural
+        operators'', enabling fast and scalable neural surrogates.\\nNeuralDEM will
+        open many new doors to advanced engineering and much faster process cycles.\"},\"pdf\":{\"value\":\"/pdf/530fe3f81fba23a4c3c6d5f8f465ba31368cad25.pdf\"},\"Supplementary\":{\"value\":\"https://AnonymousNeuralDEM.github.io/ICLR2025\"},\"Presenter\":{\"value\":\"~Benedikt_Alkin1\"},\"venue\":{\"value\":\"ICLR
+        2025 Workshop MLMP Poster\"},\"venueid\":{\"value\":\"ICLR.cc/2025/Workshop/MLMP\"},\"_bibtex\":{\"value\":\"@inproceedings{\\nalkin2025neuraldem,\\ntitle={Neural{DEM}:
+        Real-time Simulation of Industrial Particulate Flows},\\nauthor={Benedikt
+        Alkin and Tobias Kronlachner and Samuele Papa and Stefan Pirker and Thomas
+        Lichtenegger and Johannes Brandstetter},\\nbooktitle={ICLR 2025 Workshop on
+        Machine Learning Multiscale Processes},\\nyear={2025},\\nurl={https://openreview.net/forum?id=w0zlwNHFox}\\n}\"},\"paperhash\":{\"value\":\"alkin|neuraldem_realtime_simulation_of_industrial_particulate_flows\"}},\"id\":\"w0zlwNHFox\",\"forum\":\"w0zlwNHFox\",\"license\":\"CC
+        BY 4.0\",\"signatures\":[\"ICLR.cc/2025/Workshop/MLMP/Submission4/Authors\"],\"readers\":[\"everyone\"],\"writers\":[\"ICLR.cc/2025/Workshop/MLMP\",\"ICLR.cc/2025/Workshop/MLMP/Submission4/Authors\"],\"number\":4,\"invitations\":[\"ICLR.cc/2025/Workshop/MLMP/-/Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Post_Submission\",\"ICLR.cc/2025/Workshop/MLMP/-/Edit\",\"ICLR.cc/2025/Workshop/MLMP/Submission4/-/Camera-Ready_Revision\"],\"domain\":\"ICLR.cc/2025/Workshop/MLMP\",\"tcdate\":1738020421373,\"cdate\":1738020421373,\"tmdate\":1744172566612,\"mdate\":1744172566612,\"pdate\":1741248195249,\"odate\":1741248195249}],\"count\":33}"
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-store, no-cache, must-revalidate, proxy-revalidate
+      content-length:
+      - '101337'
+      content-security-policy:
+      - 'default-src ''self''; worker-src ''self'' blob:; style-src ''self'' ''unsafe-inline''
+        https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        script-src ''self'' ''unsafe-inline'' ''unsafe-eval'' https://unpkg.com https://challenges.cloudflare.com/turnstile/v0/api.js
+        https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.googletagmanager.com
+        https://*.google-analytics.com https://www.paypalobjects.com/ https://www.paypal.com/
+        https://js.stripe.com/v3/buy-button.js; font-src ''self'' https://cdn.jsdelivr.net
+        https://fonts.gstatic.com; connect-src ''self'' https://*.google-analytics.com
+        https://api.openreview.net https://api2.openreview.net wss://api2.openreview.net
+        https://arxiv.org https://export.arxiv.org https://dblp.org https://dblp.uni-trier.de
+        https://huggingface.co https://pub.orcid.org; img-src ''self'' https://t.paypal.com/
+        data: https://*.google-analytics.com; frame-src ''self'' https://challenges.cloudflare.com/
+        https://api.draftable.com https://js.stripe.com/; frame-ancestors ''self'';
+        base-uri ''self''; form-action ''self'' http://127.0.0.1:* https://ecopyright.ieee.org/ECTT/IntroPage.jsp'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 31 May 2026 15:31:44 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      ratelimit-limit:
+      - '60'
+      ratelimit-policy:
+      - 60;w=60
+      ratelimit-remaining:
+      - '59'
+      ratelimit-reset:
+      - '60'
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubdomains; preload
+      surrogate-control:
+      - no-store
+      via:
+      - 1.1 google, 1.1 google
+      x-content-type-options:
+      - nosniff
+      x-dns-prefetch-control:
+      - 'off'
+      x-download-options:
+      - noopen
+      x-frame-options:
+      - SAMEORIGIN
+      x-ratelimit-limit:
+      - '60'
+      x-ratelimit-remaining:
+      - '59'
+      x-ratelimit-reset:
+      - '1780241565'
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

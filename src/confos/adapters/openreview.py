@@ -180,7 +180,7 @@ class OpenReviewAdapter:
                 seen.add(venue_id)
 
         if name_tokens:
-            for group_id in self._prefix_search(name_tokens[0], limit=limit * 4):
+            for group_id in self._prefix_search(name_tokens[0], year, limit=limit * 4):
                 low = group_id.lower()
                 if group_id in seen:
                     continue
@@ -200,13 +200,23 @@ class OpenReviewAdapter:
                     break
         return results[:limit]
 
-    def _prefix_search(self, name_token: str, *, limit: int) -> list[str]:
+    def _prefix_search(self, name_token: str, year: str | None, *, limit: int) -> list[str]:
+        """Collect group ids by prefix. A year narrows to ``<Name>.cc/<year>`` (the
+        convention for most major ML venues), which returns that year's conference +
+        workshops directly; a bare-name prefix is the broad fallback."""
         variants = list(dict.fromkeys([name_token, name_token.upper(), name_token.title()]))
+        prefixes: list[str] = []
+        for variant in variants:
+            if year:
+                prefixes.append(f"{variant}.cc/{year}")
+        prefixes.extend(variants)  # broad fallbacks last
+        prefixes = list(dict.fromkeys(prefixes))
+
         ids: list[str] = []
         seen: set[str] = set()
-        for variant in variants:
+        for prefix in prefixes:
             try:
-                groups = self.client.get_groups(prefix=variant, limit=limit)
+                groups = self.client.get_groups(prefix=prefix, limit=limit)
             except Exception:
                 continue
             for group in groups:
@@ -214,6 +224,8 @@ class OpenReviewAdapter:
                 if gid and gid not in seen:
                     seen.add(gid)
                     ids.append(gid)
+            if len(ids) >= limit:
+                break
         return ids
 
     # --- internals -----------------------------------------------------------
