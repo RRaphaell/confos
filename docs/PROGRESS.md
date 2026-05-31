@@ -9,9 +9,12 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 1 (Ingest) — COMPLETE (gate green, 3-subagent validation passed, findings fixed). Next: Phase 2.**
+**Phase: 2 (Search & explore) — COMPLETE (gate green, 3-subagent validation passed, findings fixed). Next: Phase 3.**
 
-- ✅ Decisions/assumptions captured in [DECISIONS.md](DECISIONS.md) (now through D19).
+- ✅ **Phase 2 built:** FTS5 search (`papers search/show/related`), `authors
+  search/show/papers`, `orgs top/papers`, `index rebuild/status`; ranked + cited + offline.
+  Verified live (MLMP) + synthetic corpus; 102 tests; CI green.
+- ✅ Decisions/assumptions captured in [DECISIONS.md](DECISIONS.md) (now through D20).
 - ✅ **Phase 0:** package scaffold, typer CLI, `init`/`doctor`, full command tree, SQLite
   schema + migrate, JSON envelope, CI.
 - ✅ **Phase 1 built:** OpenReview adapter (resolve/fetch/normalize), local status
@@ -27,7 +30,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 |---|---|---|
 | 0 | Foundation (scaffold, init/doctor, CI) | ✅ done (validated) |
 | 1 | Ingest (OpenReview → raw JSONL + SQLite) | ✅ done (validated) |
-| 2 | Search & explore | not started |
+| 2 | Search & explore | ✅ done (validated) |
 | 3 | People discovery & stats | not started |
 | 4 | Trends & visualization | not started |
 | 5 | Export & agent surface | not started |
@@ -54,6 +57,16 @@ progress, what's next, and pointers to any research notes. Read this first when 
 - [x] `ingest` command wired; `schema.sql` + `venues.submission_venueid`
 - [x] tests: unit (normalize, adapter) + integration (ingest service, venues CLI, vcrpy replay of a real venue)
 - [x] **DoD:** ingest a fixture venue → SQLite + raw JSONL; incremental re-sync (incl. edits); provenance stamped; gate + CI green
+
+### Phase 2 deliverables
+- [x] `fts.py` (safe MATCH builder) + `serialize.py` (SCHEMAS §2/§3 dict mappers)
+- [x] `services/search.py` — papers search (bm25, filters, deterministic order), show, related
+- [x] `services/authors.py` — search/show/papers; `services/orgs.py` — top/papers
+- [x] `services/index.py` — rebuild (re-derive from raw JSONL, validate-before-destroy) + status
+- [x] repositories: FTS search + lookups (papers/authors/orgs); `_render.py` human tables + resolve_limit
+- [x] commands papers/authors/orgs/index wired (json/plain/human); authors find/coauthors → Phase 3
+- [x] tests: fts, search service (ranking/filters/determinism/rebuild), search CLI contract
+- [x] **DoD:** ranked + cited results offline; `--json` matches SCHEMAS; fresh-user + agent-consumer + code-reviewer subagents pass
 
 > **Per-phase mechanics (so the build survives context loss mid-phase):**
 > When a phase starts, expand its deliverables into a checkbox list right here, and add a
@@ -83,6 +96,15 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   for missing venues; empty-id note skipped; `extract_year` handles glued years.
   Deferred (logged): adapter registry + neutral timestamps before source #2 (D19).
   +6 regression tests; verified live (MLMP) + offline replay.
+- 2026-05-31 · Phase 2 · code-reviewer + agent-consumer (PASS) + fresh-user
+  (pass_with_findings) → fixed: dup-authorid no longer crashes ingest/rebuild (OR
+  IGNORE); `index rebuild` validates venue.json + normalizes BEFORE any destructive
+  write so a bad snapshot fails clean with the store untouched (no half-wiped FTS, D20);
+  `--limit 0` honoured; readable human search table (ellipsis titles, collapsed venue,
+  rounded score); `authors search` shows ids; keywords in `papers show`; friendlier
+  empty-venue message; org fallback name = domain (honest); SQL pulled out of services
+  (exists/reset_entities/count_table). Not bugs (verified): bm25 ties broken by id-asc;
+  Phase-3 org polish + venues-search acronym noted. +5 regression tests; verified live.
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_

@@ -183,6 +183,30 @@ def test_incremental_catches_edited_note_and_status_flip(tmp_path: Path) -> None
     assert len(raw.read_text().strip().splitlines()) == 1  # merged, not duplicated
 
 
+def test_duplicate_authorid_does_not_crash(tmp_path: Path) -> None:
+    # A note listing the same authorid twice must not abort the transaction (OR IGNORE).
+    note = make_note(
+        "dup", authors=["Alice Smith", "Alice Smith"], authorids=["~Alice_Smith1", "~Alice_Smith1"]
+    )
+    paths = _paths(tmp_path)
+    result = ingest_venue(
+        paths=paths,
+        adapter=FakeAdapter(FAKE_REF, [note]),
+        handle="test-venue",
+        opts=IngestOptions(),
+    )
+    assert result.status == "ok"
+    assert result.items_added == 1
+    conn = connect(paths.db)
+    try:
+        count = conn.execute(
+            "SELECT COUNT(*) FROM paper_authors WHERE paper_id = 'dup'"
+        ).fetchone()[0]
+    finally:
+        conn.close()
+    assert count == 1  # first position kept, not duplicated
+
+
 def test_venues_add_refuses_remapping_ingested_slug(tmp_path: Path) -> None:
     paths = _paths(tmp_path)
     ingest_venue(

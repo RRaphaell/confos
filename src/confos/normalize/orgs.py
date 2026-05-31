@@ -46,12 +46,13 @@ def domain_from_email(email: str) -> str | None:
 
 
 def _registrable_name(domain: str) -> str:
-    """A readable org name derived from a domain (fallback when not in the seed)."""
-    labels = domain.split(".")
-    # Drop a leading ccTLD-style academic prefix and the public suffix labels.
-    public = {"edu", "ac", "com", "org", "net", "gov", "co", "io", "ai"}
-    core = [label for label in labels if label not in public and len(label) > 2]
-    return core[0].capitalize() if core else domain
+    """Fallback org name for an unseeded domain: the domain itself.
+
+    We keep the raw domain (e.g. ``nus.edu.sg``) rather than a mangled title-case of one
+    label (``Nus``), which reads like a bug. It is honestly "derived from the email
+    domain"; Phase 3 maps domains to real display names via the alias file.
+    """
+    return domain
 
 
 def org_from_email(email: str) -> tuple[str, str | None] | None:

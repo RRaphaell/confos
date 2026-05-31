@@ -191,8 +191,7 @@ def _dry_run_result(
 ) -> IngestResult:
     added = 0
     for paper in papers:
-        exists = conn.execute("SELECT 1 FROM papers WHERE id = ?", (paper.paper_id,)).fetchone()
-        if exists is None:
+        if not papers_repo.exists(conn, paper.paper_id):
             added += 1
     return IngestResult(
         venue=ref.slug,

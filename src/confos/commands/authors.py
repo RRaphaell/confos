@@ -12,7 +12,7 @@ from ..errors import NotImplementedYetError
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import data_table, key_value_table
 from ..services import authors as authors_service
-from ._render import papers_tsv, render_authors, render_papers
+from ._render import papers_tsv, render_authors, render_papers, resolve_limit
 
 app = typer.Typer(no_args_is_help=False, help="Find and explore authors.")
 
@@ -38,7 +38,7 @@ def search(
 ) -> None:
     """Search authors by name."""
     app_ctx = bind_command(ctx, "authors.search")
-    resolved_limit = limit or app_ctx.limit or 25
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 25)
     results = authors_service.search_authors(app_ctx.paths, name, limit=resolved_limit)
     if app_ctx.is_json:
         app_ctx.render_json(results, query={"name": name, "limit": resolved_limit})
@@ -104,7 +104,7 @@ def papers(
     """List an author's papers."""
     app_ctx = bind_command(ctx, "authors.papers")
     resolved_venue = venue or app_ctx.venue
-    resolved_limit = limit or app_ctx.limit or 50
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
     result = authors_service.author_papers(
         app_ctx.paths, author_id, venue=resolved_venue, limit=resolved_limit
     )

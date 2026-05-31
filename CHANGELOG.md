@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Phase 2 — Search & explore.** `confos papers search` (FTS5/bm25, ranked + cited,
+  filters: `--venue`/`--year`/`--org`/`--accepted-only`/`--limit`), `papers show`
+  (+authors, `--with related`), `papers related`. `confos authors search/show/papers`
+  and `confos orgs top/papers`. `confos index rebuild` re-derives the whole index from
+  the raw JSONL snapshots offline (sync watermarks preserved) and `index status` reports
+  row counts. All offline, deterministic, with the stable JSON envelope.
 - **Phase 1 — Ingest (OpenReview).** `confos ingest <venue>` pulls a venue's full
   submission set, snapshots raw JSONL (the source of truth), normalizes, and upserts into
   SQLite + FTS in one transaction; status (accepted/under_review/withdrawn/desk_rejected)

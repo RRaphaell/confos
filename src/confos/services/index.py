@@ -17,6 +17,7 @@ from ..adapters.base import SourceAdapter
 from ..adapters.openreview import OpenReviewAdapter
 from ..db.connection import connect
 from ..db.migrate import create_derived, drop_derived, migrate
+from ..db.repositories import count_table, reset_entities
 from ..db.repositories import venues as venues_repo
 from ..errors import ConfigError
 from ..models import VenueRef
@@ -50,49 +51,55 @@ def rebuild(paths: Paths) -> dict[str, Any]:
     conn = connect(paths.db)
     try:
         migrate(conn)
-        snapshots = _snapshots(paths)
-        venues_done = 0
-        papers_done = 0
+        # PREPARE (read-only, fail-soft): load venue refs + normalize all notes BEFORE any
+        # destructive write. A malformed venue.json / unknown source raises here, leaving
+        # the existing index untouched (never a half-wiped FTS); bad note lines are skipped.
+        prepared: list[tuple[VenueRef, list[Any]]] = []
         failed = 0
-        with conn:  # one transaction: drop + re-derive everything
+        for venue_dir in _snapshots(paths):
+            ref = _load_ref(venue_dir)
+            adapter = _adapter_for(ref.source)
+            papers = []
+            for line in (venue_dir / "submissions.jsonl").read_text("utf-8").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    papers.append(adapter.normalize(json.loads(line), ref))
+                except Exception:  # skip an unparseable/invalid note line, keep going
+                    failed += 1
+            prepared.append((ref, papers))
+
+        # APPLY (single transaction; the data is pre-validated, so this won't raise).
+        papers_done = 0
+        with conn:
             drop_derived(conn)
             create_derived(conn)
-            conn.execute("DELETE FROM papers")  # cascades paper_authors, paper_topics
-            conn.execute("DELETE FROM authors")  # cascades author_affiliations
-            conn.execute("DELETE FROM orgs")
-            for venue_dir in snapshots:
-                ref = VenueRef.model_validate_json((venue_dir / "venue.json").read_text("utf-8"))
-                adapter = _adapter_for(ref.source)
-                venues_repo.upsert_venue(conn, ref, last_ingested_at=None)  # keep existing
-                for line in (venue_dir / "submissions.jsonl").read_text("utf-8").splitlines():
-                    if not line.strip():
-                        continue
-                    try:
-                        paper = adapter.normalize(json.loads(line), ref)
-                    except Exception:  # skip an unparseable line, keep rebuilding
-                        failed += 1
-                        continue
+            reset_entities(conn)
+            for ref, papers in prepared:
+                venues_repo.upsert_venue(conn, ref, last_ingested_at=None)  # keep watermarks
+                for paper in papers:
                     upsert_normalized_paper(conn, paper)
                     papers_done += 1
-                venues_done += 1
-        return {
-            "venues": venues_done,
-            "papers": papers_done,
-            "failed": failed,
-            "snapshots": [str(p) for p in snapshots],
-        }
+        return {"venues": len(prepared), "papers": papers_done, "failed": failed}
     finally:
         conn.close()
+
+
+def _load_ref(venue_dir: Path) -> VenueRef:
+    try:
+        return VenueRef.model_validate_json((venue_dir / "venue.json").read_text("utf-8"))
+    except Exception as exc:
+        raise ConfigError(
+            f"Cannot rebuild: {venue_dir / 'venue.json'} is missing or malformed ({exc}).",
+            hint="Fix or remove that snapshot, or re-ingest the venue.",
+        ) from exc
 
 
 def status(paths: Paths) -> dict[str, Any]:
     conn = connect(paths.db)
     try:
         migrate(conn)
-        counts = {
-            table: int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
-            for table in _CORE_COUNT_TABLES
-        }
+        counts = {table: count_table(conn, table) for table in _CORE_COUNT_TABLES}
         venues = [
             {
                 "slug": row["slug"],

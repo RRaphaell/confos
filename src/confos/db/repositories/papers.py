@@ -132,6 +132,10 @@ def get(conn: sqlite3.Connection, paper_id: str) -> sqlite3.Row | None:
     return row
 
 
+def exists(conn: sqlite3.Connection, paper_id: str) -> bool:
+    return conn.execute("SELECT 1 FROM papers WHERE id = ?", (paper_id,)).fetchone() is not None
+
+
 def authors_for_papers(
     conn: sqlite3.Connection, paper_ids: list[str]
 ) -> dict[str, list[sqlite3.Row]]:
@@ -186,8 +190,11 @@ def list_by_org(
 
 def _replace_authors(conn: sqlite3.Connection, paper: NormalizedPaper) -> None:
     conn.execute("DELETE FROM paper_authors WHERE paper_id = ?", (paper.paper_id,))
+    # OR IGNORE: a note can legitimately list the same authorid twice — keep the first
+    # position rather than aborting the whole transaction on the (paper_id, author_id) PK.
     conn.executemany(
-        "INSERT INTO paper_authors (paper_id, author_id, position, raw_name) VALUES (?, ?, ?, ?)",
+        "INSERT OR IGNORE INTO paper_authors (paper_id, author_id, position, raw_name) "
+        "VALUES (?, ?, ?, ?)",
         [(paper.paper_id, a.author_id, a.position, a.raw_name) for a in paper.authors],
     )
 

@@ -8,7 +8,7 @@ from ..console import bind_command, global_output_options
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import key_value_table
 from ..services import search as search_service
-from ._render import papers_tsv, render_papers
+from ._render import papers_tsv, render_papers, resolve_limit
 
 app = typer.Typer(no_args_is_help=False, help="Search and explore papers.")
 
@@ -34,7 +34,7 @@ def search(
     """
     app_ctx = bind_command(ctx, "papers.search")
     resolved_venue = venue or app_ctx.venue
-    resolved_limit = limit or app_ctx.limit or 20
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
     results = search_service.search_papers(
         app_ctx.paths,
         query,
@@ -59,7 +59,13 @@ def search(
         tsv_rows(app_ctx.out, papers_tsv(results))
         return
     if not results:
-        app_ctx.out.print(f"No papers matched {query!r}.")
+        if resolved_venue:
+            app_ctx.out.print(
+                f"No papers matched {query!r} in venue {resolved_venue!r}. "
+                "(Is it ingested? See `confos venues list`.)"
+            )
+        else:
+            app_ctx.out.print(f"No papers matched {query!r}.")
         return
     render_papers(app_ctx, results)
     app_ctx.info(f"{len(results)} result(s).")
@@ -81,10 +87,14 @@ def show(
     if app_ctx.is_json:
         app_ctx.render_json(paper, query={"paper_id": paper_id, "with": sorted(extras)})
         return
-    if app_ctx.is_plain:
-        key_value_plain(app_ctx.out, [(k, v) for k, v in paper.items() if k != "related"])
-        return
     authors = ", ".join(a["name"] for a in paper["authors"]) or "—"
+    keywords = "; ".join(paper["keywords"])
+    if app_ctx.is_plain:
+        flat = {k: v for k, v in paper.items() if k not in ("related", "authors", "keywords")}
+        flat["authors"] = authors
+        flat["keywords"] = keywords
+        key_value_plain(app_ctx.out, list(flat.items()))
+        return
     key_value_table(
         app_ctx.out,
         [
@@ -93,6 +103,7 @@ def show(
             ("venue", paper["venue"]),
             ("status", paper["status"]),
             ("type", str(paper["acceptance_type"] or "—")),
+            ("keywords", keywords or "—"),
             ("url", paper["url"]),
             ("abstract", paper.get("abstract", "")),
         ],
@@ -113,7 +124,7 @@ def related(
 ) -> None:
     """Show papers related to a given paper (by title/keyword overlap)."""
     app_ctx = bind_command(ctx, "papers.related")
-    resolved_limit = limit or app_ctx.limit or 10
+    resolved_limit = resolve_limit(limit, app_ctx.limit, 10)
     results = search_service.related_papers(app_ctx.paths, paper_id, limit=resolved_limit)
     if app_ctx.is_json:
         app_ctx.render_json(results, query={"paper_id": paper_id, "limit": resolved_limit})

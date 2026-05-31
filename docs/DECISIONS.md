@@ -164,6 +164,18 @@ the adapter from `VenueRef.source` and derive provenance `sources` from it, and 
 `tcdate/tmdate` as the OpenReview adapter's watermark detail (other sources may leave them
 null and use a different strategy). Logged so it isn't rediscovered late (Phase-1 critic).
 
+### D20 — `index rebuild` validates before it destroys (2026-05-31, Phase 2)
+**What:** rebuild loads every `venue.json` + normalizes every raw note FIRST (read-only,
+fail-soft on bad note lines); only then, in one transaction, does it drop/recreate the
+FTS tables, reset the derived entities, and repopulate. A malformed `venue.json` (or
+unknown source) raises a clean `ConfigError` (exit 3) BEFORE any destructive write, so
+the existing index is untouched. **Why:** the first cut dropped the FTS tables (which
+self-committed) then re-derived, so a mid-rebuild failure left search silently empty
+against a populated store (Phase-2 critic). Validate-before-destroy makes rebuild safe
+without fighting SQLite's DDL-transaction quirks. **Alternatives:** skip bad venues and
+continue (rejected — silently drops a venue's papers from the index); per-venue partial
+rebuild (rejected — more complexity than a one-shot re-derive needs).
+
 ---
 
 ## Assumptions (verify before/while building)

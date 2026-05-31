@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from confos.errors import NotFoundError
+from confos.errors import ConfigError, NotFoundError
 from confos.models import IngestOptions
 from confos.paths import Paths
 from confos.services import authors as authors_service
@@ -150,6 +150,22 @@ def test_orgs_top_and_papers(corpus: Paths) -> None:
 
     org = orgs_service.org_papers(corpus, "MIT")
     assert _ids(org["papers"]) == ["bbb2"]
+
+
+def test_search_limit_zero_returns_nothing(corpus: Paths) -> None:
+    assert search_service.search_papers(corpus, "agents", limit=0) == []
+
+
+def test_rebuild_aborts_cleanly_on_malformed_venue_json(corpus: Paths) -> None:
+    # A corrupt venue.json must fail BEFORE any destructive write — store untouched,
+    # FTS not wiped (CR1/CR3 regression).
+    (corpus.raw_venue_dir("openreview", "test-venue") / "venue.json").write_text("not json")
+    before = index_service.status(corpus)["counts"]
+    with pytest.raises(ConfigError):
+        index_service.rebuild(corpus)
+    after = index_service.status(corpus)["counts"]
+    assert before == after
+    assert search_service.search_papers(corpus, "agents", limit=50)  # FTS intact
 
 
 def test_index_rebuild_is_idempotent(corpus: Paths) -> None:

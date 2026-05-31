@@ -50,18 +50,22 @@ def migrate(conn: sqlite3.Connection) -> bool:
 
 
 def drop_derived(conn: sqlite3.Connection) -> None:
-    """Drop the FTS5 tables (used by ``index rebuild`` before repopulating)."""
+    """Drop the FTS5 tables (used by ``index rebuild`` before repopulating).
+
+    Does not commit — the caller owns the surrounding transaction so a rebuild is
+    atomic (it must not leave the FTS tables dropped if a later step fails).
+    """
     for table in _DERIVED_TABLES:
         conn.execute(f"DROP TABLE IF EXISTS {table}")
-    conn.commit()
 
 
 def create_derived(conn: sqlite3.Connection) -> None:
-    """Recreate the FTS5 tables from the schema's CREATE VIRTUAL TABLE statements."""
-    sql = _schema_sql()
-    for stmt in _virtual_table_statements(sql):
+    """Recreate the FTS5 tables from the schema's CREATE VIRTUAL TABLE statements.
+
+    Does not commit — the caller owns the transaction.
+    """
+    for stmt in _virtual_table_statements(_schema_sql()):
         conn.execute(stmt)
-    conn.commit()
 
 
 def _virtual_table_statements(sql: str) -> list[str]:

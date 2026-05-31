@@ -1,11 +1,21 @@
-"""Shared human-mode renderers for paper/author lists (command layer only)."""
+"""Shared command-layer helpers: limit resolution + human paper/author tables."""
 
 from __future__ import annotations
 
 from typing import Any
 
+from rich.table import Table
+
 from ..console import AppContext
-from ..output.table import data_table
+
+
+def resolve_limit(cmd_limit: int | None, ctx_limit: int | None, default: int) -> int:
+    """Resolve a result cap: command flag > root --limit > default. Honours an explicit 0."""
+    if cmd_limit is not None:
+        return cmd_limit
+    if ctx_limit is not None:
+        return ctx_limit
+    return default
 
 
 def _authors_label(authors: list[dict[str, Any]]) -> str:
@@ -20,22 +30,32 @@ def _authors_label(authors: list[dict[str, Any]]) -> str:
 def render_papers(
     ctx: AppContext, papers: list[dict[str, Any]], *, show_score: bool = True
 ) -> None:
-    columns = ["#", "title", "authors", "venue", "status"]
+    """A readable results table: titles ellipsize (no word-per-line wrap), and when every
+    result shares one venue the venue column collapses into the caption (FU1)."""
+    venue_set = {p["venue"] for p in papers}
+    single_venue = next(iter(venue_set)) if len(venue_set) == 1 else None
+
+    table = Table(
+        caption=f"venue: {single_venue}" if single_venue else None, caption_justify="left"
+    )
+    table.add_column("#", justify="right", no_wrap=True)
+    table.add_column("title", overflow="ellipsis", no_wrap=True)
+    table.add_column("authors", overflow="ellipsis", no_wrap=True)
+    if single_venue is None:
+        table.add_column("venue", no_wrap=True)
+    table.add_column("status", no_wrap=True)
     if show_score:
-        columns.append("score")
-    rows: list[list[str]] = []
+        table.add_column("score", justify="right", no_wrap=True)
+
     for index, paper in enumerate(papers, start=1):
-        row = [
-            str(index),
-            paper["title"],
-            _authors_label(paper["authors"]),
-            paper["venue"],
-            paper["status"],
-        ]
+        row = [str(index), str(paper["title"]), _authors_label(paper["authors"])]
+        if single_venue is None:
+            row.append(str(paper["venue"]))
+        row.append(str(paper["status"]))
         if show_score:
-            row.append(str(paper.get("bm25", "")))
-        rows.append(row)
-    data_table(ctx.out, columns, rows)
+            row.append(f"{float(paper.get('bm25') or 0):.1f}")
+        table.add_row(*row)
+    ctx.out.print(table)
 
 
 def papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
@@ -43,13 +63,18 @@ def papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
 
 
 def render_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
-    rows = [
-        (
-            a["display_name"],
-            a["affiliation_current"],
-            str(a.get("paper_count", "")),
-            a["data_quality"],
+    table = Table()
+    table.add_column("id", no_wrap=True)
+    table.add_column("author", overflow="ellipsis", no_wrap=True)
+    table.add_column("affiliation", overflow="ellipsis")
+    table.add_column("papers", justify="right", no_wrap=True)
+    table.add_column("quality", no_wrap=True)
+    for author in authors:
+        table.add_row(
+            author["author_id"],
+            author["display_name"],
+            author["affiliation_current"],
+            str(author.get("paper_count", "")),
+            author["data_quality"],
         )
-        for a in authors
-    ]
-    data_table(ctx.out, ["author", "affiliation", "papers", "quality"], rows)
+    ctx.out.print(table)
