@@ -16,6 +16,14 @@ the full v1 surface in [PRODUCT.md](PRODUCT.md) §8, with clean code, passing te
 subagent-validated quality. No rushing. No fake-done. Define "done" by the
 definition-of-done checklists below, not by elapsed effort.
 
+**Two standards held in tension (both matter):**
+- **Production-grade, modern, open-source quality** — this repo is public-facing. Clean
+  structure, typed, tested, CI-green, good docs, idiomatic 2026 Python.
+- **Not over-engineered** — public data, anonymous reads, a focused CLI. No security
+  ceremony, no speculative abstraction, no config knobs nobody needs. Every line earns
+  its place. When the two pull against each other, prefer the *simpler* thing that still
+  meets the production bar. (See §3 "Simplicity is a hard rule.")
+
 ## 1. How I work (process)
 
 A repeating loop per phase:
@@ -26,14 +34,35 @@ A repeating loop per phase:
    └──────────────────  (re-plan if validation fails)  ◀─────────────┘
 ```
 
-- **Track progress** with a task list (one item per phase deliverable); mark in-progress
-  / done as I go. Keep `docs/PROGRESS.md` updated with what's done, what's next, and any
-  decisions changed.
+- **Track progress** with a live task list (one item per phase deliverable); mark
+  in-progress / done as I go. Keep [PROGRESS.md](PROGRESS.md) updated each session: what's
+  done, what's next, what changed.
+- **Research before guessing.** When a piece is unfamiliar (an openreview-py call, a typer
+  pattern, an FTS5 detail, how `ft`/`gogcli` solved something), look it up — read the
+  docs/source/reference repo — *before* writing code. Don't invent an API. Then **write
+  down what I learned** so it isn't re-researched: short notes in `docs/research/` (one
+  file per topic, e.g. `docs/research/typer-patterns.md`) and a one-line pointer from
+  PROGRESS.md. Reference repos to mine: `ft`, `birdclaw`, `gogcli`, the `create-cli`
+  rubric (see [REFERENCES.md](REFERENCES.md)).
+- **Document decisions & assumptions as they happen.** Every non-obvious choice or
+  assumption goes in [DECISIONS.md](DECISIONS.md) (lightweight ADR: what / why / context /
+  alternatives). This is for both of us — so future-me doesn't re-litigate, and Raphael
+  can see why things are the way they are. If I have to assume something about the data or
+  the user, log it as an assumption with how to verify it.
 - **Commit at every meaningful checkpoint** and push to the private GitHub repo so
   progress is visible. Conventional-commit style (`feat:`, `fix:`, `test:`, `docs:`,
-  `chore:`). Never commit secrets.
+  `chore:`). **Never add a `Co-Authored-By`/AI-attribution trailer** (Raphael's hard rule
+  — the harness adds it by default; omit it). Never commit secrets.
 - **Checkpoint discipline:** end each phase only when its definition-of-done is met and
   the subagent pass is clean (or findings are triaged and fixed).
+
+### Working docs I keep current (the paper trail)
+| File | Purpose | Updated |
+|---|---|---|
+| [PROGRESS.md](PROGRESS.md) | What's done / in-progress / next; pointers to notes | every session |
+| [DECISIONS.md](DECISIONS.md) | Decisions + assumptions (lightweight ADR) | whenever a choice is made |
+| `docs/research/*.md` | Insights/examples gathered while building (one file per topic) | when I research something |
+| CHANGELOG.md | User-facing change log | per release/phase |
 
 ## 2. Subagent validation strategy (counter my own bias)
 

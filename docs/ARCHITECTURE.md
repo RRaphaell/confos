@@ -196,7 +196,7 @@ ranking in [RANKING.md](RANKING.md). The essentials:
   warnings, diagnostics. Nonzero exit on failure.
 - Global: `--json`, `--plain`, `--quiet`, `--verbose`, `--no-input`, `--no-color`,
   `--home`, `--venue`, `--limit`. Respect `NO_COLOR`, TTY detection.
-- Config precedence: **flags > env > project config > user config > defaults.**
+- Config precedence: **flags > env > user config > defaults** (no per-project layer).
 - Exit codes: `0` ok · `1` generic · `2` usage/validation · `3` config/env ·
   `4` network/backend · `5` partial ingest · `130` interrupted (SIGINT, bounded cleanup).
 - Safety classes: **local-read** (search/show/find/stats/trends/viz/export — no network),

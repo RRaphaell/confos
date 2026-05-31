@@ -85,7 +85,9 @@ the full tour and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it works.
 | [docs/CLI_CONTRACT.md](docs/CLI_CONTRACT.md) | Full command tree, flags, output contract, exit codes, safety |
 | [docs/RANKING.md](docs/RANKING.md) | How `authors find` ranks people + how `--topic` matching works |
 | [docs/SCHEMAS.md](docs/SCHEMAS.md) | Stable `--json` output shapes (the agent/script contract) |
-| [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) | How the project is built: phases, standards, testing, validation |
+| [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) | How the project is built: phases, standards, research/notes discipline, testing, validation |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions + assumptions log (lightweight ADR) |
+| [docs/PROGRESS.md](docs/PROGRESS.md) | Live build progress + session log |
 | [docs/REFERENCES.md](docs/REFERENCES.md) | Lessons taken from `ft`, `birdclaw`, `gogcli`, `create-cli` |
 | [AGENTS.md](AGENTS.md) | How an agent should drive confos |
 
