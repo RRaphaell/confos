@@ -13,6 +13,7 @@ from confos.services import authors as authors_service
 from confos.services import index as index_service
 from confos.services import orgs as orgs_service
 from confos.services import search as search_service
+from confos.services import stats as stats_service
 from confos.services.ingest import ingest_venue
 from tests.synthetic import FAKE_REF, FakeAdapter, make_note
 
@@ -166,6 +167,39 @@ def test_rebuild_aborts_cleanly_on_malformed_venue_json(corpus: Paths) -> None:
     after = index_service.status(corpus)["counts"]
     assert before == after
     assert search_service.search_papers(corpus, "agents", limit=50)  # FTS intact
+
+
+def test_stats_overview(corpus: Paths) -> None:
+    overview = stats_service.overview(corpus)
+    assert overview["papers"] == 6
+    assert overview["status"]["under_review"] == 1  # ccc3
+    assert overview["status"]["accepted"] == 5
+    assert overview["venues"] == 2
+
+
+def test_stats_topics_coverage(corpus: Paths) -> None:
+    result = stats_service.topics(corpus)
+    keys = {r["key"] for r in result["rows"]}
+    assert "agents" in keys
+    dq = result["data_quality"]
+    assert (dq["papers_total"], dq["papers_with_signal"], dq["unknown"]) == (6, 6, 0)
+
+
+def test_stats_orgs_is_honest_about_sparsity(corpus: Paths) -> None:
+    result = stats_service.orgs(corpus)
+    dq = result["data_quality"]
+    assert dq["papers_total"] == 6
+    assert dq["papers_with_signal"] == 1  # only bbb2 (bob@mit.edu) has an affiliation
+    assert dq["unknown"] == 5
+    assert dq["low_confidence"] == 1  # all v1 affiliations are email-domain → low confidence
+    assert dq["method"] == "author_affiliation_domain_v1"
+    assert any(r["key"] == "MIT" for r in result["rows"])
+
+
+def test_stats_countries(corpus: Paths) -> None:
+    result = stats_service.countries(corpus)
+    assert any(r["key"] == "United States" for r in result["rows"])  # MIT → US
+    assert result["data_quality"]["method"] == "affiliation_country_domain_v1"
 
 
 def test_index_rebuild_is_idempotent(corpus: Paths) -> None:
