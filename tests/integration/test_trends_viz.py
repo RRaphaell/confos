@@ -114,6 +114,15 @@ def test_trends_compare_is_two_venue_trend(two_venues: Paths) -> None:
     assert result["delta"]["matched_abs"] == 1
 
 
+def test_trends_warns_on_not_ingested_venue(two_venues: Paths) -> None:
+    # A venue that isn't local should report zeros AND a warning (not a phantom decline).
+    result = trends_service.trends_topic(two_venues, "qq", ["v1", "nope-2099"])
+    series = {s["venue"]: s for s in result["series"]}
+    assert series["nope-2099"]["matched"] == 0
+    assert series["nope-2099"]["total"] == 0
+    assert any("nope-2099" in w for w in result["warnings"])
+
+
 def test_coauthor_graph_edges(two_venues: Paths) -> None:
     # In v2, "qq" papers are A+B (b1) and A+C (b2) → edges A-B, A-C; A has degree 2.
     graph = viz_service.build_coauthor_graph(two_venues, "qq", venue="v2")

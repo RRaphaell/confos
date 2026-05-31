@@ -5,22 +5,24 @@ from __future__ import annotations
 from confos.output.graph import to_html, to_mermaid
 
 
-def test_to_mermaid_sanitizes_ids_and_labels() -> None:
+def test_to_mermaid_injective_ids_and_softened_labels() -> None:
+    # These two ids would collide under a lossy char-substitution scheme; positional
+    # ids (n0/n1) keep them distinct.
     nodes = [
-        {"id": "~Alice_Smith1", "label": 'Alice "A" Smith', "degree": 1},
-        {"id": "email:bob@x.com", "label": "Bob [Tan]", "degree": 1},
+        {"id": "email:a.b@x.com", "label": 'Alice "A" Smith', "degree": 1},
+        {"id": "email:a-b@x.com", "label": "Bob [Tan]", "degree": 1},
     ]
-    edges = [["~Alice_Smith1", "email:bob@x.com"]]
+    edges = [["email:a.b@x.com", "email:a-b@x.com"]]
     out = to_mermaid(nodes, edges)
     assert out.startswith("graph LR")
-    # node ids are alnum-safe (no ~, @, :, .)
-    assert "n__Alice_Smith1" in out
-    assert "n_email_bob_x_com" in out
-    # label quotes/brackets softened so the mermaid ["..."] doesn't break
-    assert "Alice 'A' Smith" in out
-    assert "Bob (Tan)" in out
-    # the edge connects the two sanitized ids
-    assert "n__Alice_Smith1 --- n_email_bob_x_com" in out
+    assert "n0[\"Alice 'A' Smith\"]" in out
+    assert 'n1["Bob (Tan)"]' in out
+    assert "n0 --- n1" in out  # the edge maps to the two distinct node ids
+
+
+def test_to_mermaid_label_strips_newline() -> None:
+    out = to_mermaid([{"id": "x", "label": "Line1\nLine2", "degree": 0}], [])
+    assert 'n0["Line1 Line2"]' in out  # newline collapsed, statement intact
 
 
 def test_to_html_escapes_free_text() -> None:

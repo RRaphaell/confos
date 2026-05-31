@@ -30,8 +30,10 @@ def trends_topic(paths: Paths, topic: str, venues: list[str]) -> dict[str, Any]:
     try:
         migrate(conn)
         fts = topic_query(topic, load_topic_aliases(paths))
-        series = [_venue_point(conn, fts, venue) for venue in venues]
-        return {"topic": topic, "series": series, "delta": _delta(series)}
+        points = [_venue_point(conn, fts, venue) for venue in venues]
+        series = [point for point, _ in points]
+        warnings = [w for _, venue_warnings in points for w in venue_warnings]
+        return {"topic": topic, "series": series, "delta": _delta(series), "warnings": warnings}
     finally:
         conn.close()
 
@@ -41,23 +43,31 @@ def trends_compare(paths: Paths, venue_a: str, venue_b: str, topic: str) -> dict
     return trends_topic(paths, topic, [venue_a, venue_b])
 
 
-def _venue_point(conn: sqlite3.Connection, fts: str, venue: str) -> dict[str, Any]:
+def _venue_point(
+    conn: sqlite3.Connection, fts: str, venue: str
+) -> tuple[dict[str, Any], list[str]]:
     rows = papers_repo.search(conn, fts, venue=venue, limit=_MATCH_CAP)
     matched = len(rows)
     total = stats_repo.papers_total(conn, venue)
     venue_row = venues_repo.get_venue(conn, venue)
-    year = venue_row["year"] if venue_row is not None else None
+
+    warnings: list[str] = []
+    if venue_row is None:
+        warnings.append(f"venue {venue!r} is not ingested locally — reported as zeros")
+    if matched >= _MATCH_CAP:
+        warnings.append(f"venue {venue!r}: matched truncated at {_MATCH_CAP}; share is approximate")
 
     top_authors, top_orgs = _top_contributors(conn, rows)
-    return {
+    point = {
         "venue": venue,
-        "year": year,
+        "year": venue_row["year"] if venue_row is not None else None,
         "matched": matched,
         "total": total,
         "share": round(matched / total, 4) if total else 0.0,
         "top_authors": top_authors,
         "top_orgs": top_orgs,
     }
+    return point, warnings
 
 
 def _top_contributors(

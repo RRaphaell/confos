@@ -2,34 +2,38 @@
 
 The one real output-safety rule (SCHEMAS §"Free-text in HTML"): free text (author names)
 is escaped before it lands in HTML, so a stray ``<`` can't break the page. Mermaid node
-ids are sanitized to an alnum-safe form; labels have mermaid-breaking characters softened.
+ids are positional (injective); labels have mermaid-breaking characters softened.
 """
 
 from __future__ import annotations
 
 import html
-import re
-
-_ID_UNSAFE = re.compile(r"[^A-Za-z0-9]")
-
-
-def _node_id(raw: str) -> str:
-    return "n_" + _ID_UNSAFE.sub("_", raw)
 
 
 def _mermaid_label(label: str) -> str:
-    # Quotes and brackets break a mermaid ["..."] label; soften them.
-    return label.replace('"', "'").replace("[", "(").replace("]", ")")
+    # Quotes/brackets break a mermaid ["..."] label; newlines split the statement.
+    return (
+        label.replace('"', "'")
+        .replace("[", "(")
+        .replace("]", ")")
+        .replace("\n", " ")
+        .replace("\r", " ")
+    )
 
 
 def to_mermaid(nodes: list[dict[str, object]], edges: list[list[str]]) -> str:
-    """A ``graph LR`` mermaid diagram: labelled nodes + undirected co-authorship edges."""
+    """A ``graph LR`` mermaid diagram: labelled nodes + undirected co-authorship edges.
+
+    Node ids are assigned by position (n0, n1, …) so they are injective — distinct
+    author_ids that differ only in punctuation can never collapse into one node.
+    """
+    id_map = {str(node["id"]): f"n{index}" for index, node in enumerate(nodes)}
     lines = ["graph LR"]
     for node in nodes:
-        node_id = _node_id(str(node["id"]))
-        lines.append(f'    {node_id}["{_mermaid_label(str(node["label"]))}"]')
+        lines.append(f'    {id_map[str(node["id"])]}["{_mermaid_label(str(node["label"]))}"]')
     for a, b in edges:
-        lines.append(f"    {_node_id(a)} --- {_node_id(b)}")
+        if a in id_map and b in id_map:
+            lines.append(f"    {id_map[a]} --- {id_map[b]}")
     return "\n".join(lines)
 
 

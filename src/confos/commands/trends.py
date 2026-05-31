@@ -41,8 +41,10 @@ def _render(app_ctx: AppContext, result: dict[str, object]) -> None:
 
 
 def _emit(app_ctx: AppContext, result: dict[str, object], query: dict[str, object]) -> None:
+    warnings = result["warnings"]
+    assert isinstance(warnings, list)
     if app_ctx.is_json:
-        app_ctx.render_json(result, query=query)
+        app_ctx.render_json(result, query=query, warnings=warnings)
         return
     if app_ctx.is_plain:
         series = result["series"]
@@ -53,6 +55,8 @@ def _emit(app_ctx: AppContext, result: dict[str, object], query: dict[str, objec
         )
         return
     _render(app_ctx, result)
+    for warning in warnings:
+        app_ctx.warn(warning)
 
 
 @app.command()

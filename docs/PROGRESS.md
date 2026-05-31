@@ -9,11 +9,11 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 4 (Trends & visualization) — build complete + gate green; subagent validation next. Then Phase 5.**
+**Phase: 4 (Trends & visualization) — COMPLETE (gate green, 2-subagent validation passed, findings fixed). Next: Phase 5.**
 
 - ✅ **Phase 4 built:** `trends topic`/`compare` (matched/total/share + first→last delta,
   SCHEMAS §5), `viz topics`/`orgs` (terminal bar charts), `viz network` (networkx
-  co-authorship graph → terminal/mermaid/html, HTML-escaped). Verified live (MLMP); 130 tests.
+  co-authorship graph → terminal/mermaid/html, HTML-escaped). Verified live (MLMP); 132 tests.
 - ✅ **Phase 3 built:** `authors find --topic` (ranked people + why-relevant + provenance,
   RANKING §2, pinned by the §3 acceptance test), `coauthors`, `stats overview/topics/orgs/
   countries` with honest `data_quality` + `--explain`, user-editable alias files
@@ -37,7 +37,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 | 1 | Ingest (OpenReview → raw JSONL + SQLite) | ✅ done (validated) |
 | 2 | Search & explore | ✅ done (validated) |
 | 3 | People discovery & stats | ✅ done (validated) |
-| 4 | Trends & visualization | build done · validation pending |
+| 4 | Trends & visualization | ✅ done (validated) |
 | 5 | Export & agent surface | not started |
 | 6 | Hardening & release polish (v0.1.0) | not started |
 
@@ -129,6 +129,13 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   clarified (Unknown lives in data_quality, not a row); ranking-test docstring corrected
   (count is dominant, not absolute). Verified: topic_query FTS-injection-safe, ranking
   deterministic + tie-break pinned, D3 alias re-derivation works end-to-end, layering clean.
+
+- 2026-05-31 · Phase 4 · code-reviewer (pass_with_findings) + agent-consumer (PASS) →
+  fixed: mermaid node ids are now positional/injective (distinct author_ids that differ
+  only in punctuation no longer collide into one node); mermaid labels strip newlines;
+  trends emits a warning when a requested venue isn't ingested (zeros are self-explaining,
+  not a phantom decline) or the match cap is hit. Verified: HTML escaping robust, stdout
+  pure across mermaid/html/json, deltas correct. +2 regression tests.
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_
