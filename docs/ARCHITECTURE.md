@@ -92,7 +92,7 @@ Rules enforced by the layering:
         ▼                  └────▶ confos index rebuild
   SQLite upsert (by id)           re-normalize from raw JSONL
    • papers, authors, …           → fresh SQLite + FTS (truth unchanged)
-challenge   • FTS5 index built
+   • FTS5 index built
         │
         ▼
   ingest_runs row (counts, watermark for incremental sync)
