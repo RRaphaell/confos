@@ -130,8 +130,9 @@ confos export papers --venue neurips-2025 --format csv
 confos export papers --venue neurips-2025 --format jsonl
 ```
 The **context pack** is the killer agent primitive: one self-contained artifact (top
-papers + authors + orgs + stats + open questions + sources) an agent ingests to plan a
-literature review, a thread, or outreach — with every claim cited.
+papers + authors + orgs + topic-scoped stats + thin-areas + sources) an agent ingests to
+plan a literature review, a thread, or outreach — with every claim cited. (Schema:
+[SCHEMAS.md](SCHEMAS.md) §6.)
 
 ## 6. Setup & maintenance
 ```bash

@@ -90,21 +90,28 @@ Every stats payload includes a `data_quality` block — confos never fakes clean
 ```
 
 ## 6. Context pack (`export context`) — the headline agent artifact
-A single self-contained, fully-cited object an agent ingests to plan real work.
-**v1 is LLM-free** (principle #5), so it contains only data confos can derive + cite.
+A single self-contained, fully-cited object an agent ingests to plan real work. Like every
+other command it uses the standard envelope (§1); the pack itself is the `data` object, so
+agents read `.data.papers[].title`, `.data.authors[]`, etc. **v1 is LLM-free**
+(principle #5) — it contains only data confos can derive + cite.
 ```json
 {
-  "type": "confos.context_pack",
+  "ok": true,
   "schema_version": "1",
-  "topic": "agent evals",
-  "venue": "neurips-2025",
-  "papers":  [ /* Paper objects, ranked by bm25, with url */ ],
-  "authors": [ /* ranked Author objects per RANKING.md, with matched_papers */ ],
-  "orgs":    [ { "name": "…", "papers": 12 } ],
-  "stats":   { /* Stats object as in §4, scoped to the topic */ },
-  "thin_areas": [ "keyword pairs / subtopics with few papers" ],  // heuristic, LABELLED — NOT "open questions"
-  "sources": [ { "paper_id": "…", "url": "…" } ],                 // every claim traces here
-  "notes": "All fields derived locally from OpenReview with provenance; no LLM synthesis."
+  "command": "export.context",
+  "query": { "topic": "agent evals", "venue": "neurips-2025" },
+  "data": {
+    "type": "confos.context_pack",
+    "topic": "agent evals",
+    "venue": "neurips-2025",
+    "papers":  [ /* Paper objects, ranked by bm25, with url */ ],
+    "authors": [ /* ranked Author objects per RANKING.md, with matched_papers */ ],
+    "orgs":    [ { "name": "…", "papers": 12 } ],
+    "stats":   { /* Stats object as in §4, scoped to the topic */ },
+    "thin_areas": [ "keyword pairs / subtopics with few papers" ],  // heuristic, LABELLED — NOT "open questions"
+    "notes": "All fields derived locally from OpenReview with provenance; no LLM synthesis."
+  },
+  "provenance": { "db": "~/.confos/confos.db", "sources": ["openreview"], "venue": "neurips-2025" }
 }
 ```
 **Removed from v1:** the earlier "open_questions" field — it implied LLM synthesis, which

@@ -12,7 +12,8 @@ reading lists, find people on a topic, compute trends, and produce cited context
 1. **Always pass `--json --no-input`** for programmatic use. stdout is pure JSON; logs go
    to stderr. Never parse the human table format.
 2. **Check the data is local first.** Run `confos venues list --json`. If the venue isn't
-   present, `confos ingest <venue>` (this is the only command that hits the network).
+   present, `confos ingest <venue>` (the network commands are `ingest` — re-run it to
+   update — and `venues search`; everything else is offline).
 3. **Trust, but cite.** Every paper/stat/person includes a source id + URL in
    `provenance` / per-row fields. Cite those. Do **not** invent statistics — if confos
    reports `unknown` counts, report them as unknown.

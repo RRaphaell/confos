@@ -30,7 +30,12 @@ confos
     add --slug S --openreview-id ID register a custom venue
     aliases                         show built-in alias map
 
-  ingest <venue> [--accepted-only] [--include-decisions] [--force] [--dry-run]
+  ingest <venue> [--include-decisions] [--force] [--dry-run]
+        # pulls the full submission set; status derived locally (see ARCHITECTURE §8).
+        # --include-decisions: also fetch Decision notes to populate acceptance_type
+        #   (oral/spotlight/poster); off by default (heavier fetch). --force ignores
+        #   sync watermarks for a full re-pull. Re-running ingest = incremental update.
+        # (--accepted-only is a query-time filter on read commands, not an ingest flag.)
 
   papers
     search <query> [--venue V] [--year Y] [--org O] [--accepted-only] [--limit N]
@@ -151,8 +156,10 @@ hit the network.
 ## 7. Config precedence
 
 ```
-command-line flags  >  env vars  >  project ./.confos.toml  >  user ~/.confos/config.toml  >  built-in defaults
+command-line flags  >  env vars  >  user ~/.confos/config.toml  >  built-in defaults
 ```
+(No per-project config layer — confos has one global store, so a `./.confos.toml` would be
+a layer with no real use case. Kept deliberately simple.)
 Env vars: `CONFOS_HOME`, `CONFOS_CONFIG`, `OPENREVIEW_USERNAME`/`OPENREVIEW_PASSWORD`
 (optional; anonymous reads are the default), `NO_COLOR`.
 

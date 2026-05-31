@@ -65,8 +65,8 @@ doubt, write the simpler version.
   (no network in repositories, no SQL in commands, no business logic in commands). That
   layering is the *only* structural ceremony — it exists to keep code testable and is not
   an invitation to add more layers.
-- **Errors:** a small set of typed exceptions → exit codes (CLI_CONTRACT §5); stack trace
-  only with `--debug`.
+- **Errors:** a small set of typed exceptions → exit codes (CLI_CONTRACT §5); full stack
+  trace only at higher `--verbose` (`-vv`).
 - **No hidden I/O:** read commands never touch the network; only `ingest` does.
 - **Determinism:** explicit `ORDER BY` with a unique tiebreak on list queries, so `--json`
   and tests are reproducible (pairs with RANKING §2). This is clean code, not complexity.

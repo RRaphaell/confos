@@ -58,7 +58,8 @@ score(a) =
 - **`recency_bonus`** is **0 for single-venue queries** (every paper shares the venue's
   year — recency is meaningless within one venue; this was a flaw the critic caught). For
   **multi-venue** queries it is `0.3 * (newest_year(P_a) - min_year) / (max_year - min_year)`,
-  rewarding authors active in the most recent venues. With one year in scope it is 0.
+  rewarding authors active in the most recent venues. If the scope spans only one year
+  (`max_year == min_year`), recency_bonus = 0 (avoids divide-by-zero).
 
 ### Deterministic tie-break (required for reproducible JSON + tests)
 Sort by: `score desc`, then `matched_paper_count desc`, then `author_id asc`

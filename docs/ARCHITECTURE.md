@@ -215,7 +215,7 @@ ranking in [RANKING.md](RANKING.md). The essentials:
 | **Author identity** | Names collide; one human can have multiple merged tilde ids | Key on profile id; expose "possible duplicates"; never auto-merge by name |
 | **Affiliations / countries** | Free-text, missing ~10–15%, inconsistent | Email-domain + curated alias table; report known/unknown/low-confidence in every stat; `--explain` shows method |
 | **Venue id conventions** | `NeurIPS.cc/2025/Conference` vs `colmweb.org/COLM/2024/Conference` | Curated alias map + `venues add` for arbitrary ids; never derive algorithmically |
-| **Rate/politeness** | No published limits; be polite | Sequential ingest, cache aggressively, optional `--rate-delay`, identify in User-Agent |
+| **Rate/politeness** | No published limits; the API research concludes no throttling is needed for anonymous reads | Sequential ingest, cache aggressively, identify in User-Agent. No rate-limit knob unless 429s actually appear. |
 
 (Full OpenReview API mechanics: [research/openreview-api.md](research/openreview-api.md).)
 

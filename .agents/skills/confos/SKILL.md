@@ -33,7 +33,8 @@ If the target venue isn't local yet, ingest it (network, one-time): `confos inge
 
 ## Safety
 - Read commands (search/find/stats/trends/viz/export) are offline + safe — no approval needed.
-- `ingest`/`sync` hit the network and take time — show progress, fine to run.
+- `ingest` (and re-running it to update) and `venues search` hit the network and take time
+  — show progress, fine to run. There is no separate `sync` command.
 - Never run destructive commands without explicit user intent.
 
 ## Notes
