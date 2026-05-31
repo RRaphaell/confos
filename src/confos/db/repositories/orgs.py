@@ -31,3 +31,32 @@ def link_affiliation(
         """,
         (author_id, org_id, confidence),
     )
+
+
+def top(
+    conn: sqlite3.Connection, *, venue: str | None = None, limit: int = 50
+) -> list[sqlite3.Row]:
+    """Organisations ranked by distinct paper count (sparse until Phase 3 enriches)."""
+    clauses = []
+    params: dict[str, object] = {"limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    where = f"WHERE {' AND '.join(clauses)} " if clauses else ""
+    return conn.execute(
+        "SELECT o.id, o.name, o.country, COUNT(DISTINCT p.id) AS papers "
+        "FROM orgs o "
+        "JOIN author_affiliations aa ON aa.org_id = o.id "
+        "JOIN paper_authors pa ON pa.author_id = aa.author_id "
+        "JOIN papers p ON p.id = pa.paper_id "
+        f"{where}"
+        "GROUP BY o.id ORDER BY papers DESC, o.name ASC, o.id ASC LIMIT :limit",
+        params,
+    ).fetchall()
+
+
+def find_by_name(conn: sqlite3.Connection, name: str) -> sqlite3.Row | None:
+    """Resolve an org by display name (matched on its normalized-name slug)."""
+    org_id = org_slug(name)
+    row: sqlite3.Row | None = conn.execute("SELECT * FROM orgs WHERE id = ?", (org_id,)).fetchone()
+    return row

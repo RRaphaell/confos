@@ -122,6 +122,19 @@ def ingest_venue(
         conn.close()
 
 
+def upsert_normalized_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
+    """Upsert one normalized paper + its authors/orgs. Returns True if newly inserted.
+
+    Shared by ingest and ``index rebuild``; the caller owns the transaction.
+    """
+    for author in paper.authors:
+        authors_repo.upsert_author(conn, author)
+        if author.affiliation:
+            org_id = orgs_repo.upsert_org(conn, author.affiliation, author.country)
+            orgs_repo.link_affiliation(conn, author.author_id, org_id, confidence="low")
+    return papers_repo.upsert_paper(conn, paper)
+
+
 def _resolve(conn: sqlite3.Connection, adapter: SourceAdapter, handle: str) -> VenueRef:
     """Resolve a handle: a DB-registered slug takes priority, else the adapter's map."""
     row = venues_repo.get_venue(conn, handle)
@@ -146,12 +159,7 @@ def _write_papers(
     with conn:  # transaction: all-or-nothing
         venues_repo.upsert_venue(conn, ref, last_ingested_at=started)
         for paper in papers:
-            for author in paper.authors:
-                authors_repo.upsert_author(conn, author)
-                if author.affiliation:
-                    org_id = orgs_repo.upsert_org(conn, author.affiliation, author.country)
-                    orgs_repo.link_affiliation(conn, author.author_id, org_id, confidence="low")
-            if papers_repo.upsert_paper(conn, paper):
+            if upsert_normalized_paper(conn, paper):
                 added += 1
             else:
                 updated += 1

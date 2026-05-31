@@ -34,3 +34,43 @@ def upsert_author(conn: sqlite3.Connection, author: NormalizedAuthor) -> None:
             author.profile_url,
         ),
     )
+
+
+def search_by_name(conn: sqlite3.Connection, name: str, *, limit: int = 25) -> list[sqlite3.Row]:
+    """Case-insensitive substring search on display name, most-prolific first."""
+    return conn.execute(
+        """
+        SELECT a.*,
+               (SELECT COUNT(*) FROM paper_authors pa WHERE pa.author_id = a.id) AS paper_count
+        FROM authors a
+        WHERE LOWER(a.display_name) LIKE :pattern
+        ORDER BY paper_count DESC, a.display_name ASC, a.id ASC
+        LIMIT :limit
+        """,
+        {"pattern": f"%{name.lower()}%", "limit": limit},
+    ).fetchall()
+
+
+def get_with_stats(conn: sqlite3.Connection, author_id: str) -> sqlite3.Row | None:
+    row: sqlite3.Row | None = conn.execute(
+        """
+        SELECT a.*,
+               (SELECT COUNT(*) FROM paper_authors pa WHERE pa.author_id = a.id) AS paper_count
+        FROM authors a WHERE a.id = ?
+        """,
+        (author_id,),
+    ).fetchone()
+    return row
+
+
+def venues_for_author(conn: sqlite3.Connection, author_id: str) -> list[sqlite3.Row]:
+    """Per-venue paper counts for an author (most papers first)."""
+    return conn.execute(
+        """
+        SELECT p.venue_slug AS venue, COUNT(*) AS papers
+        FROM paper_authors pa JOIN papers p ON p.id = pa.paper_id
+        WHERE pa.author_id = ?
+        GROUP BY p.venue_slug ORDER BY papers DESC, p.venue_slug ASC
+        """,
+        (author_id,),
+    ).fetchall()

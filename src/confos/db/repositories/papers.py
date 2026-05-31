@@ -83,6 +83,107 @@ def count_papers(conn: sqlite3.Connection, venue_slug: str | None = None) -> int
     return int(row[0])
 
 
+# Column weights for bm25 (papers_fts order: paper_id, title, abstract, keywords,
+# author_names, org_names). Title + keywords matter most; paper_id is UNINDEXED (0).
+_BM25_WEIGHTS = "0.0, 5.0, 1.0, 3.0, 1.0, 1.0"
+
+
+def search(
+    conn: sqlite3.Connection,
+    fts_query: str,
+    *,
+    venue: str | None = None,
+    year: int | None = None,
+    org_id: str | None = None,
+    accepted_only: bool = False,
+    limit: int = 20,
+) -> list[sqlite3.Row]:
+    """FTS search ranked by bm25 (exposed positive, bigger = better), deterministic order."""
+    clauses = ["papers_fts MATCH :q"]
+    params: dict[str, object] = {"q": fts_query, "limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    if year is not None:
+        clauses.append("v.year = :year")
+        params["year"] = year
+    if accepted_only:
+        clauses.append("p.status = 'accepted'")
+    if org_id is not None:
+        clauses.append(
+            "EXISTS (SELECT 1 FROM paper_authors pa JOIN author_affiliations aa "
+            "ON aa.author_id = pa.author_id WHERE pa.paper_id = p.id AND aa.org_id = :org_id)"
+        )
+        params["org_id"] = org_id
+    sql = (
+        f"SELECT p.*, -bm25(papers_fts, {_BM25_WEIGHTS}) AS relevance "
+        "FROM papers_fts JOIN papers p ON p.id = papers_fts.paper_id "
+        "JOIN venues v ON v.slug = p.venue_slug "
+        f"WHERE {' AND '.join(clauses)} "
+        "ORDER BY relevance DESC, p.id ASC LIMIT :limit"
+    )
+    return conn.execute(sql, params).fetchall()
+
+
+def get(conn: sqlite3.Connection, paper_id: str) -> sqlite3.Row | None:
+    row: sqlite3.Row | None = conn.execute(
+        "SELECT * FROM papers WHERE id = ?", (paper_id,)
+    ).fetchone()
+    return row
+
+
+def authors_for_papers(
+    conn: sqlite3.Connection, paper_ids: list[str]
+) -> dict[str, list[sqlite3.Row]]:
+    """Batch-fetch ordered author rows for a set of papers (avoids N+1)."""
+    grouped: dict[str, list[sqlite3.Row]] = {pid: [] for pid in paper_ids}
+    if not paper_ids:
+        return grouped
+    placeholders = ",".join("?" * len(paper_ids))
+    rows = conn.execute(
+        f"SELECT paper_id, author_id, raw_name, position FROM paper_authors "
+        f"WHERE paper_id IN ({placeholders}) ORDER BY paper_id, position",
+        paper_ids,
+    ).fetchall()
+    for row in rows:
+        grouped[row["paper_id"]].append(row)
+    return grouped
+
+
+def list_by_author(
+    conn: sqlite3.Connection, author_id: str, *, venue: str | None = None, limit: int = 50
+) -> list[sqlite3.Row]:
+    clauses = ["pa.author_id = :author_id"]
+    params: dict[str, object] = {"author_id": author_id, "limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    sql = (
+        "SELECT p.* FROM papers p JOIN paper_authors pa ON pa.paper_id = p.id "
+        f"WHERE {' AND '.join(clauses)} "
+        "ORDER BY COALESCE(p.pdate, p.tcdate, 0) DESC, p.id ASC LIMIT :limit"
+    )
+    return conn.execute(sql, params).fetchall()
+
+
+def list_by_org(
+    conn: sqlite3.Connection, org_id: str, *, venue: str | None = None, limit: int = 50
+) -> list[sqlite3.Row]:
+    clauses = ["aa.org_id = :org_id"]
+    params: dict[str, object] = {"org_id": org_id, "limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    sql = (
+        "SELECT DISTINCT p.* FROM papers p "
+        "JOIN paper_authors pa ON pa.paper_id = p.id "
+        "JOIN author_affiliations aa ON aa.author_id = pa.author_id "
+        f"WHERE {' AND '.join(clauses)} "
+        "ORDER BY COALESCE(p.pdate, p.tcdate, 0) DESC, p.id ASC LIMIT :limit"
+    )
+    return conn.execute(sql, params).fetchall()
+
+
 def _replace_authors(conn: sqlite3.Connection, paper: NormalizedPaper) -> None:
     conn.execute("DELETE FROM paper_authors WHERE paper_id = ?", (paper.paper_id,))
     conn.executemany(

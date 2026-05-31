@@ -91,11 +91,12 @@ def test_json_plain_mutually_exclusive(run_cli: RunCli) -> None:
 
 
 def test_stub_command_returns_json_error_envelope(run_cli: RunCli) -> None:
-    result = run_cli("papers", "search", "agents", "--json")
+    # viz topics is still a stub (Phase 4).
+    result = run_cli("viz", "topics", "--json")
     assert result.exit_code == 1
     payload = result.json()
     assert payload["ok"] is False
-    assert payload["command"] == "papers.search"
+    assert payload["command"] == "viz.topics"
     assert payload["error"]["type"] == "not_implemented"
 
 
@@ -169,17 +170,18 @@ def test_click_parse_error_under_json_is_envelope(run_cli: RunCli) -> None:
 
 
 def test_stub_error_envelope_with_json_before_subcommand(run_cli: RunCli) -> None:
-    result = run_cli("--json", "papers", "search", "agents")
+    result = run_cli("--json", "viz", "topics")
     assert result.exit_code == 1
     payload = result.json()
     assert payload["ok"] is False
-    assert payload["command"] == "papers.search"
+    assert payload["command"] == "viz.topics"
     assert payload["error"]["type"] == "not_implemented"
 
 
 def test_single_verbose_in_both_positions_is_not_vv(run_cli: RunCli) -> None:
     # -v before AND after a command must stay verbosity 1 (no leaked traceback at -vv).
-    result = run_cli("-v", "papers", "search", "agents", "-v")
+    # viz topics is a stub → exit 1, but the typed error must not dump a traceback.
+    result = run_cli("-v", "viz", "topics", "-v")
     assert result.exit_code == 1
     assert "Traceback" not in result.stderr
 
