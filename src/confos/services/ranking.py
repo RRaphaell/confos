@@ -39,8 +39,14 @@ def find_authors(
         migrate(conn)
         fts = topic_query(topic, load_topic_aliases(paths))
         rows = papers_repo.search(conn, fts, venue=venue, limit=_CANDIDATE_CAP)
+        warnings: list[str] = []
+        if len(rows) >= _CANDIDATE_CAP:
+            warnings.append(
+                f"candidate set truncated at {_CANDIDATE_CAP} matching papers; "
+                "matched_paper_count may be a lower bound — narrow --topic or --venue"
+            )
         ranked = _rank(conn, rows, topic=topic, single_venue=venue is not None, limit=limit)
-        return {"topic": topic, "venue": venue, "authors": ranked}
+        return {"topic": topic, "venue": venue, "authors": ranked, "warnings": warnings}
     finally:
         conn.close()
 

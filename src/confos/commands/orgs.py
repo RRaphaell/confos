@@ -24,23 +24,29 @@ def top(
     app_ctx = bind_command(ctx, "orgs.top")
     resolved_venue = venue or app_ctx.venue
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
-    results = orgs_service.top_orgs(app_ctx.paths, venue=resolved_venue, limit=resolved_limit)
+    result = orgs_service.top_orgs(app_ctx.paths, venue=resolved_venue, limit=resolved_limit)
+    rows = result["rows"]
+    dq = result["data_quality"]
     if app_ctx.is_json:
         app_ctx.render_json(
-            results, query={"venue": resolved_venue, "limit": resolved_limit}, venue=resolved_venue
+            result, query={"venue": resolved_venue, "limit": resolved_limit}, venue=resolved_venue
         )
         return
     if app_ctx.is_plain:
-        tsv_rows(app_ctx.out, [(o["name"], o["country"] or "", o["papers"]) for o in results])
+        tsv_rows(app_ctx.out, [(o["name"], o["country"] or "", o["papers"]) for o in rows])
         return
-    if not results:
+    if not rows:
         app_ctx.out.print("No organisation data yet (v1 affiliation coverage is sparse).")
         return
     data_table(
         app_ctx.out,
         ["organisation", "country", "papers"],
-        [(o["name"], o["country"] or "—", str(o["papers"])) for o in results],
+        [(o["name"], o["country"] or "—", str(o["papers"])) for o in rows],
         title="Top organisations",
+    )
+    app_ctx.out.print(
+        f"coverage: {dq['papers_with_signal']}/{dq['papers_total']} papers have affiliation "
+        f"signal ({dq['unknown']} unknown)"
     )
 
 

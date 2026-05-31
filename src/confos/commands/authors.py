@@ -44,9 +44,10 @@ def find(
         app_ctx.paths, topic, venue=resolved_venue, limit=resolved_limit
     )
     authors = result["authors"]
+    warnings = result["warnings"]
     query = {"topic": topic, "venue": resolved_venue, "limit": resolved_limit}
     if app_ctx.is_json:
-        app_ctx.render_json(authors, query=query, venue=resolved_venue)
+        app_ctx.render_json(authors, query=query, venue=resolved_venue, warnings=warnings)
         return
     if app_ctx.is_plain:
         tsv_rows(
@@ -61,6 +62,8 @@ def find(
         app_ctx.out.print(f"No authors found for topic {topic!r}.")
         return
     render_found_authors(app_ctx, authors)
+    for warning in warnings:
+        app_ctx.warn(warning)
 
 
 @app.command()

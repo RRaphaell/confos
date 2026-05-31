@@ -3,9 +3,11 @@
 RANKING §3: a fixture with a KNOWN expected order makes the differentiator testable, not
 vibes. The corpus is designed so the order is deterministic regardless of exact bm25:
 
-* Alice is on 3 matching papers, Bob on 2, Carol/Dave/Eve on 1 each. Since
-  ``score = count + 0.5·bm25_sum`` with ``bm25_sum ≤ count`` and the count tie-break,
-  a higher matched_paper_count ALWAYS ranks first → Alice, then Bob.
+* Alice is on 3 matching papers, Bob on 2, Carol/Dave/Eve on 1 each. ``count`` is the
+  *dominant* score term: for this fixture (counts ≤ 3, single-venue → recency 0), a higher
+  matched_paper_count wins via count-dominance + the count tie-break → Alice, then Bob.
+  (In general, with counts ≥ 4 a very on-topic lower-count author can edge a weak
+  higher-count one — count dominates, it isn't absolute precedence.)
 * Carol/Dave/Eve each have ONE identical single-author paper → identical bm25 → an exact
   score tie → broken by author_id ascending (Carol < Dave < Eve).
 

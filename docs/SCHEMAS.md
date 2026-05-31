@@ -62,20 +62,24 @@ Error form:
 ```
 `authors find` extends this with the ranking fields in [RANKING.md](RANKING.md) §2.
 
-## 4. Stats object (overview/topics/orgs/countries)
+## 4. Stats object (topics/orgs/countries; `orgs top` carries it too)
 Every stats payload includes a `data_quality` block — confos never fakes clean numbers.
+`rows` lists only the *known* keys; the unknown count lives in `data_quality.unknown`
+(it is not a synthetic `"Unknown"` row — that would distort `share` math in trends).
 ```json
 {
-  "rows": [ { "key": "USA", "papers": 2100 }, { "key": "Unknown", "papers": 1430 } ],
+  "rows": [ { "key": "USA", "papers": 2100 }, { "key": "Germany", "papers": 480 } ],
   "data_quality": {
     "papers_total": 5020,
     "papers_with_signal": 3590,           // e.g. papers with a parseable country
-    "unknown": 1430,
-    "low_confidence": 240,
+    "unknown": 1430,                      // papers_total - papers_with_signal
+    "low_confidence": 240,                // v1: all email-domain affiliations are low-confidence
     "method": "author_affiliation_domain_v1"
   }
 }
 ```
+(`stats overview` is a summary object — `papers`, a `status` map, and `authors`/`orgs`/
+`topics`/`venues` counts — not the rows/data_quality shape above.)
 
 ## 5. Trends object
 ```json

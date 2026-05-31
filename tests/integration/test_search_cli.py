@@ -91,7 +91,9 @@ def test_authors_show_not_found(run_cli: RunCli, ingested: Path) -> None:
 def test_orgs_top_json(run_cli: RunCli, ingested: Path) -> None:
     result = run_cli("orgs", "top", "--json")
     assert result.exit_code == 0
-    assert any(o["name"] == "MIT" for o in result.json()["data"])
+    data = result.json()["data"]
+    assert any(o["name"] == "MIT" for o in data["rows"])
+    assert "data_quality" in data  # honesty parity with stats orgs
 
 
 def test_index_status_and_rebuild(run_cli: RunCli, ingested: Path) -> None:

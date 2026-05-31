@@ -9,11 +9,13 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 2 (Search & explore) — COMPLETE (gate green, 3-subagent validation passed, findings fixed). Next: Phase 3.**
+**Phase: 3 (People discovery & stats) — COMPLETE (gate green, 3-subagent validation passed; architecture-critic: "not a worse OpenReview site — the wedge is real"). Next: Phase 4.**
 
-- ✅ **Phase 2 built:** FTS5 search (`papers search/show/related`), `authors
-  search/show/papers`, `orgs top/papers`, `index rebuild/status`; ranked + cited + offline.
-  Verified live (MLMP) + synthetic corpus; 102 tests; CI green.
+- ✅ **Phase 3 built:** `authors find --topic` (ranked people + why-relevant + provenance,
+  RANKING §2, pinned by the §3 acceptance test), `coauthors`, `stats overview/topics/orgs/
+  countries` with honest `data_quality` + `--explain`, user-editable alias files
+  (topics/orgs/countries). Verified live (MLMP); 119 tests; CI green.
+- ✅ **Phase 2 built:** FTS5 search + explore + index rebuild.
 - ✅ Decisions/assumptions captured in [DECISIONS.md](DECISIONS.md) (now through D20).
 - ✅ **Phase 0:** package scaffold, typer CLI, `init`/`doctor`, full command tree, SQLite
   schema + migrate, JSON envelope, CI.
@@ -31,7 +33,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 | 0 | Foundation (scaffold, init/doctor, CI) | ✅ done (validated) |
 | 1 | Ingest (OpenReview → raw JSONL + SQLite) | ✅ done (validated) |
 | 2 | Search & explore | ✅ done (validated) |
-| 3 | People discovery & stats | not started |
+| 3 | People discovery & stats | ✅ done (validated) |
 | 4 | Trends & visualization | not started |
 | 5 | Export & agent surface | not started |
 | 6 | Hardening & release polish (v0.1.0) | not started |
@@ -67,6 +69,18 @@ progress, what's next, and pointers to any research notes. Read this first when 
 - [x] commands papers/authors/orgs/index wired (json/plain/human); authors find/coauthors → Phase 3
 - [x] tests: fts, search service (ranking/filters/determinism/rebuild), search CLI contract
 - [x] **DoD:** ranked + cited results offline; `--json` matches SCHEMAS; fresh-user + agent-consumer + code-reviewer subagents pass
+
+### Phase 3 deliverables
+- [x] `fts.topic_query` (RANKING §1) + `aliases.py` (topics/orgs/countries) + pyyaml dep
+- [x] `services/ranking.py` — `authors find` (RANKING §2 score + tie-break + why-relevant +
+  provenance) + `coauthors`; pinned by the RANKING §3 fixed-ranking acceptance test
+- [x] `services/stats.py` + `db/repositories/stats.py` — overview/topics/orgs/countries with
+  honest `data_quality` (known/unknown/low-confidence + method)
+- [x] org/country aliases threaded through normalize (re-applied via `index rebuild`, D3)
+- [x] `authors find/coauthors` + `stats` commands wired; `orgs top` carries coverage too
+- [x] tests: RANKING §3 acceptance, fts topic_query, aliases, stats data_quality
+- [x] **DoD:** explainable + provenance-backed ranking; honest stats; architecture-critic
+  confirmed it is NOT a worse OpenReview site
 
 > **Per-phase mechanics (so the build survives context loss mid-phase):**
 > When a phase starts, expand its deliverables into a checkbox list right here, and add a
@@ -105,6 +119,13 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   empty-venue message; org fallback name = domain (honest); SQL pulled out of services
   (exists/reset_entities/count_table). Not bugs (verified): bm25 ties broken by id-asc;
   Phase-3 org polish + venues-search acronym noted. +5 regression tests; verified live.
+- 2026-05-31 · Phase 3 · code-reviewer (pass_with_findings) + architecture-critic
+  (pass_with_findings, **"not a worse OpenReview site — the wedge is real"**) +
+  agent-consumer (PASS) → fixed: `orgs top` now carries the data_quality coverage footer
+  (honesty parity with `stats orgs`); candidate-cap truncation emits a warning; SCHEMAS §4
+  clarified (Unknown lives in data_quality, not a row); ranking-test docstring corrected
+  (count is dominant, not absolute). Verified: topic_query FTS-injection-safe, ranking
+  deterministic + tie-break pinned, D3 alias re-derivation works end-to-end, layering clean.
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_

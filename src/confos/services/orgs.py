@@ -12,19 +12,34 @@ from ..db.connection import connect
 from ..db.migrate import migrate
 from ..db.repositories import orgs as orgs_repo
 from ..db.repositories import papers as papers_repo
+from ..db.repositories import stats as stats_repo
 from ..errors import NotFoundError
 from ..paths import Paths
 from .search import assemble_papers
 
 
-def top_orgs(paths: Paths, *, venue: str | None = None, limit: int = 50) -> list[dict[str, Any]]:
+def top_orgs(paths: Paths, *, venue: str | None = None, limit: int = 50) -> dict[str, Any]:
+    """Top orgs by paper count, WITH a data_quality block — the same honesty guardrail
+    `stats orgs` carries, so the ranked list never reads as authoritative coverage."""
     conn = connect(paths.db)
     try:
         migrate(conn)
-        return [
+        rows = [
             {"name": row["name"], "country": row["country"], "papers": row["papers"]}
             for row in orgs_repo.top(conn, venue=venue, limit=limit)
         ]
+        total = stats_repo.papers_total(conn, venue)
+        with_signal = stats_repo.papers_with_affiliation(conn, venue)
+        return {
+            "rows": rows,
+            "data_quality": {
+                "papers_total": total,
+                "papers_with_signal": with_signal,
+                "unknown": total - with_signal,
+                "low_confidence": with_signal,
+                "method": "author_affiliation_domain_v1",
+            },
+        }
     finally:
         conn.close()
 

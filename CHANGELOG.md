@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Phase 3 — People discovery & stats.** `confos authors find --topic` ranks the people
+  actually publishing on a topic (count + relevance + recency), each with a why-relevant
+  explanation, score breakdown, and cited matched papers — the differentiator, pinned by a
+  fixed-ranking acceptance test. `confos authors coauthors` ranks collaborators by shared
+  papers. `confos stats overview/topics/orgs/countries` reports aggregates with a
+  `data_quality` block (known/unknown/low-confidence + method) and `--explain` — never
+  faking clean numbers. User-editable alias files (`topics.yml` for `--topic` expansion;
+  `orgs.yml`/`countries.yml` applied during normalization, re-derived via `index rebuild`).
 - **Phase 2 — Search & explore.** `confos papers search` (FTS5/bm25, ranked + cited,
   filters: `--venue`/`--year`/`--org`/`--accepted-only`/`--limit`), `papers show`
   (+authors, `--with related`), `papers related`. `confos authors search/show/papers`

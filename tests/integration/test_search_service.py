@@ -147,7 +147,8 @@ def test_authors_search_show_papers(corpus: Paths) -> None:
 
 def test_orgs_top_and_papers(corpus: Paths) -> None:
     top = orgs_service.top_orgs(corpus, limit=10)
-    assert any(o["name"] == "MIT" and o["papers"] == 1 for o in top)
+    assert any(o["name"] == "MIT" and o["papers"] == 1 for o in top["rows"])
+    assert top["data_quality"]["papers_with_signal"] == 1  # coverage parity with stats
 
     org = orgs_service.org_papers(corpus, "MIT")
     assert _ids(org["papers"]) == ["bbb2"]
