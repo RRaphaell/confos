@@ -43,6 +43,15 @@ confos trends compare neurips-2024 neurips-2025 --topic "evals" --json
 
 # 5. One self-contained context pack to plan real work
 confos export context --topic "agent evals" --venue neurips-2025 --json
+
+# 6. More: collaborators, landscape stats, a co-authorship graph, bulk dumps
+confos authors coauthors ~Alice_Smith1 --json
+confos stats topics --venue neurips-2025 --json          # + stats orgs/countries --explain
+confos viz network --topic "agents" --venue neurips-2025 --format mermaid
+confos export papers --venue neurips-2025 --format jsonl   # bulk; large — prefer the pack
+
+# Discover any command's output contract
+confos schema export.context        # versioned field map for that command's --json
 ```
 
 ## The context pack (your best primitive)
