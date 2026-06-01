@@ -169,10 +169,16 @@ app.add_typer(index.app, name="index")
 
 # --- error handling + entry point --------------------------------------------
 def _wants_json() -> bool:
-    """Whether output should be JSON — from the active context, else sniff argv."""
+    """Whether output should be JSON — from the active context, OR by sniffing argv.
+
+    The argv sniff is not just a pre-context fallback: a command-level ``--json`` (the
+    documented agent form, ``papers search ... --json``) is only merged into the context
+    *after* successful arg parsing. On a parse/usage error the command body never runs, so
+    the context still reads HUMAN — we must fall back to argv so the error stays pure JSON.
+    """
     ctx = _ACTIVE.get()
-    if ctx is not None:
-        return ctx.is_json
+    if ctx is not None and ctx.is_json:
+        return True
     return "--json" in sys.argv
 
 

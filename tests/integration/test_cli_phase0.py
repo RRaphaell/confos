@@ -169,6 +169,21 @@ def test_click_parse_error_under_json_is_envelope(run_cli: RunCli) -> None:
     assert payload["error"]["type"] == "usage"
 
 
+def test_parse_error_with_json_AFTER_subcommand_is_envelope(run_cli: RunCli) -> None:
+    # The documented agent form puts --json after the subcommand. On a parse error the
+    # command body never runs (so the flag isn't merged into the context yet) — stdout
+    # must STILL be a pure JSON usage envelope, not click's plain Usage/Error text.
+    for args in (
+        ("papers", "search", "--json"),  # missing required QUERY
+        ("papers", "search", "x", "--bogus-flag", "--json"),  # unknown option
+    ):
+        result = run_cli(*args)
+        assert result.exit_code == 2, args
+        payload = json.loads(result.stdout)  # must parse — no leak
+        assert payload["ok"] is False
+        assert payload["error"]["type"] == "usage"
+
+
 def test_error_envelope_with_json_before_subcommand(run_cli: RunCli) -> None:
     result = run_cli("--json", "papers", "show", "no-such-id")
     assert result.exit_code == 1
