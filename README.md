@@ -58,11 +58,16 @@ surface to do real work, offline, repeatably.
 
 ## Install
 
+Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/). confos isn't on PyPI yet, so
+install it from source:
+
 ```bash
-uv tool install confos          # recommended
-# or: uvx confos <command>      # run without installing
+git clone https://github.com/RRaphaell/confos
+cd confos
+uv tool install .               # install the `confos` command globally
+# or: uvx --from . confos ...   # run without installing
+# or: uv sync && uv run confos  # to develop on it
 ```
-Requires Python 3.12+.
 
 ## First run
 
@@ -90,10 +95,22 @@ the full tour and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it works.
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Live build progress + session log |
 | [docs/REFERENCES.md](docs/REFERENCES.md) | Lessons taken from `ft`, `birdclaw`, `gogcli`, `create-cli` |
 | [AGENTS.md](AGENTS.md) | How an agent should drive confos |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, the gate, layering rules, conventions |
 
 ## Status
 
-Early development. Built in public-grade phases — see [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md).
+**v0.1.0.** The full v1 surface — ingest · search · people · orgs · stats · trends · viz ·
+export · context packs · agent skill — is implemented, tested, and verified end-to-end
+against live OpenReview (`scripts/live-test.sh`). OpenReview is the only source in v1; more
+adapters, semantic search, an LLM `ask`, and an MCP server are designed-for-later (the
+seams exist, the code doesn't — see [docs/PRODUCT.md](docs/PRODUCT.md) §8). Built in
+public-grade phases; see [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) and
+[docs/PROGRESS.md](docs/PROGRESS.md).
+
+## Contributing
+
+Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the gate, and the
+layering rules. The opt-in `scripts/live-test.sh` exercises the real API before a release.
 
 ## License
 
