@@ -244,7 +244,13 @@ def main() -> None:
         _render_confos_error(wrapped, original=exc)
         sys.exit(wrapped.exit_code)
     else:
-        sys.exit(result if isinstance(result, int) else EXIT_OK)
+        # typer intercepts KeyboardInterrupt and, in non-standalone mode, *returns*
+        # Exit(130) as an int rather than re-raising — so the interrupt never reaches
+        # the except branch above. Emit the message here so Ctrl-C isn't silent.
+        code = result if isinstance(result, int) else EXIT_OK
+        if code == EXIT_INTERRUPTED:
+            sys.stderr.write("\ninterrupted\n")
+        sys.exit(code)
 
 
 if __name__ == "__main__":  # pragma: no cover
