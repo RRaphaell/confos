@@ -73,7 +73,12 @@ def search(
     name: Annotated[str, typer.Argument(help="Author name to search for.")],
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """Search authors by name."""
+    """Search authors by name.
+
+    Examples:
+      confos authors search "Yann LeCun"
+      confos authors search "Chen" --limit 10 --json
+    """
     app_ctx = bind_command(ctx, "authors.search")
     resolved_limit = resolve_limit(limit, app_ctx.limit, 25)
     results = authors_service.search_authors(app_ctx.paths, name, limit=resolved_limit)
@@ -101,7 +106,12 @@ def show(
     ctx: typer.Context,
     author_id: Annotated[str, typer.Argument(help="Profile id (or email:/name: fallback).")],
 ) -> None:
-    """Show a single author's profile and headline stats."""
+    """Show a single author's profile and headline stats.
+
+    Examples:
+      confos authors show "~Yann_LeCun1"
+      confos authors show email:someone@mit.edu --json
+    """
     app_ctx = bind_command(ctx, "authors.show")
     author = authors_service.show_author(app_ctx.paths, author_id)
     if app_ctx.is_json:
@@ -138,7 +148,12 @@ def papers(
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """List an author's papers."""
+    """List an author's papers.
+
+    Examples:
+      confos authors papers "~Yann_LeCun1"
+      confos authors papers "~Yann_LeCun1" --venue neurips-2025 --json
+    """
     app_ctx = bind_command(ctx, "authors.papers")
     resolved_venue = venue or app_ctx.venue
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
@@ -166,7 +181,12 @@ def coauthors(
     author_id: Annotated[str, typer.Argument(help="Profile id (or email:/name: fallback).")],
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """List an author's co-authors, ranked by shared papers."""
+    """List an author's co-authors, ranked by shared papers.
+
+    Examples:
+      confos authors coauthors "~Yann_LeCun1"
+      confos authors coauthors "~Yann_LeCun1" --limit 10 --json
+    """
     app_ctx = bind_command(ctx, "authors.coauthors")
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
     result = ranking_service.coauthors(app_ctx.paths, author_id, limit=resolved_limit)

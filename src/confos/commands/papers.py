@@ -80,7 +80,12 @@ def show(
         str | None, typer.Option("--with", help="Comma-separated extras (currently: related).")
     ] = None,
 ) -> None:
-    """Show a single paper, with authors (and optionally related papers)."""
+    """Show a single paper, with authors (and optionally related papers).
+
+    Examples:
+      confos papers show aBcD1234
+      confos papers show aBcD1234 --with related --json
+    """
     app_ctx = bind_command(ctx, "papers.show")
     extras = {e.strip() for e in (with_ or "").split(",") if e.strip()}
     paper = search_service.get_paper(app_ctx.paths, paper_id, with_related="related" in extras)
@@ -122,7 +127,12 @@ def related(
     paper_id: Annotated[str, typer.Argument(help="OpenReview note id.")],
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """Show papers related to a given paper (by title/keyword overlap)."""
+    """Show papers related to a given paper (by title/keyword overlap).
+
+    Examples:
+      confos papers related aBcD1234
+      confos papers related aBcD1234 --limit 5 --json
+    """
     app_ctx = bind_command(ctx, "papers.related")
     resolved_limit = resolve_limit(limit, app_ctx.limit, 10)
     results = search_service.related_papers(app_ctx.paths, paper_id, limit=resolved_limit)

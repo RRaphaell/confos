@@ -53,7 +53,12 @@ def overview(
     ctx: typer.Context,
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
 ) -> None:
-    """High-level counts for a venue (papers, status mix, authors, orgs, topics)."""
+    """High-level counts for a venue (papers, status mix, authors, orgs, topics).
+
+    Examples:
+      confos stats overview --venue neurips-2025
+      confos stats overview --json
+    """
     app_ctx = bind_command(ctx, "stats.overview")
     resolved_venue = venue or app_ctx.venue
     result = stats_service.overview(app_ctx.paths, resolved_venue)
@@ -90,7 +95,12 @@ def topics(
         bool, typer.Option("--explain", help="Show coverage method + counts.")
     ] = False,
 ) -> None:
-    """Top topics (normalised keywords) with coverage."""
+    """Top topics (normalised keywords) with coverage.
+
+    Examples:
+      confos stats topics --venue neurips-2025
+      confos stats topics --venue neurips-2025 --explain --json
+    """
     app_ctx = bind_command(ctx, "stats.topics")
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 50)
@@ -107,7 +117,12 @@ def orgs(
         bool, typer.Option("--explain", help="Show coverage method + counts.")
     ] = False,
 ) -> None:
-    """Top organisations with data-quality reporting."""
+    """Top organisations with data-quality reporting.
+
+    Examples:
+      confos stats orgs --venue neurips-2025
+      confos stats orgs --venue neurips-2025 --explain
+    """
     app_ctx = bind_command(ctx, "stats.orgs")
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 50)
@@ -124,7 +139,12 @@ def countries(
         bool, typer.Option("--explain", help="Show known/unknown/low-confidence counts and method.")
     ] = False,
 ) -> None:
-    """Country distribution, with explicit known/unknown counts."""
+    """Country distribution, with explicit known/unknown counts.
+
+    Examples:
+      confos stats countries --venue neurips-2025
+      confos stats countries --venue neurips-2025 --explain --json
+    """
     app_ctx = bind_command(ctx, "stats.countries")
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 50)

@@ -37,7 +37,12 @@ def topics(
     ctx: typer.Context,
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
 ) -> None:
-    """Terminal bar chart of top topics."""
+    """Terminal bar chart of top topics.
+
+    Examples:
+      confos viz topics --venue neurips-2025
+      confos viz topics --venue neurips-2025 --limit 15
+    """
     app_ctx = bind_command(ctx, "viz.topics")
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 20)
@@ -51,7 +56,12 @@ def orgs(
     ctx: typer.Context,
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
 ) -> None:
-    """Terminal bar chart of top organisations."""
+    """Terminal bar chart of top organisations.
+
+    Examples:
+      confos viz orgs --venue neurips-2025
+      confos viz orgs --venue neurips-2025 --limit 15
+    """
     app_ctx = bind_command(ctx, "viz.orgs")
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 20)

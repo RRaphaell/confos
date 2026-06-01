@@ -16,7 +16,12 @@ def rebuild(ctx: typer.Context) -> None:
     """Re-normalise from raw JSONL into a fresh index (no network).
 
     Drops the derived tables and re-derives papers/authors/orgs/FTS from the raw
-    snapshots; sync watermarks are preserved.
+    snapshots; sync watermarks are preserved. Run this after editing alias files
+    (topics.yml / orgs.yml / countries.yml) so the new mappings take effect.
+
+    Examples:
+      confos index rebuild
+      confos index rebuild --json
     """
     app_ctx = bind_command(ctx, "index.rebuild")
     app_ctx.info("Rebuilding index from raw JSONL …")
@@ -45,7 +50,12 @@ def rebuild(ctx: typer.Context) -> None:
 @app.command()
 @global_output_options
 def status(ctx: typer.Context) -> None:
-    """Show index status: table row counts and per-venue paper counts."""
+    """Show index status: table row counts and per-venue paper counts.
+
+    Examples:
+      confos index status
+      confos index status --json
+    """
     app_ctx = bind_command(ctx, "index.status")
     result = index_service.status(app_ctx.paths)
     if app_ctx.is_json:

@@ -17,7 +17,12 @@ app = typer.Typer(no_args_is_help=False, help="List, search, and register venues
 @app.command("list")
 @global_output_options
 def list_(ctx: typer.Context) -> None:
-    """List known and locally-ingested venues (offline)."""
+    """List known and locally-ingested venues (offline).
+
+    Examples:
+      confos venues list
+      confos venues list --json
+    """
     app_ctx = bind_command(ctx, "venues.list")
     venues = venues_service.list_local_venues(app_ctx.paths)
     if app_ctx.is_json:
@@ -52,7 +57,14 @@ def search(
     ctx: typer.Context,
     query: Annotated[str, typer.Argument(help="Venue query, e.g. 'ICLR 2025'.")],
 ) -> None:
-    """Find a venue on OpenReview (network)."""
+    """Find a venue on OpenReview (network).
+
+    Hits the network. Returns suggested slugs + OpenReview ids you can pass to `ingest`.
+
+    Examples:
+      confos venues search "ICLR 2025"
+      confos venues search "NeurIPS" --limit 5 --json
+    """
     app_ctx = bind_command(ctx, "venues.search")
     app_ctx.info(f"Searching OpenReview for {query!r} …")
     adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
@@ -82,7 +94,12 @@ def show(
     ctx: typer.Context,
     slug: Annotated[str, typer.Argument(help="Venue slug, e.g. neurips-2025.")],
 ) -> None:
-    """Show details for a known venue."""
+    """Show details for a known venue.
+
+    Examples:
+      confos venues show neurips-2025
+      confos venues show iclr-2025 --json
+    """
     app_ctx = bind_command(ctx, "venues.show")
     venue = venues_service.get_local_venue(app_ctx.paths, slug)
     if venue is None:
@@ -119,7 +136,15 @@ def add(
         ),
     ],
 ) -> None:
-    """Register a custom venue by its OpenReview id (local-write)."""
+    """Register a custom venue by its OpenReview id (local-write).
+
+    Use this when a venue isn't in the built-in alias map. Writes only to the local
+    store; the next `ingest <slug>` will pull it.
+
+    Examples:
+      confos venues add --slug colm-2025 --openreview-id colmweb.org/COLM/2025/Conference
+      confos venues add --slug my-workshop --openreview-id NeurIPS.cc/2025/Workshop/Foo --json
+    """
     app_ctx = bind_command(ctx, "venues.add")
     venue = venues_service.add_local_venue(app_ctx.paths, slug, openreview_id)
     if app_ctx.is_json:
@@ -137,7 +162,12 @@ def add(
 @app.command()
 @global_output_options
 def aliases(ctx: typer.Context) -> None:
-    """Show the built-in venue alias map."""
+    """Show the built-in venue alias map.
+
+    Examples:
+      confos venues aliases
+      confos venues aliases --plain
+    """
     app_ctx = bind_command(ctx, "venues.aliases")
     alias_map = venues_service.builtin_aliases()
     if app_ctx.is_json:

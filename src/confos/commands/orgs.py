@@ -20,7 +20,12 @@ def top(
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """Rank organisations by paper count (best-effort coverage in v1)."""
+    """Rank organisations by paper count (best-effort coverage in v1).
+
+    Examples:
+      confos orgs top --venue neurips-2025
+      confos orgs top --venue neurips-2025 --limit 20 --json
+    """
     app_ctx = bind_command(ctx, "orgs.top")
     resolved_venue = venue or app_ctx.venue
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
@@ -58,7 +63,12 @@ def papers(
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
     limit: Annotated[int | None, typer.Option("--limit", help="Cap result count.")] = None,
 ) -> None:
-    """List papers affiliated with an organisation."""
+    """List papers affiliated with an organisation.
+
+    Examples:
+      confos orgs papers "Google DeepMind" --venue neurips-2025
+      confos orgs papers "MIT" --limit 25 --json
+    """
     app_ctx = bind_command(ctx, "orgs.papers")
     resolved_venue = venue or app_ctx.venue
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)

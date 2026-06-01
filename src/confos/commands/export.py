@@ -71,7 +71,12 @@ def authors(
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
     format: Annotated[str, typer.Option("--format", help="Output format: csv or jsonl.")] = "csv",
 ) -> None:
-    """Export authors as CSV or JSONL."""
+    """Export authors as CSV or JSONL.
+
+    Examples:
+      confos export authors --venue neurips-2025 --format csv > authors.csv
+      confos export authors --venue neurips-2025 --format jsonl
+    """
     app_ctx = bind_command(ctx, "export.authors")
     if format not in ("csv", "jsonl"):
         raise UsageError(f"Unknown --format {format!r}.", hint="Use csv or jsonl.")
