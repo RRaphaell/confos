@@ -64,7 +64,8 @@ def run(
 
     if app_ctx.is_json:
         app_ctx.render_json(
-            data,
+            # warnings live at the envelope level only (SCHEMAS §5), like every other command.
+            {k: v for k, v in data.items() if k != "warnings"},
             query=query,
             sources=["openreview"],
             venue=result.venue,

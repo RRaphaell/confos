@@ -188,7 +188,6 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "dry_run": "bool",
             "incremental": "bool",
             "raw_path": "string|null (the JSONL snapshot written)",
-            "warnings": "string[]",
         },
     },
     "index.rebuild": {

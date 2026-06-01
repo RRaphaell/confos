@@ -57,7 +57,8 @@ def test_partial_ingest_exits_5(run_cli: RunCli, monkeypatch: pytest.MonkeyPatch
     assert payload["ok"] is False  # ok must agree with the non-zero exit code
     assert payload["data"]["status"] == "partial"
     assert payload["data"]["items_added"] == 2
-    assert payload["warnings"]
+    assert payload["warnings"]  # warnings live at the envelope level...
+    assert "warnings" not in payload["data"]  # ...not duplicated inside data (uniform contract)
 
 
 def test_keyboard_interrupt_exits_130(run_cli: RunCli, monkeypatch: pytest.MonkeyPatch) -> None:
