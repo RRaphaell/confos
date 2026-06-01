@@ -19,6 +19,29 @@ import pytest
 from confos.cli import main
 
 
+def leaf_command_paths() -> list[tuple[str, ...]]:
+    """Every leaf command path the CLI exposes (canonical click names).
+
+    Walks the click command tree typer builds (duck-typed via ``.commands`` since typer
+    vendors its own click), so callers stay in sync with whatever the CLI exposes — used
+    by the help-text and schema-registry contract tests.
+    """
+    import typer
+
+    root = typer.main.get_command(__import__("confos.cli", fromlist=["app"]).app)
+
+    def walk(command: object, prefix: tuple[str, ...]) -> list[tuple[str, ...]]:
+        children = getattr(command, "commands", None)
+        if isinstance(children, dict) and children:
+            leaves: list[tuple[str, ...]] = []
+            for name, sub in children.items():
+                leaves.extend(walk(sub, (*prefix, name)))
+            return leaves
+        return [prefix]
+
+    return sorted(walk(root, ()))
+
+
 @dataclass
 class CliResult:
     exit_code: int

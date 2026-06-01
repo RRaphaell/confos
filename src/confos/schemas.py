@@ -68,6 +68,17 @@ _STATS = {
     },
 }
 
+_VENUE = {
+    "slug": "string",
+    "source": "string (e.g. 'openreview')",
+    "source_venue_id": "string (e.g. NeurIPS.cc/2025/Conference)",
+    "display_name": "string|null",
+    "year": "int|null",
+    "submission_name": "string|null",
+    "last_ingested_at": "iso8601|null (null = registered but not yet ingested)",
+    "paper_count": "int",
+}
+
 SCHEMAS: dict[str, dict[str, Any]] = {
     "papers.search": {"envelope": _ENVELOPE, "data": [_PAPER]},
     "papers.show": {
@@ -126,6 +137,7 @@ SCHEMAS: dict[str, dict[str, Any]] = {
         "data": {
             "topic": "string",
             "venue": "string|null",
+            "matched_papers": "int (papers the topic matched)",
             "node_count": "int",
             "edge_count": "int",
             "truncated": "bool",
@@ -152,11 +164,65 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "notes": "string",
         },
     },
-    "venues.list": {
+    "venues.list": {"envelope": _ENVELOPE, "data": [_VENUE]},
+    "venues.search": {
         "envelope": _ENVELOPE,
-        "data": "[{slug, source_venue_id, display_name, year, paper_count, last_ingested_at}]",
+        "data": "[{slug, source_venue_id, via}] (network; 'via' = how it was matched)",
+    },
+    "venues.show": {"envelope": _ENVELOPE, "data": _VENUE},
+    "venues.add": {"envelope": _ENVELOPE, "data": _VENUE},
+    "venues.aliases": {
+        "envelope": _ENVELOPE,
+        "data": "{slug: source_venue_id} (the built-in alias map)",
+    },
+    "ingest": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "venue": "string (resolved slug)",
+            "status": "ok|partial (partial → exit 5, ok:false)",
+            "items_seen": "int",
+            "items_added": "int",
+            "items_updated": "int",
+            "items_failed": "int",
+            "max_tcdate": "int|null (creation-date watermark)",
+            "max_tmdate": "int|null (modify-date watermark)",
+            "dry_run": "bool",
+            "incremental": "bool",
+            "raw_path": "string|null (the JSONL snapshot written)",
+            "warnings": "string[]",
+        },
+    },
+    "index.rebuild": {
+        "envelope": _ENVELOPE,
+        "data": {"venues": "int", "papers": "int", "failed": "int (notes skipped)"},
+    },
+    "index.status": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "counts": "{table: int} (row counts per core table)",
+            "venues": "[{slug, papers, last_ingested_at}]",
+            "db": "string (path)",
+        },
+    },
+    "init": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "home": "string",
+            "db": "string",
+            "schema_version": "string",
+            "created": "bool (false = store already existed)",
+        },
     },
     "doctor": {"envelope": _ENVELOPE, "data": {"ok": "bool", "checks": "[{name, status, detail}]"}},
+    "schema": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "command": "string",
+            "schema_version": "string",
+            "envelope": "object (the standard envelope shape)",
+            "data": "object|array (the command's data shape)",
+        },
+    },
 }
 
 

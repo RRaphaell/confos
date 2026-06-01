@@ -9,33 +9,9 @@ hand-maintained list, so a new command without examples fails this test).
 
 from __future__ import annotations
 
-import typer
+from tests.conftest import RunCli, leaf_command_paths
 
-from confos.cli import app
-from tests.conftest import RunCli
-
-
-def _leaf_commands() -> list[tuple[str, ...]]:
-    """Every leaf command path as the CLI exposes it (canonical click names).
-
-    Walks the click command tree typer builds (duck-typed via ``.commands`` since
-    typer vendors its own click), so this stays in sync with whatever the CLI exposes.
-    """
-    root = typer.main.get_command(app)
-
-    def walk(command: object, prefix: tuple[str, ...]) -> list[tuple[str, ...]]:
-        children = getattr(command, "commands", None)
-        if isinstance(children, dict) and children:
-            leaves: list[tuple[str, ...]] = []
-            for name, sub in children.items():
-                leaves.extend(walk(sub, (*prefix, name)))
-            return leaves
-        return [prefix]
-
-    return sorted(walk(root, ()))
-
-
-LEAVES = _leaf_commands()
+LEAVES = leaf_command_paths()
 
 
 def test_leaf_enumeration_is_sane() -> None:
