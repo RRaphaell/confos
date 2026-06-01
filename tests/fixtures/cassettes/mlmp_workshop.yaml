@@ -94,7 +94,7 @@ interactions:
       server:
       - nginx
       set-cookie:
-      - GCILB="7efb84ba8ee6e329"; Path=/; HttpOnly
+      - REDACTED
       strict-transport-security:
       - max-age=31536000; includeSubdomains; preload
       surrogate-control:

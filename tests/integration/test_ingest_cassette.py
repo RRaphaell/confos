@@ -32,7 +32,9 @@ _vcr = vcr.VCR(
     cassette_library_dir=str(CASSETTE_DIR),
     record_mode="once" if _recording else "none",
     match_on=["method", "host", "path", "query"],
-    filter_headers=["authorization", "Authorization", "Cookie", "Set-Cookie"],
+    # Header names are matched case-sensitively against the recorded (lowercased) keys,
+    # so list the lowercase forms — capitalized-only filters silently miss e.g. set-cookie.
+    filter_headers=["authorization", "cookie", "set-cookie"],
     decode_compressed_response=True,
 )
 
