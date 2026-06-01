@@ -131,7 +131,17 @@ def test_export_csv_escapes_formula_and_round_trips(tmp_path: Path) -> None:
 def test_csv_safe_neutralises_leading_whitespace_formulas() -> None:
     # Spreadsheets strip leading whitespace/tab/CR before evaluating, so the guard must
     # look past it. The original (untrimmed) value is preserved after the quote.
-    for danger in ("=cmd()", "\t=cmd()", " =cmd()", "\r\n=cmd()", " +1", "\t-2", "@x"):
+    for danger in (
+        "=cmd()",
+        "\t=cmd()",
+        " =cmd()",
+        "\r\n=cmd()",
+        " +1",
+        "\t-2",
+        "@x",
+        "\ufeff=cmd()",  # leading BOM (consumers often strip it, re-exposing the '=')
+        "\xa0=cmd()",  # NBSP (Unicode whitespace, not plain ASCII)
+    ):
         assert export_service._csv_safe(danger) == "'" + danger
     # Benign values (incl. leading text, numbers) are untouched.
     for ok in ("hello", "a=b", "  spaced text", "2024"):

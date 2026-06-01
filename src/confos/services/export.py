@@ -229,10 +229,12 @@ def _csv_safe(value: Any) -> Any:
     """Neutralise spreadsheet formula injection.
 
     A cell is dangerous if its first *non-whitespace* character is one of =,+,-,@:
-    spreadsheet apps strip leading spaces/tabs/CR before evaluating, so the guard must
-    look past leading whitespace, then prefix the original (untrimmed) value with a quote.
+    spreadsheet apps strip leading whitespace before evaluating, so the guard looks past
+    it, then prefixes the original (untrimmed) value with a quote. We strip a leading BOM
+    too (consumers often discard it, re-exposing the formula char) and use str.lstrip(),
+    which covers all Unicode whitespace (NBSP, vertical tab, form feed, …), not just ASCII.
     """
-    if isinstance(value, str) and value.lstrip(" \t\r\n")[:1] in ("=", "+", "-", "@"):
+    if isinstance(value, str) and value.lstrip("\ufeff").lstrip()[:1] in ("=", "+", "-", "@"):
         return "'" + value
     return "" if value is None else value
 

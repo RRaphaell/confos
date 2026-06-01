@@ -193,6 +193,14 @@ def test_parse_error_with_json_AFTER_subcommand_is_envelope(run_cli: RunCli) -> 
         assert payload["error"]["type"] == "usage"
 
 
+def test_literal_json_positional_after_dashdash_is_not_json_mode(run_cli: RunCli) -> None:
+    # `--json` AFTER the POSIX `--` marker is a positional value, not the flag. A usage
+    # error here must render as HUMAN (text on stderr), not a JSON envelope on stdout.
+    result = run_cli("papers", "show", "--", "--json", "extra-arg")
+    assert result.exit_code == 2
+    assert result.stdout == ""  # no JSON leaked to stdout for a human-mode run
+
+
 def test_error_envelope_with_json_before_subcommand(run_cli: RunCli) -> None:
     result = run_cli("--json", "papers", "show", "no-such-id")
     assert result.exit_code == 1

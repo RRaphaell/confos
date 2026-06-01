@@ -179,7 +179,12 @@ def _wants_json() -> bool:
     ctx = _ACTIVE.get()
     if ctx is not None and ctx.is_json:
         return True
-    return "--json" in sys.argv
+    # Sniff argv, but only tokens before the POSIX `--` end-of-options marker, so a literal
+    # `--json` passed as a positional (e.g. `papers show -- --json`) isn't mistaken for the
+    # flag. Best-effort: it covers the documented agent form and the demonstrated edge case.
+    argv = sys.argv[1:]
+    end = argv.index("--") if "--" in argv else len(argv)
+    return "--json" in argv[:end]
 
 
 def _emit_json_error(command: str, error: ConfosError) -> None:
