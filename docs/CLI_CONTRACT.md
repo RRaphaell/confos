@@ -21,7 +21,7 @@ help and ignores other args. `--version` prints version to stdout.
 ```
 confos
   init                              create local store (~/.confos)
-  doctor                            check env, DB, FTS5, network, openreview-py
+  doctor                            check env, DB, FTS5, openreview-py (offline)
 
   venues
     list                            list known/ingested venues

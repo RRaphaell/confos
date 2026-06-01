@@ -1,12 +1,14 @@
-"""``confos doctor`` — check environment, store, and FTS5 availability.
+"""``confos doctor`` — check environment, store, FTS5, and the ingest backend.
 
-Phase 0 checks env/DB/FTS5 only; the network + openreview-py checks are added in
-Phase 1 once the adapter exists. Exit code is 3 (config) if any *hard* check fails
-(today: FTS5), otherwise 0 — soft findings (store not initialised) only warn.
+Runs offline: python/sqlite/FTS5, the openreview-py dependency, and the local store/DB.
+There is deliberately no network probe (it would surprise ``--no-input`` callers and
+confos is offline after ingest). Exit code is 3 (config) if any *hard* check fails
+(today: FTS5), otherwise 0 — soft findings (no store yet, no openreview-py) only warn.
 """
 
 import platform
 import sys
+from importlib.metadata import version as pkg_version
 
 import typer
 
@@ -40,6 +42,15 @@ def _collect_checks(app_ctx: AppContext) -> list[dict[str, str]]:
     else:
         checks.append(
             _check("fts5", "fail", "missing — confos search needs SQLite built with FTS5")
+        )
+
+    # openreview-py is the ingest/venue-search backend (a declared dependency). Offline
+    # queries don't need it, so a missing one only warns rather than failing hard.
+    try:
+        checks.append(_check("openreview-py", "ok", f"v{pkg_version('openreview-py')}"))
+    except Exception as exc:  # any import/metadata failure here is a soft finding
+        checks.append(
+            _check("openreview-py", "warn", f"unavailable ({exc}); ingest/venue search disabled")
         )
 
     paths = app_ctx.paths
@@ -79,10 +90,10 @@ def _collect_checks(app_ctx: AppContext) -> list[dict[str, str]]:
 
 
 def run(ctx: typer.Context) -> None:
-    """Check the environment, local store, and FTS5 availability.
+    """Check the environment, local store, FTS5, and the openreview-py backend.
 
-    Reports each check and its status. Exits 3 if a hard requirement (FTS5) is
-    missing; soft findings (no store yet) only warn and exit 0.
+    Runs offline. Reports each check and its status. Exits 3 if a hard requirement (FTS5)
+    is missing; soft findings (no store yet, openreview-py absent) only warn and exit 0.
 
     Examples:
       confos doctor

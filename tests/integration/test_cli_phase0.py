@@ -133,9 +133,18 @@ def test_doctor_plain_one_record_per_line(run_cli: RunCli, initialized_home: Pat
     result = run_cli("doctor", "--plain")
     assert result.exit_code == 0
     lines = [ln for ln in result.stdout.splitlines() if ln]
-    assert len(lines) == 5  # five checks
+    assert len(lines) == 6  # python, sqlite, fts5, openreview-py, store, database
     for line in lines:
         assert line.count("\t") == 2  # name, status, detail
+
+
+def test_doctor_reports_openreview_backend(run_cli: RunCli) -> None:
+    # openreview-py is a declared dependency, so doctor must report it (and find it ok in
+    # any real install). Documents that the contract check actually exists.
+    result = run_cli("doctor", "--json")
+    assert result.exit_code == 0
+    checks = {c["name"]: c["status"] for c in result.json()["data"]["checks"]}
+    assert checks.get("openreview-py") == "ok"
 
 
 def test_doctor_unhealthy_json_is_honest(run_cli: RunCli, monkeypatch: pytest.MonkeyPatch) -> None:

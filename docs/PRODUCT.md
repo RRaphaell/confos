@@ -137,7 +137,7 @@ plan a literature review, a thread, or outreach — with every claim cited. (Sch
 ## 6. Setup & maintenance
 ```bash
 confos init        # create local store at ~/.confos (or $CONFOS_HOME)
-confos doctor      # check environment, DB, network, openreview-py
+confos doctor      # check environment, DB, FTS5, openreview-py (offline)
 confos ingest neurips-2025          # pull venue into local store (network)
 confos ingest neurips-2025 --force  # full re-sync
 ```
