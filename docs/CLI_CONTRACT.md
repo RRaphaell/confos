@@ -39,7 +39,7 @@ confos
 
   papers
     search <query> [--venue V] [--year Y] [--org O] [--accepted-only] [--limit N]
-    show <paper-id> [--with authors,related]
+    show <paper-id> [--with related]   # authors + abstract are always included
     related <paper-id> [--limit N]
 
   authors

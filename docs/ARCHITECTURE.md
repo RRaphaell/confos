@@ -115,6 +115,12 @@ makes ingest auditable, and it makes the SQLite layer fully disposable/rebuildab
 | `models.py` | pydantic v2 domain models (Paper, Author, Venue, Org, Stat) | I/O |
 | `config.py` / `paths.py` | config precedence, XDG-style dirs | business logic |
 
+**Store-lifecycle exception:** `init` and `doctor` are store bootstrap/diagnostics, not
+business logic — they may use `db.connection`/`db.migrate` directly (creating the store,
+applying the schema, reading the schema version) rather than going through a service.
+There's no meaningful "verb" to wrap a one-line `migrate()`. Every other command still
+flows command → service → repository.
+
 ## 5. Stack (and why each piece)
 
 | Concern | Choice | Why |

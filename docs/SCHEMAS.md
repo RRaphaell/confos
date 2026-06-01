@@ -39,7 +39,7 @@ Error form:
 {
   "paper_id": "aBcDeFgHiJ",                 // OpenReview note id == public id (C3)
   "title": "…",
-  "abstract": "…",                          // omitted in list views unless --with abstract
+  "abstract": "…",                          // present in `show` + context packs; omitted in list/search views
   "authors": [ { "author_id": "~Alice_Smith1", "name": "Alice Smith", "position": 0 } ],
   "keywords": ["…"],
   "status": "accepted|under_review|withdrawn|desk_rejected|unknown",  // derived locally (C2)

@@ -50,8 +50,9 @@ confos stats topics --venue neurips-2025 --json          # + stats orgs/countrie
 confos viz network --topic "agents" --venue neurips-2025 --format mermaid
 confos export papers --venue neurips-2025 --format jsonl   # bulk; large — prefer the pack
 
-# Discover any command's output contract
+# Discover a command's output contract (every command that emits a --json envelope)
 confos schema export.context        # versioned field map for that command's --json
+# (export papers/authors are the exception: raw CSV/JSONL bulk dumps, not an envelope)
 ```
 
 ## The context pack (your best primitive)

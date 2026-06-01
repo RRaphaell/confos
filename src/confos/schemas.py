@@ -30,7 +30,7 @@ _ENVELOPE = {
 _PAPER = {
     "paper_id": "string (OpenReview note id)",
     "title": "string",
-    "abstract": "string (only with --with abstract / in show)",
+    "abstract": "string (present in show + context packs; omitted in list/search views)",
     "authors": "[{author_id, name, position}]",
     "keywords": "string[]",
     "status": "accepted|under_review|withdrawn|desk_rejected|unknown",
