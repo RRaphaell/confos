@@ -174,19 +174,12 @@ def _paper_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
     conn = connect(paths.db)
     try:
         migrate(conn)
-        if venue is not None:
-            rows = conn.execute(
-                "SELECT * FROM papers WHERE venue_slug = ? ORDER BY id", (venue,)
-            ).fetchall()
-        else:
-            rows = conn.execute("SELECT * FROM papers ORDER BY id").fetchall()
+        rows = papers_repo.list_all(conn, venue)
         authors_by_paper = papers_repo.authors_for_papers(conn, [r["id"] for r in rows])
-        out = []
-        for row in rows:
-            briefs = [author_brief(a) for a in authors_by_paper.get(row["id"], [])]
-            data = paper_dict(row, briefs)
-            out.append(data)
-        return out
+        return [
+            paper_dict(row, [author_brief(a) for a in authors_by_paper.get(row["id"], [])])
+            for row in rows
+        ]
     finally:
         conn.close()
 
@@ -195,15 +188,6 @@ def _author_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
     conn = connect(paths.db)
     try:
         migrate(conn)
-        if venue is not None:
-            rows = conn.execute(
-                "SELECT DISTINCT a.* FROM authors a "
-                "JOIN paper_authors pa ON pa.author_id = a.id "
-                "JOIN papers p ON p.id = pa.paper_id WHERE p.venue_slug = ? ORDER BY a.id",
-                (venue,),
-            ).fetchall()
-        else:
-            rows = conn.execute("SELECT * FROM authors ORDER BY id").fetchall()
         return [
             {
                 "author_id": r["id"],
@@ -212,7 +196,7 @@ def _author_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
                 "data_quality": r["data_quality"],
                 "profile_url": r["profile_url"],
             }
-            for r in rows
+            for r in authors_repo.list_for_export(conn, venue)
         ]
     finally:
         conn.close()
@@ -241,6 +225,13 @@ def export_authors(paths: Paths, *, venue: str | None, fmt: str) -> str:
     return _render_bulk(rows, _AUTHOR_COLUMNS, fmt)
 
 
+def _csv_safe(value: Any) -> Any:
+    """Neutralise spreadsheet formula injection: prefix a cell starting with =,+,-,@."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+        return "'" + value
+    return "" if value is None else value
+
+
 def _render_bulk(rows: list[dict[str, Any]], columns: list[str], fmt: str) -> str:
     if fmt == "jsonl":
         return "\n".join(json.dumps(row, ensure_ascii=False) for row in rows)
@@ -248,5 +239,5 @@ def _render_bulk(rows: list[dict[str, Any]], columns: list[str], fmt: str) -> st
     writer = csv.DictWriter(buffer, fieldnames=columns, extrasaction="ignore")
     writer.writeheader()
     for row in rows:
-        writer.writerow({k: ("" if row.get(k) is None else row.get(k)) for k in columns})
+        writer.writerow({k: _csv_safe(row.get(k)) for k in columns})
     return buffer.getvalue().rstrip("\n")

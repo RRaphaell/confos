@@ -108,10 +108,10 @@ agents read `.data.papers[].title`, `.data.authors[]`, etc. **v1 is LLM-free**
     "type": "confos.context_pack",
     "topic": "agent evals",
     "venue": "neurips-2025",
-    "papers":  [ /* Paper objects, ranked by bm25, with url */ ],
+    "papers":  [ /* Paper objects, ranked by bm25, WITH abstract + url (self-contained) */ ],
     "authors": [ /* ranked Author objects per RANKING.md, with matched_papers */ ],
     "orgs":    [ { "name": "…", "papers": 12 } ],
-    "stats":   { /* Stats object as in §4, scoped to the topic */ },
+    "stats":   { "matched": 142, "total": 4500, "share": 0.0316, "by_status": { "accepted": 130 } },
     "thin_areas": [ "keyword pairs / subtopics with few papers" ],  // heuristic, LABELLED — NOT "open questions"
     "notes": "All fields derived locally from OpenReview with provenance; no LLM synthesis."
   },

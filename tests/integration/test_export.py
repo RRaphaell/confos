@@ -101,6 +101,33 @@ def test_export_papers_csv_and_jsonl(corpus: Paths) -> None:
     assert "authors" in records[0] and "url" in records[0]
 
 
+def test_export_csv_escapes_formula_and_round_trips(tmp_path: Path) -> None:
+    import csv as _csv
+    import io as _io
+
+    paths = Paths(home=tmp_path / "store")
+    note = make_note(
+        "x1",
+        title='=cmd(), "quoted, comma" title',
+        keywords=["a"],
+        authors=["Al"],
+        authorids=["~Al1"],
+        venueid=PUB,
+    )
+    ingest_venue(
+        paths=paths,
+        adapter=FakeAdapter(FAKE_REF, [note]),
+        handle="test-venue",
+        opts=IngestOptions(),
+    )
+    csv_out = export_service.export_papers(paths, venue="test-venue", fmt="csv")
+    records = list(_csv.DictReader(_io.StringIO(csv_out)))
+    assert len(records) == 1
+    title = records[0]["title"]
+    assert title.startswith("'=")  # formula injection neutralised
+    assert "quoted, comma" in title  # comma + quotes round-trip via the csv module
+
+
 def test_export_authors_jsonl(corpus: Paths) -> None:
     out = export_service.export_authors(corpus, venue="test-venue", fmt="jsonl")
     records = [json.loads(line) for line in out.splitlines()]

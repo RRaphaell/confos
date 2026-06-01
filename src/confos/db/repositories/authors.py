@@ -63,6 +63,18 @@ def get_with_stats(conn: sqlite3.Connection, author_id: str) -> sqlite3.Row | No
     return row
 
 
+def list_for_export(conn: sqlite3.Connection, venue: str | None = None) -> list[sqlite3.Row]:
+    """All authors (optionally scoped to a venue's papers), ordered by id — bulk export."""
+    if venue is None:
+        return conn.execute("SELECT * FROM authors ORDER BY id").fetchall()
+    return conn.execute(
+        "SELECT DISTINCT a.* FROM authors a "
+        "JOIN paper_authors pa ON pa.author_id = a.id "
+        "JOIN papers p ON p.id = pa.paper_id WHERE p.venue_slug = ? ORDER BY a.id",
+        (venue,),
+    ).fetchall()
+
+
 def get_many(conn: sqlite3.Connection, author_ids: list[str]) -> dict[str, sqlite3.Row]:
     """Fetch author rows for a set of ids, keyed by id (for ranking)."""
     if not author_ids:

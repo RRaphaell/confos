@@ -9,8 +9,12 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 4 (Trends & visualization) — COMPLETE (gate green, 2-subagent validation passed, findings fixed). Next: Phase 5.**
+**Phase: 5 (Export & agent surface) — COMPLETE (gate green, 2-subagent validation passed; agent-consumer produced a credible fully-cited brief from confos alone). Next: Phase 6 (release polish).**
 
+- ✅ **Phase 5 built:** `export context` (self-contained, cited context pack — JSON +
+  markdown, LLM-free, SCHEMAS §6), `export papers`/`authors` (CSV + JSONL),
+  `confos schema <command>` (output-contract discovery), finalized AGENTS.md/SKILL.md.
+  Verified live (MLMP); 167 tests; CI green.
 - ✅ **Phase 4 built:** `trends topic`/`compare` (matched/total/share + first→last delta,
   SCHEMAS §5), `viz topics`/`orgs` (terminal bar charts), `viz network` (networkx
   co-authorship graph → terminal/mermaid/html, HTML-escaped). Verified live (MLMP); 132 tests.
@@ -38,7 +42,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 | 2 | Search & explore | ✅ done (validated) |
 | 3 | People discovery & stats | ✅ done (validated) |
 | 4 | Trends & visualization | ✅ done (validated) |
-| 5 | Export & agent surface | not started |
+| 5 | Export & agent surface | ✅ done (validated) |
 | 6 | Hardening & release polish (v0.1.0) | not started |
 
 ### Phase 0 deliverables
@@ -84,6 +88,17 @@ progress, what's next, and pointers to any research notes. Read this first when 
 - [x] tests: RANKING §3 acceptance, fts topic_query, aliases, stats data_quality
 - [x] **DoD:** explainable + provenance-backed ranking; honest stats; architecture-critic
   confirmed it is NOT a worse OpenReview site
+
+### Phase 5 deliverables
+- [x] `services/export.py` — `build_context_pack` (papers+authors+orgs+stats+thin_areas+notes,
+  LLM-free, SCHEMAS §6) + markdown render + CSV/JSONL bulk (formula-injection-safe)
+- [x] `schemas.py` + `confos schema <command>` — versioned output-contract discovery
+- [x] `export` (context json/markdown, papers/authors csv/jsonl) + `schema` commands
+- [x] repo helpers `papers.list_all` / `authors.list_for_export` (no SQL in the service)
+- [x] removed dead `NotImplementedYetError`; finalized AGENTS.md + SKILL.md
+- [x] tests: context-pack structure/markdown, CSV escaping + round-trip, JSONL, schema registry
+- [x] **DoD:** context pack self-contained + fully cited; agent-consumer completed a real
+  task ("top papers + people on topic X, cited") using only confos
 
 > **Per-phase mechanics (so the build survives context loss mid-phase):**
 > When a phase starts, expand its deliverables into a checkbox list right here, and add a
@@ -136,6 +151,14 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   trends emits a warning when a requested venue isn't ingested (zeros are self-explaining,
   not a phantom decline) or the match cap is hit. Verified: HTML escaping robust, stdout
   pure across mermaid/html/json, deltas correct. +2 regression tests.
+
+- 2026-06-01 · Phase 5 · code-reviewer (pass_with_findings) + agent-consumer (PASS,
+  **"an agent CAN produce a credible, fully-cited brief from confos alone"**) → fixed:
+  moved export's bulk SQL into repo helpers (layering); CSV formula-injection escaping
+  (=/+/-/@); SCHEMAS §6 aligned (pack includes abstracts + leaner stats shape). Verified:
+  context pack self-contained + cited + LLM-free, schema shapes match real output, CSV/JSONL
+  round-trip. Deferred (logged): a "venue not ingested" warning on empty --venue results
+  across search/stats (AGENTS.md already tells agents to check `venues list` first).
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_

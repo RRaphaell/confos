@@ -136,6 +136,15 @@ def exists(conn: sqlite3.Connection, paper_id: str) -> bool:
     return conn.execute("SELECT 1 FROM papers WHERE id = ?", (paper_id,)).fetchone() is not None
 
 
+def list_all(conn: sqlite3.Connection, venue: str | None = None) -> list[sqlite3.Row]:
+    """All papers (optionally scoped to a venue), ordered by id — for bulk export."""
+    if venue is None:
+        return conn.execute("SELECT * FROM papers ORDER BY id").fetchall()
+    return conn.execute(
+        "SELECT * FROM papers WHERE venue_slug = ? ORDER BY id", (venue,)
+    ).fetchall()
+
+
 def authors_for_papers(
     conn: sqlite3.Connection, paper_ids: list[str]
 ) -> dict[str, list[sqlite3.Row]]:

@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Phase 5 — Export & agent surface.** `confos export context --topic t [--venue v]
+  [--format json|markdown]` produces one self-contained, fully-cited context pack (top
+  papers with abstracts + ranked people with why-relevant + orgs + topic-scoped stats +
+  heuristic thin areas), LLM-free. `confos export papers|authors --format csv|jsonl` dumps
+  bulk data (spreadsheet-formula-injection-safe). `confos schema <command>` prints the
+  versioned output contract for any command. AGENTS.md + the bundled skill finalized.
 - **Phase 4 — Trends & visualization.** `confos trends topic <t> --venues a,b,c` and
   `confos trends compare a b --topic t` show a topic's matched/total/share across
   venues with a first→last delta and the top authors/orgs per venue. `confos viz topics`
