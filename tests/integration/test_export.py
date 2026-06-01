@@ -128,6 +128,17 @@ def test_export_csv_escapes_formula_and_round_trips(tmp_path: Path) -> None:
     assert "quoted, comma" in title  # comma + quotes round-trip via the csv module
 
 
+def test_csv_safe_neutralises_leading_whitespace_formulas() -> None:
+    # Spreadsheets strip leading whitespace/tab/CR before evaluating, so the guard must
+    # look past it. The original (untrimmed) value is preserved after the quote.
+    for danger in ("=cmd()", "\t=cmd()", " =cmd()", "\r\n=cmd()", " +1", "\t-2", "@x"):
+        assert export_service._csv_safe(danger) == "'" + danger
+    # Benign values (incl. leading text, numbers) are untouched.
+    for ok in ("hello", "a=b", "  spaced text", "2024"):
+        assert export_service._csv_safe(ok) == ok
+    assert export_service._csv_safe(None) == ""
+
+
 def test_export_authors_jsonl(corpus: Paths) -> None:
     out = export_service.export_authors(corpus, venue="test-venue", fmt="jsonl")
     records = [json.loads(line) for line in out.splitlines()]

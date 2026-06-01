@@ -226,8 +226,13 @@ def export_authors(paths: Paths, *, venue: str | None, fmt: str) -> str:
 
 
 def _csv_safe(value: Any) -> Any:
-    """Neutralise spreadsheet formula injection: prefix a cell starting with =,+,-,@."""
-    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+    """Neutralise spreadsheet formula injection.
+
+    A cell is dangerous if its first *non-whitespace* character is one of =,+,-,@:
+    spreadsheet apps strip leading spaces/tabs/CR before evaluating, so the guard must
+    look past leading whitespace, then prefix the original (untrimmed) value with a quote.
+    """
+    if isinstance(value, str) and value.lstrip(" \t\r\n")[:1] in ("=", "+", "-", "@"):
         return "'" + value
     return "" if value is None else value
 
