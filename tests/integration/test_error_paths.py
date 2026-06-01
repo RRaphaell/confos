@@ -54,6 +54,7 @@ def test_partial_ingest_exits_5(run_cli: RunCli, monkeypatch: pytest.MonkeyPatch
     assert result.exit_code == 5
     payload = result.json()
     # Partial means usable-but-incomplete: the good rows persisted, with a warning.
+    assert payload["ok"] is False  # ok must agree with the non-zero exit code
     assert payload["data"]["status"] == "partial"
     assert payload["data"]["items_added"] == 2
     assert payload["warnings"]

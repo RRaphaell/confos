@@ -69,7 +69,8 @@ def run(
             sources=["openreview"],
             venue=result.venue,
             warnings=result.warnings,
-            ok=result.status != "error",
+            # ok must agree with the exit code: a partial ingest exits 5, so ok:false.
+            ok=result.status == "ok",
         )
     elif app_ctx.is_plain:
         key_value_plain(app_ctx.out, list(data.items()))
