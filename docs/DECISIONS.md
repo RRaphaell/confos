@@ -84,6 +84,8 @@ no `--wrap-untrusted`, no `--rate-delay`, no per-project config layer, no plugin
 no coverage-percentage gate. **Why:** Raphael's explicit guardrail — public anonymous
 data, focused CLI; these add complexity without value. The only output-safety rule is
 `html.escape` on free-text in HTML graphs. **Re-add only if a concrete need appears.**
+**Update (D21, v0.1.0):** `CONTRIBUTING.md` was added at release (the "premature" window
+closed when the repo went public); everything else here stays cut.
 
 ### D12 — Git: no AI-attribution trailer; conventional commits; push per phase (2026-05-31)
 **What:** commit messages are plain conventional-commits with **no** `Co-Authored-By:
@@ -176,6 +178,19 @@ without fighting SQLite's DDL-transaction quirks. **Alternatives:** skip bad ven
 continue (rejected — silently drops a venue's papers from the index); per-venue partial
 rebuild (rejected — more complexity than a one-shot re-derive needs).
 
+### D21 — Phase 6 release decisions (2026-06-01, v0.1.0)
+**What:** for v0.1.0 we (a) ADD `CONTRIBUTING.md` (the D11 Phase-6 trigger fired — going
+public) and an opt-in `scripts/live-test.sh`; (b) keep `doctor` fully offline — the
+"network" check sketched in early docs is CUT (it would surprise `--no-input` callers and
+confos is offline after ingest), so `doctor` checks env/DB/FTS5/openreview-py only and the
+contract docs were trimmed to match; (c) the `schema` command must document *every*
+command that emits a `--json` envelope (export papers/authors are the raw-bulk exception),
+enforced by a drift-guard test; (d) `warnings` live at the envelope level only across all
+commands; `ok` always agrees with the exit code. **Why:** uniform, discoverable, honest
+JSON contract for agents + a clean public release. **Still CUT (per D11):** SECURITY.md,
+SBOM/pip-audit/Dependabot. **Still deferred (per D19):** the source→adapter registry and
+putting `search_venues` on the `SourceAdapter` Protocol — both land before adapter #2.
+
 ---
 
 ## Assumptions (verify before/while building)
@@ -233,3 +248,4 @@ auto-accept.
   matched set vs across venue). Keep it simple and clearly labelled as a heuristic.
 - **Phase 6 — add a minimal `CONTRIBUTING.md`** before going public (table-stakes for a
   "serious OSS repo"; correctly cut until then). SECURITY.md stays cut (public anon data).
+  ✅ **Done (D21, v0.1.0):** CONTRIBUTING.md added; SECURITY.md stays cut.

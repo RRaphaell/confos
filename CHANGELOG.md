@@ -5,7 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-01
+
+First public-grade release: the full v1 surface on OpenReview — ingest, search, people
+discovery, orgs, honest stats, trends, visualization, export, context packs, and a bundled
+agent skill — all offline after ingest, all with provenance.
+
 ### Added
+- **Phase 6 — Hardening & release polish.** Every command's `--help` carries 2-3 examples
+  (pinned by a test); `confos schema <command>` now documents every command that emits a
+  `--json` envelope (drift-guarded); a full exit-code contract test (network 4, partial
+  ingest 5, interrupt 130, unexpected-error wrap); `confos doctor` checks the openreview-py
+  backend; CONTRIBUTING.md + an opt-in `scripts/live-test.sh`; clean-checkout wheel install
+  verified. A multi-agent architecture-critic + code-reviewer sign-off pass was run and its
+  findings fixed (CSV formula-injection hardening, `--json` purity on parse errors,
+  envelope `ok`/`warnings` uniformity, doc/code alignment).
 - **Phase 5 — Export & agent surface.** `confos export context --topic t [--venue v]
   [--format json|markdown]` produces one self-contained, fully-cited context pack (top
   papers with abstracts + ranked people with why-relevant + orgs + topic-scoped stats +
@@ -51,3 +65,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ### Project setup
 - Blueprint complete: product spec, architecture, CLI contract, ranking/topic spec, JSON
   schemas, build plan, references, agent docs.
+
+[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/RRaphaell/confos/releases/tag/v0.1.0

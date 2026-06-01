@@ -1,6 +1,6 @@
 # confos — Progress
 
-**Status:** living · **Last updated:** 2026-05-31
+**Status:** living · **Last updated:** 2026-06-01
 
 The running state of the build. I update this every session: what's done, what's in
 progress, what's next, and pointers to any research notes. Read this first when resuming.
@@ -9,8 +9,17 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 ## Current state
 
-**Phase: 5 (Export & agent surface) — COMPLETE (gate green, 2-subagent validation passed; agent-consumer produced a credible fully-cited brief from confos alone). Next: Phase 6 (release polish).**
+**Phase: 6 (Hardening & release polish) — COMPLETE. v0.1.0 tagged. All 7 phases done.**
 
+- ✅ **Phase 6 built (v0.1.0):** every command's `--help` has 2-3 examples (test-pinned);
+  `confos schema` documents every `--json`-envelope command (drift-guarded); full
+  exit-code contract tests (network 4 / partial 5 / interrupt 130 / unexpected-error wrap);
+  `doctor` checks openreview-py; CONTRIBUTING.md + opt-in `scripts/live-test.sh`;
+  clean-checkout wheel install verified; CI actions bumped off Node 20. Two adversarial
+  multi-agent sweeps (architecture-critic + code-reviewer sign-off, then a fix-verification
+  pass) run and their findings fixed (CSV formula-injection hardening incl. BOM/Unicode-ws,
+  `--json` purity on parse errors, envelope ok/warnings uniformity, doc/code alignment).
+  Version 0.1.0; 192 tests; CI green.
 - ✅ **Phase 5 built:** `export context` (self-contained, cited context pack — JSON +
   markdown, LLM-free, SCHEMAS §6), `export papers`/`authors` (CSV + JSONL),
   `confos schema <command>` (output-contract discovery), finalized AGENTS.md/SKILL.md.
@@ -31,7 +40,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
   upsert, hybrid incremental (new + edited, D17), `--force`/`--dry-run`/partial(exit 5),
   `venues` (list/search/show/add/aliases) + alias map. Verified live (MLMP, 33 papers) +
   offline vcrpy replay. ruff + mypy(strict) + 72 pytest green; CI green.
-- ⏳ **Next:** Phase 2 — Search & explore.
+- 🎉 **All phases complete — v0.1.0 released.**
 
 ## Phase checklist (see BUILD_PLAN.md §5 for detail)
 
@@ -43,7 +52,7 @@ progress, what's next, and pointers to any research notes. Read this first when 
 | 3 | People discovery & stats | ✅ done (validated) |
 | 4 | Trends & visualization | ✅ done (validated) |
 | 5 | Export & agent surface | ✅ done (validated) |
-| 6 | Hardening & release polish (v0.1.0) | not started |
+| 6 | Hardening & release polish (v0.1.0) | ✅ done (validated, tagged) |
 
 ### Phase 0 deliverables
 - [x] `pyproject.toml` (uv, hatchling), `.python-version` (3.12), ruff/mypy/pytest config
@@ -99,6 +108,17 @@ progress, what's next, and pointers to any research notes. Read this first when 
 - [x] tests: context-pack structure/markdown, CSV escaping + round-trip, JSONL, schema registry
 - [x] **DoD:** context pack self-contained + fully cited; agent-consumer completed a real
   task ("top papers + people on topic X, cited") using only confos
+
+### Phase 6 deliverables (v0.1.0)
+- [x] `--help` for every command carries 2-3 examples (CLI_CONTRACT §10), test-pinned
+- [x] `confos schema` documents every `--json`-envelope command; drift-guard test
+- [x] error-path tests: exit 4 (network), 5 (partial), 130 (interrupt), unexpected-error wrap
+- [x] `doctor` checks openreview-py (offline); docs aligned (no phantom network probe)
+- [x] CONTRIBUTING.md; opt-in `scripts/live-test.sh`; clean-checkout wheel install verified
+- [x] CI bumped off Node 20 (checkout@v5, setup-uv@v6)
+- [x] two adversarial multi-agent sweeps (sign-off + fix-verification); all findings fixed
+- [x] version 0.1.0; CHANGELOG `[0.1.0]`; **tagged v0.1.0**
+- [x] **DoD:** clean install + quickstart works; subagent passes clean; v1 surface complete
 
 > **Per-phase mechanics (so the build survives context loss mid-phase):**
 > When a phase starts, expand its deliverables into a checkbox list right here, and add a
@@ -159,6 +179,19 @@ _(one line per subagent pass, per phase — added as the build proceeds)_
   context pack self-contained + cited + LLM-free, schema shapes match real output, CSV/JSONL
   round-trip. Deferred (logged): a "venue not ingested" warning on empty --venue results
   across search/stats (AGENTS.md already tells agents to check `venues list` first).
+
+- 2026-06-01 · Phase 6 · v1 sign-off sweep (4 lenses: architecture / correctness / contract
+  / release, 21 agents, every finding adversarially verified → 17 confirmed, 0 dropped) then
+  a fix-verification pass (per-fix skeptics + completeness critic) → fixed: **[HIGH]** CSV
+  formula-injection bypass via leading whitespace (later widened to BOM + all Unicode ws);
+  **[HIGH]** `--json` after the subcommand leaked non-JSON on parse errors (`_wants_json`
+  argv sniff, scoped to pre-`--` tokens); **[MED]** partial-ingest `ok` now agrees with
+  exit 5; **[MED]** `schema` registry completed for all 9 missing envelope commands +
+  drift-guard test; **[MED]** `doctor` openreview-py check + doc alignment; **[LOW]**
+  trends+ingest warnings de-duplicated to the envelope level, mermaid label hardening
+  (`;`/`#`/backtick), `venues search --limit 0`, several doc/code alignments. Left as
+  logged D19 decisions: the adapter-registry / search_venues-on-Protocol seam (intentional
+  one-adapter-v1 simplification). +regression tests for each. 192 tests; CI green; tagged.
 
 ## Research notes gathered
 _(none yet — added under `docs/research/` as I look things up during the build)_
