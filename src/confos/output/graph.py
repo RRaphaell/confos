@@ -11,14 +11,21 @@ import html
 
 
 def _mermaid_label(label: str) -> str:
-    # Quotes/brackets break a mermaid ["..."] label; newlines split the statement.
-    return (
-        label.replace('"', "'")
-        .replace("[", "(")
-        .replace("]", ")")
-        .replace("\n", " ")
-        .replace("\r", " ")
-    )
+    # Inside a mermaid ["..."] label: quotes/brackets close it, ';' ends the statement,
+    # newlines split it, and '#'/backtick start entity/markdown sequences. Soften them all
+    # so an author name with odd punctuation can't produce a diagram that fails to parse.
+    for bad, good in (
+        ('"', "'"),
+        ("[", "("),
+        ("]", ")"),
+        ("\n", " "),
+        ("\r", " "),
+        (";", ","),
+        ("#", " "),
+        ("`", "'"),
+    ):
+        label = label.replace(bad, good)
+    return label
 
 
 def to_mermaid(nodes: list[dict[str, object]], edges: list[list[str]]) -> str:

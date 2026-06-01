@@ -10,6 +10,7 @@ from ..errors import NotFoundError
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import data_table, key_value_table
 from ..services import venues as venues_service
+from ._render import resolve_limit
 
 app = typer.Typer(no_args_is_help=False, help="List, search, and register venues.")
 
@@ -68,7 +69,7 @@ def search(
     app_ctx = bind_command(ctx, "venues.search")
     app_ctx.info(f"Searching OpenReview for {query!r} …")
     adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
-    limit = app_ctx.limit or 25
+    limit = resolve_limit(None, app_ctx.limit, 25)  # honours an explicit --limit 0
     matches = venues_service.search_venues(adapter, query, limit=limit)
     if app_ctx.is_json:
         app_ctx.render_json(matches, query={"q": query, "limit": limit}, sources=["openreview"])

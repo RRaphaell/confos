@@ -126,7 +126,6 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "topic": "string",
             "series": "[{venue, year, matched, total, share, top_authors, top_orgs}]",
             "delta": {"matched_abs": "int", "share_pp": "number"},
-            "warnings": "string[]",
         },
     },
     "trends.compare": {"envelope": _ENVELOPE, "data": "same as trends.topic (two venues)"},

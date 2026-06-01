@@ -25,6 +25,15 @@ def test_to_mermaid_label_strips_newline() -> None:
     assert 'n0["Line1 Line2"]' in out  # newline collapsed, statement intact
 
 
+def test_to_mermaid_label_softens_statement_breakers() -> None:
+    # ';' (statement separator), '#' (entity start) and backticks must be neutralised so
+    # an author name like 'A; B #1 `x`' can't break the diagram.
+    out = to_mermaid([{"id": "x", "label": "A; B #1 `x`", "degree": 0}], [])
+    label = out.splitlines()[1]  # the single node line
+    assert ";" not in label and "#" not in label and "`" not in label
+    assert label == "    n0[\"A, B  1 'x'\"]"
+
+
 def test_to_html_escapes_free_text() -> None:
     # A label with HTML metacharacters must be escaped so it can't break the page.
     mermaid = to_mermaid([{"id": "x", "label": "A <script> & B", "degree": 0}], [])

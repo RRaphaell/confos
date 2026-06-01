@@ -44,7 +44,9 @@ def _emit(app_ctx: AppContext, result: dict[str, object], query: dict[str, objec
     warnings = result["warnings"]
     assert isinstance(warnings, list)
     if app_ctx.is_json:
-        app_ctx.render_json(result, query=query, warnings=warnings)
+        # warnings live at the envelope level only (SCHEMAS §5), like every other command.
+        data = {k: v for k, v in result.items() if k != "warnings"}
+        app_ctx.render_json(data, query=query, warnings=warnings)
         return
     if app_ctx.is_plain:
         series = result["series"]
