@@ -69,5 +69,18 @@ def test_ingest_replays_real_venue(tmp_path: Path) -> None:
             "SELECT COUNT(*) FROM papers_fts WHERE papers_fts MATCH ?", ("neural",)
         ).fetchone()[0]
         assert hits > 0
+        # Phase-0 enrichment survives a REAL ingest (guards _abs_url + the content keys
+        # against the only non-synthetic corpus). Every MLMP paper has an absolutized pdf
+        # link + bibtex; 8 expose supplementary material under the custom `Supplementary`
+        # field (absolute external URLs passed through unchanged).
+        missing = conn.execute(
+            "SELECT COUNT(*) FROM papers WHERE pdf_url IS NULL OR bibtex IS NULL "
+            "OR pdf_url NOT LIKE 'https://openreview.net/pdf/%'"
+        ).fetchone()[0]
+        assert missing == 0
+        supp = conn.execute(
+            "SELECT COUNT(*) FROM papers WHERE supplementary_url IS NOT NULL"
+        ).fetchone()[0]
+        assert supp == 8
     finally:
         conn.close()

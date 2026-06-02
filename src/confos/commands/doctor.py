@@ -75,12 +75,24 @@ def _collect_checks(app_ctx: AppContext) -> list[dict[str, str]]:
                 checks.append(
                     _check("database", "warn", "present but not migrated — run `confos init`")
                 )
-            else:
+            elif version < SCHEMA_VERSION:
+                # An older-but-upgradable store (e.g. a v0.1.0 v1 store after the schema
+                # grew): any confos command migrates it in place (D22). Warn, don't fail.
+                checks.append(
+                    _check(
+                        "database",
+                        "warn",
+                        f"schema v{version} needs migration to v{SCHEMA_VERSION} — "
+                        "run `confos init` (or any confos command)",
+                    )
+                )
+            else:  # version > SCHEMA_VERSION: created by a newer confos than this one
                 checks.append(
                     _check(
                         "database",
                         "fail",
-                        f"schema v{version} unsupported (expected v{SCHEMA_VERSION})",
+                        f"schema v{version} is newer than this confos supports "
+                        f"(expected v{SCHEMA_VERSION}); upgrade confos",
                     )
                 )
     else:

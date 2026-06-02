@@ -89,6 +89,22 @@ def test_absolute_pdf_url_passed_through_and_missing_is_none() -> None:
     assert missing.supplementary_url is None
 
 
+def test_abs_url_empty_and_bare_relative_edge_cases() -> None:
+    # Empty string is treated as missing (None), not absolutized to the bare host.
+    assert _normalize(make_note("p12", pdf="")).pdf_url is None
+    # A bare relative value (no leading '/', not http) is returned verbatim — we only
+    # prefix the web host onto server-absolute paths.
+    assert _normalize(make_note("p13", pdf="abc.pdf")).pdf_url == "abc.pdf"
+
+
+def test_supplementary_custom_field_fallback() -> None:
+    # Some workshops store the link under a custom `Supplementary` field (absolute URL)
+    # rather than the standard `supplementary_material`.
+    note = make_note("p14", supplementary_material=None)
+    note["content"]["Supplementary"] = {"value": "https://github.com/x/y"}
+    assert _normalize(note).supplementary_url == "https://github.com/x/y"
+
+
 def test_acceptance_type_from_venue_string() -> None:
     oral = _normalize(make_note("p6", venue="Test 2025 oral"))
     poster = _normalize(make_note("p7", venue="Test 2025 poster"))

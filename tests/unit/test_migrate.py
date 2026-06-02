@@ -45,6 +45,10 @@ def test_migrate_applies_then_idempotent(tmp_path: Path) -> None:
         names = _table_names(conn)
         assert CORE_TABLES.issubset(names)
         assert FTS_TABLES.issubset(names)
+        # A fresh store (schema.sql path) must end with the SAME columns the incremental
+        # _MIGRATIONS ladder produces — locks schema.sql/migration parity (D22).
+        cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
+        assert {"pdf_url", "bibtex", "supplementary_url"} <= cols
     finally:
         conn.close()
 

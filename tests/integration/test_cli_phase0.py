@@ -160,6 +160,38 @@ def test_doctor_unhealthy_json_is_honest(run_cli: RunCli, monkeypatch: pytest.Mo
     assert fts["status"] == "fail"
 
 
+def _set_user_version(db: Path, version: int) -> None:
+    import sqlite3
+
+    conn = sqlite3.connect(db)
+    try:
+        conn.execute(f"PRAGMA user_version = {version}")
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_doctor_warns_on_upgradable_older_schema(run_cli: RunCli, initialized_home: Path) -> None:
+    # An older-but-upgradable store (v0.1.0 left user_version=1 after the schema grew) is
+    # migrated in place by any command (D22) — doctor must warn, NOT fail (exit 0).
+    _set_user_version(initialized_home / "confos.db", 1)
+    result = run_cli("doctor", "--json")
+    assert result.exit_code == 0
+    checks = {c["name"]: c["status"] for c in result.json()["data"]["checks"]}
+    assert checks["database"] == "warn"
+
+
+def test_doctor_fails_on_too_new_schema(run_cli: RunCli, initialized_home: Path) -> None:
+    # A store from a newer confos (version > SCHEMA_VERSION) is genuinely unsupported → fail.
+    _set_user_version(initialized_home / "confos.db", SCHEMA_VERSION + 7)
+    result = run_cli("doctor", "--json")
+    assert result.exit_code == 3
+    payload = result.json()
+    assert payload["ok"] is False
+    checks = {c["name"]: c["status"] for c in payload["data"]["checks"]}
+    assert checks["database"] == "fail"
+
+
 def test_bare_group_under_json_keeps_stdout_pure_json(run_cli: RunCli) -> None:
     # `confos --json papers` (no subcommand) must NOT leak a help banner to stdout.
     result = run_cli("--json", "papers")

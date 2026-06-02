@@ -154,6 +154,14 @@ Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
 
 ## Validation log
 _(one line per subagent pass, per phase — added as the build proceeds)_
+- 2026-06-02 · Enrichment M0+Phase 0 · adversarial multi-agent review (4 dimensions ×
+  find→verify, 11 reported → 4 confirmed, 7 dismissed) → fixed: **[MED]** `doctor` reported
+  an upgradable v1 store as `fail: unsupported` (M0 regression) → now `warn: needs migration`,
+  distinct from the too-new `fail`; **[HIGH]** the only real-data (cassette) test asserted
+  none of the Phase-0 fields → now locks pdf_url/bibtex (33/33) + supplementary (8/33), and
+  the adapter captures the workshop-custom `Supplementary` field (8 real links that were
+  silently dropped); **[MED]** fresh-store (schema.sql) column-parity assertion added;
+  **[LOW]** `_abs_url` empty/bare-relative edge cases pinned. +8 tests (210 total); gate green.
 - 2026-05-31 · blueprint · architecture-critic + fresh-user + re-validation + readiness →
   6 criticals fixed, over-engineering trimmed, verdict **ready to implement**.
 - 2026-05-31 · Phase 0 · code-reviewer + architecture-critic + fresh-user + agent-consumer

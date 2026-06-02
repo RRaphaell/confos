@@ -70,6 +70,21 @@ def _abs_url(path: Any) -> str | None:
     return f"{_OPENREVIEW_WEB}{path}" if path.startswith("/") else path
 
 
+# Field names that hold a supplementary-material link, in priority order. The standard
+# OpenReview submission field is ``supplementary_material``; some workshops use a custom
+# ``Supplementary`` field (holding an absolute external URL) instead.
+_SUPPLEMENTARY_KEYS = ("supplementary_material", "Supplementary", "supplementary")
+
+
+def _supplementary_url(content: dict[str, Any]) -> str | None:
+    """First usable supplementary link across the known field names, or None."""
+    for key in _SUPPLEMENTARY_KEYS:
+        url = _abs_url(_unwrap(content, key))
+        if url:
+            return url
+    return None
+
+
 def _slug_name(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or "anon"
 
@@ -245,7 +260,7 @@ class OpenReviewAdapter:
             url=f"{_OPENREVIEW_WEB}/forum?id={paper_id}",
             pdf_url=_abs_url(_unwrap(content, "pdf")),
             bibtex=_unwrap(content, "_bibtex"),
-            supplementary_url=_abs_url(_unwrap(content, "supplementary_material")),
+            supplementary_url=_supplementary_url(content),
             pdate=raw.get("pdate"),
             tcdate=raw.get("tcdate"),
             tmdate=raw.get("tmdate"),
