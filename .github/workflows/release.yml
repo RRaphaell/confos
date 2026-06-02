@@ -1,0 +1,51 @@
+name: Release
+
+# Fires when you push a version tag like v0.1.0 or v0.2.0.
+# workflow_dispatch lets you run it by hand from the Actions tab — you'll use
+# that for the very first 0.1.0 publish, because the existing v0.1.0 tag was
+# created before this file existed and so can't retroactively trigger it.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  # ── Job 1: build the distribution files. Runs with NO special permissions. ──
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build sdist + wheel
+        run: uv build            # writes confos-X.Y.Z.tar.gz and .whl into dist/
+
+      - name: Hand the artifacts to the publish job
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # ── Job 2: publish to PyPI via OIDC. The ONLY job that holds a token. ──
+  publish:
+    needs: build                 # only runs if the build succeeded
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi                 # must match the env in your PyPI trusted publisher
+      url: https://pypi.org/p/confos
+    permissions:
+      id-token: write            # OIDC — this is what fully replaces an API token
+
+    steps:
+      - name: Download the built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No username, no password, no token. Trusted Publishing authenticates
+        # via OIDC, and signed attestations (PEP 740) are generated automatically.
