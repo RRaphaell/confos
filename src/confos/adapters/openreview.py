@@ -38,6 +38,15 @@ BUILTIN_VENUE_ALIASES: dict[str, str] = {
 
 _ACCEPTANCE_TYPES = ("oral", "spotlight", "poster")
 
+# Files (pdf, attachments) are served from the web host, not the API host the client
+# talks to; note content stores them as server-relative paths (e.g. ``/pdf/<hash>.pdf``).
+_OPENREVIEW_WEB = "https://openreview.net"
+
+# Conventional venueid suffix for the post-review reject bucket, used as a fallback when
+# a venue group doesn't expose ``rejected_venue_id`` (and to reclassify already-ingested
+# snapshots whose venue.json predates that field) — see _derive_status.
+_REJECTED_SUFFIX = "/Rejected_Submission"
+
 
 def _unwrap(content: dict[str, Any], key: str) -> Any:
     """Read a v2 ``{"value": X}`` content field defensively (v1 is flat)."""
@@ -45,6 +54,20 @@ def _unwrap(content: dict[str, Any], key: str) -> Any:
     if isinstance(field, dict):
         return field.get("value")
     return field
+
+
+def _abs_url(path: Any) -> str | None:
+    """Resolve an OpenReview content path to an absolute URL, or None.
+
+    pdf/supplementary fields are server-relative (``/pdf/<hash>.pdf``); prefix them with
+    the web host. A value that is already absolute (or empty/non-string) is passed through
+    unchanged (None for anything unusable).
+    """
+    if not isinstance(path, str) or not path:
+        return None
+    if path.startswith(("http://", "https://")):
+        return path
+    return f"{_OPENREVIEW_WEB}{path}" if path.startswith("/") else path
 
 
 def _slug_name(name: str) -> str:
@@ -101,6 +124,7 @@ class OpenReviewAdapter:
             submission_venueid=_unwrap(content, "submission_venue_id"),
             withdrawn_venueid=_unwrap(content, "withdrawn_venue_id"),
             desk_rejected_venueid=_unwrap(content, "desk_rejected_venue_id"),
+            rejected_venueid=_unwrap(content, "rejected_venue_id"),
             submission_name=_unwrap(content, "submission_name") or "Submission",
             display_name=_unwrap(content, "title") or slug,
             year=extract_year(venue_id),
@@ -218,7 +242,10 @@ class OpenReviewAdapter:
             ),
             raw_venueid=raw_venueid,
             venue_string=venue_string,
-            url=f"https://openreview.net/forum?id={paper_id}",
+            url=f"{_OPENREVIEW_WEB}/forum?id={paper_id}",
+            pdf_url=_abs_url(_unwrap(content, "pdf")),
+            bibtex=_unwrap(content, "_bibtex"),
+            supplementary_url=_abs_url(_unwrap(content, "supplementary_material")),
             pdate=raw.get("pdate"),
             tcdate=raw.get("tcdate"),
             tmdate=raw.get("tmdate"),
@@ -337,6 +364,13 @@ def _derive_status(raw_venueid: str | None, ref: VenueRef) -> PaperStatus:
         return "withdrawn"
     if ref.desk_rejected_venueid and raw_venueid == ref.desk_rejected_venueid:
         return "desk_rejected"
+    # Post-review rejects: prefer the venue's explicit id; fall back to the conventional
+    # ``/Rejected_Submission`` suffix so a snapshot whose venue.json predates
+    # ``rejected_venueid`` still reclassifies on a no-network ``index rebuild``.
+    if (ref.rejected_venueid and raw_venueid == ref.rejected_venueid) or raw_venueid.endswith(
+        _REJECTED_SUFFIX
+    ):
+        return "rejected"
     return "unknown"
 
 

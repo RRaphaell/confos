@@ -22,6 +22,7 @@ FAKE_REF = VenueRef(
     submission_venueid="Test.cc/2025/Conference/Submission",
     withdrawn_venueid="Test.cc/2025/Conference/Withdrawn_Submission",
     desk_rejected_venueid="Test.cc/2025/Conference/Desk_Rejected_Submission",
+    rejected_venueid="Test.cc/2025/Conference/Rejected_Submission",
     submission_name="Submission",
     display_name="Test 2025",
     year=2025,
@@ -38,25 +39,35 @@ def make_note(
     title: str = "A Paper",
     abstract: str = "An abstract.",
     venue: str = "Test 2025 poster",
+    pdf: str | None = "/pdf/abc123.pdf",
+    bibtex: str | None = "@inproceedings{x2025, title={A Paper}}",
+    supplementary_material: str | None = None,
     tcdate: int = 1000,
     tmdate: int = 2000,
     number: int = 1,
 ) -> RawNote:
+    content: dict[str, object] = {
+        "title": {"value": title},
+        "abstract": {"value": abstract},
+        "authors": {"value": authors if authors is not None else ["Alice Smith"]},
+        "authorids": {"value": authorids if authorids is not None else ["~Alice_Smith1"]},
+        "keywords": {"value": keywords if keywords is not None else ["agents"]},
+        "venueid": {"value": venueid},
+        "venue": {"value": venue},
+    }
+    if pdf is not None:
+        content["pdf"] = {"value": pdf}
+    if bibtex is not None:
+        content["_bibtex"] = {"value": bibtex}
+    if supplementary_material is not None:
+        content["supplementary_material"] = {"value": supplementary_material}
     return {
         "id": note_id,
         "number": number,
         "tcdate": tcdate,
         "tmdate": tmdate,
         "pdate": None,
-        "content": {
-            "title": {"value": title},
-            "abstract": {"value": abstract},
-            "authors": {"value": authors if authors is not None else ["Alice Smith"]},
-            "authorids": {"value": authorids if authorids is not None else ["~Alice_Smith1"]},
-            "keywords": {"value": keywords if keywords is not None else ["agents"]},
-            "venueid": {"value": venueid},
-            "venue": {"value": venue},
-        },
+        "content": content,
     }
 
 

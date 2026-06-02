@@ -12,7 +12,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-PaperStatus = Literal["accepted", "under_review", "withdrawn", "desk_rejected", "unknown"]
+PaperStatus = Literal[
+    "accepted", "under_review", "withdrawn", "desk_rejected", "rejected", "unknown"
+]
 DataQuality = Literal["resolved", "low", "unresolved"]
 IngestStatus = Literal["ok", "partial", "error"]
 
@@ -29,6 +31,7 @@ class VenueRef(BaseModel):
     submission_venueid: str | None = None  # under-review bucket → 'under_review'
     withdrawn_venueid: str | None = None
     desk_rejected_venueid: str | None = None
+    rejected_venueid: str | None = None  # post-review reject bucket → 'rejected'
     submission_name: str | None = None  # e.g. 'Submission' (read from the group)
     display_name: str | None = None
     year: int | None = None
@@ -79,6 +82,9 @@ class NormalizedPaper(BaseModel):
     raw_venueid: str | None = None
     venue_string: str | None = None
     url: str = ""
+    pdf_url: str | None = None  # absolute link to the PDF, or None
+    bibtex: str | None = None  # the note's _bibtex citation block, verbatim
+    supplementary_url: str | None = None  # absolute link to supplementary material, or None
     pdate: int | None = None
     tcdate: int | None = None
     tmdate: int | None = None

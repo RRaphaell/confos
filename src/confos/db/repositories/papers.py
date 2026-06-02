@@ -21,12 +21,12 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
         """
         INSERT INTO papers (
             id, venue_slug, number, title, abstract, tldr, keywords_json, primary_area,
-            status, acceptance_type, raw_venueid, venue_string, url, pdate, tcdate, tmdate,
-            created_at, updated_at
+            status, acceptance_type, raw_venueid, venue_string, url, pdf_url, bibtex,
+            supplementary_url, pdate, tcdate, tmdate, created_at, updated_at
         ) VALUES (
             :id, :venue_slug, :number, :title, :abstract, :tldr, :keywords_json, :primary_area,
-            :status, :acceptance_type, :raw_venueid, :venue_string, :url, :pdate, :tcdate, :tmdate,
-            :now, :now
+            :status, :acceptance_type, :raw_venueid, :venue_string, :url, :pdf_url, :bibtex,
+            :supplementary_url, :pdate, :tcdate, :tmdate, :now, :now
         )
         ON CONFLICT(id) DO UPDATE SET
             venue_slug=excluded.venue_slug,
@@ -41,6 +41,9 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
             raw_venueid=excluded.raw_venueid,
             venue_string=excluded.venue_string,
             url=excluded.url,
+            pdf_url=excluded.pdf_url,
+            bibtex=excluded.bibtex,
+            supplementary_url=excluded.supplementary_url,
             pdate=excluded.pdate,
             tcdate=excluded.tcdate,
             tmdate=excluded.tmdate,
@@ -60,6 +63,9 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
             "raw_venueid": paper.raw_venueid,
             "venue_string": paper.venue_string,
             "url": paper.url,
+            "pdf_url": paper.pdf_url,
+            "bibtex": paper.bibtex,
+            "supplementary_url": paper.supplementary_url,
             "pdate": paper.pdate,
             "tcdate": paper.tcdate,
             "tmdate": paper.tmdate,

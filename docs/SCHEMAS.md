@@ -1,6 +1,6 @@
 # confos — JSON Output Schemas
 
-**Status:** canonical · **Last updated:** 2026-05-31
+**Status:** canonical · **Last updated:** 2026-06-02
 
 The `--json` output is a **public contract**. Agents and scripts depend on field paths
 (AGENTS.md hard-codes e.g. `.data.papers[].title`). This doc defines the stable shapes.
@@ -42,13 +42,19 @@ Error form:
   "abstract": "…",                          // present in `show` + context packs; omitted in list/search views
   "authors": [ { "author_id": "~Alice_Smith1", "name": "Alice Smith", "position": 0 } ],
   "keywords": ["…"],
-  "status": "accepted|under_review|withdrawn|desk_rejected|unknown",  // derived locally (C2)
+  "status": "accepted|under_review|withdrawn|desk_rejected|rejected|unknown",  // derived locally (C2)
   "acceptance_type": "oral|spotlight|poster|null",   // when decisions ingested (S7)
   "venue": "neurips-2025",
   "url": "https://openreview.net/forum?id=aBcDeFgHiJ",
+  "pdf_url": "https://openreview.net/pdf/…",         // present in `show` + `export papers`; omitted in list/search; null if absent
+  "bibtex": "@inproceedings{…}",                     // present in `show` + `export papers`; the note's _bibtex, verbatim
+  "supplementary_url": "https://openreview.net/attachment/…",  // present in `show` + `export papers`; null if absent
   "bm25": 7.4                                // search/find only; relevance score
 }
 ```
+`status` gained **`rejected`** (the post-review reject bucket, derived locally from the
+venue's `rejected_venue_id`, falling back to the conventional `…/Rejected_Submission`
+venueid suffix); papers there used to mislabel as `unknown`.
 
 ## 3. Author object (shared by find/show/papers/coauthors)
 ```json

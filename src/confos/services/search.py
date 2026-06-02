@@ -105,7 +105,7 @@ def get_paper(paths: Paths, paper_id: str, *, with_related: bool = False) -> dic
         briefs = [
             author_brief(a) for a in papers_repo.authors_for_papers(conn, [paper_id])[paper_id]
         ]
-        data = paper_dict(row, briefs, include_abstract=True)
+        data = paper_dict(row, briefs, include_abstract=True, include_artifacts=True)
         if with_related:
             data["related"] = _related_for_row(conn, row, limit=10)
         return data

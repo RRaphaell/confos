@@ -33,10 +33,13 @@ _PAPER = {
     "abstract": "string (present in show + context packs; omitted in list/search views)",
     "authors": "[{author_id, name, position}]",
     "keywords": "string[]",
-    "status": "accepted|under_review|withdrawn|desk_rejected|unknown",
+    "status": "accepted|under_review|withdrawn|desk_rejected|rejected|unknown",
     "acceptance_type": "oral|spotlight|poster|null",
     "venue": "string (slug)",
     "url": "string",
+    "pdf_url": "string|null (present in show + `export papers`; omitted in list/search views)",
+    "bibtex": "string|null (present in show + `export papers`; omitted in list/search views)",
+    "supplementary_url": "string|null (present in show + `export papers`; omitted elsewhere)",
     "bm25": "number (search/find only; bigger = more relevant)",
 }
 

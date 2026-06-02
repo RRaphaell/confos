@@ -92,13 +92,19 @@ def test_context_pack_markdown(corpus: Paths) -> None:
 def test_export_papers_csv_and_jsonl(corpus: Paths) -> None:
     csv_out = export_service.export_papers(corpus, venue="test-venue", fmt="csv")
     lines = csv_out.splitlines()
-    assert lines[0] == "paper_id,title,status,acceptance_type,venue,url,authors,keywords"
+    assert lines[0] == (
+        "paper_id,title,status,acceptance_type,venue,url,"
+        "pdf_url,supplementary_url,authors,keywords,bibtex"
+    )
     assert len(lines) == 1 + 3  # header + 3 papers
 
     jsonl_out = export_service.export_papers(corpus, venue="test-venue", fmt="jsonl")
     records = [json.loads(line) for line in jsonl_out.splitlines()]
     assert len(records) == 3
     assert "authors" in records[0] and "url" in records[0]
+    # Phase 0: pdf link + bibtex now ride along (server path → absolute).
+    assert records[0]["pdf_url"].startswith("https://openreview.net/pdf/")
+    assert records[0]["bibtex"].startswith("@inproceedings{")
 
 
 def test_export_csv_escapes_formula_and_round_trips(tmp_path: Path) -> None:

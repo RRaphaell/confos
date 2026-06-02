@@ -1,6 +1,6 @@
 # confos — Decisions & Assumptions Log
 
-**Status:** living · **Last updated:** 2026-05-31
+**Status:** living · **Last updated:** 2026-06-02
 
 A lightweight ADR (Architecture Decision Record). Every non-obvious choice, and every
 assumption we're relying on, gets an entry — so neither future-me nor Raphael has to
@@ -190,6 +190,39 @@ commands; `ok` always agrees with the exit code. **Why:** uniform, discoverable,
 JSON contract for agents + a clean public release. **Still CUT (per D11):** SECURITY.md,
 SBOM/pip-audit/Dependabot. **Still deferred (per D19):** the source→adapter registry and
 putting `search_venues` on the `SourceAdapter` Protocol — both land before adapter #2.
+
+### D22 — Incremental migrations after the v0.1.0 freeze (2026-06-02, Enrichment M0)
+**What:** `db/migrate.py` now converges two paths against `PRAGMA user_version`: a **fresh**
+store (`version 0`) applies the complete current `schema.sql` in one shot and jumps to
+`SCHEMA_VERSION`; an **existing** store (`1 ≤ version < SCHEMA_VERSION`) applies the ordered
+`_MIGRATIONS` steps newer than it. Steps are additive (`ALTER TABLE … ADD COLUMN` via an
+`_add_columns` helper that diffs `table_info`, so a step is idempotent + crash-safe; new
+tables use `CREATE TABLE IF NOT EXISTS`) and `schema.sql` always mirrors the latest shape.
+Each schema-changing enrichment phase appends a step + bumps `SCHEMA_VERSION`. The upgrade
+path per phase is **`migrate` (adds empty columns) → `index rebuild` (backfills from raw)**.
+**Why:** D18 froze the schema at v0.1.0 and said the next change ships a real migration; the
+enrichment phases (0/1/2/4) each add columns/tables to *existing* stores, so apply-once (D13)
+no longer suffices. **Alternatives:** Alembic (rejected — framework overhead for a
+single-process local store); blow-away-and-re-init (rejected — discards a user's ingested
+venues for an additive change; raw survives either way but a forced re-ingest is a worse UX).
+*Supersedes D13's "apply-once" for ≥ v2; the fresh-store fast path is unchanged.*
+
+### D23 — Phase 0: `rejected` status + capture pdf/bibtex/supplementary (2026-06-02, Enrichment)
+**What:** (a) added the `rejected` `PaperStatus`, derived from the venue group's
+`rejected_venue_id` (read into `VenueRef.rejected_venueid`) with a fallback to the
+conventional `…/Rejected_Submission` venueid suffix — so a snapshot whose venue.json predates
+the field still reclassifies on a no-network `index rebuild`. (b) Persist `pdf_url`/`bibtex`/
+`supplementary_url`, all already present in the raw note content (pdf/supplementary server
+paths are prefixed with the `https://openreview.net` web host; bibtex is verbatim). The three
+artifact fields are surfaced in `papers show` + `export papers` and gated behind a
+`paper_dict(include_artifacts=…)` flag so lean list/search/context views (and the context
+pack) stay small — same precedent as `abstract`. **Why:** these are free wins — the data is
+already on disk, so a `migrate` + `index rebuild` (no re-download) reclassifies 254 NeurIPS-2025
+papers and backfills links for all 5,540. **Alternatives:** suffix-only reject detection
+(rejected — fragile if a venue renames the bucket; the group field is authoritative when
+present); putting bibtex in every view (rejected — bloats search/context output).
+**Verified:** real-store rebuild → `accepted 5286 / rejected 254`, pdf+bibtex 5540/5540,
+supplementary 2784/5540, offline in ~17s.
 
 ---
 

@@ -41,6 +41,54 @@ def test_status_unknown_bucket() -> None:
     assert paper.status == "unknown"
 
 
+def test_status_rejected_from_explicit_venueid() -> None:
+    paper = _normalize(make_note("p5r", venueid=FAKE_REF.rejected_venueid or ""))
+    assert paper.status == "rejected"
+
+
+def test_status_rejected_from_suffix_fallback() -> None:
+    # A snapshot whose venue.json predates rejected_venueid (None on the ref) must still
+    # reclassify via the conventional `/Rejected_Submission` suffix — the no-network
+    # `index rebuild` upgrade path.
+    ref = FAKE_REF.model_copy(update={"rejected_venueid": None})
+    paper = ADAPTER.normalize(
+        make_note("p5s", venueid="Test.cc/2025/Conference/Rejected_Submission"), ref
+    )
+    assert paper.status == "rejected"
+
+
+def test_desk_rejected_not_confused_with_rejected_suffix() -> None:
+    # `…/Desk_Rejected_Submission` must stay desk_rejected, not match the rejected suffix.
+    ref = FAKE_REF.model_copy(update={"rejected_venueid": None})
+    paper = ADAPTER.normalize(
+        make_note("p5d", venueid="Test.cc/2025/Conference/Desk_Rejected_Submission"), ref
+    )
+    assert paper.status == "desk_rejected"
+
+
+def test_captures_pdf_bibtex_supplementary() -> None:
+    paper = _normalize(
+        make_note(
+            "p9",
+            pdf="/pdf/9d1f.pdf",
+            bibtex="@inproceedings{a2025,title={X}}",
+            supplementary_material="/attachment/deadbeef.zip",
+        )
+    )
+    assert paper.pdf_url == "https://openreview.net/pdf/9d1f.pdf"  # server path → absolute
+    assert paper.bibtex == "@inproceedings{a2025,title={X}}"  # verbatim, not prefixed
+    assert paper.supplementary_url == "https://openreview.net/attachment/deadbeef.zip"
+
+
+def test_absolute_pdf_url_passed_through_and_missing_is_none() -> None:
+    kept = _normalize(make_note("p10", pdf="https://example.org/x.pdf"))
+    assert kept.pdf_url == "https://example.org/x.pdf"
+    missing = _normalize(make_note("p11", pdf=None, bibtex=None, supplementary_material=None))
+    assert missing.pdf_url is None
+    assert missing.bibtex is None
+    assert missing.supplementary_url is None
+
+
 def test_acceptance_type_from_venue_string() -> None:
     oral = _normalize(make_note("p6", venue="Test 2025 oral"))
     poster = _normalize(make_note("p7", venue="Test 2025 poster"))

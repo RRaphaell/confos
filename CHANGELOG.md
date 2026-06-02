@@ -5,6 +5,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Added
+- **Enrichment Phase 0 — capture dropped fields + the `rejected` status.** Papers now carry
+  `pdf_url`, `bibtex`, and `supplementary_url` (all already downloaded, previously dropped) —
+  surfaced in `confos papers show` and `confos export papers`. A new `rejected` status
+  classifies post-review rejects (derived from the venue's `rejected_venue_id`, with a
+  `…/Rejected_Submission` suffix fallback); these papers used to mislabel as `unknown`.
+- **Incremental schema migrations.** `db/migrate.py` upgrades an existing store in place with
+  additive, idempotent steps (fresh stores still apply the full schema in one shot). Upgrade
+  an existing store with `confos index rebuild` — it backfills the new columns from the raw
+  JSONL snapshot with **no re-download**.
+
+### Changed
+- `--json` Paper objects gain `pdf_url`/`bibtex`/`supplementary_url` in `show` + `export
+  papers` (additive; omitted from lean search/list views). `export papers` CSV/JSONL gained
+  `pdf_url`, `supplementary_url`, and `bibtex` columns. SCHEMAS.md + `confos schema` updated.
+
 ## [0.1.0] - 2026-06-01
 
 First public-grade release: the full v1 surface on OpenReview — ingest, search, people

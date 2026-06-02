@@ -158,8 +158,11 @@ _PAPER_COLUMNS = [
     "acceptance_type",
     "venue",
     "url",
+    "pdf_url",
+    "supplementary_url",
     "authors",
     "keywords",
+    "bibtex",
 ]
 _AUTHOR_COLUMNS = [
     "author_id",
@@ -177,7 +180,11 @@ def _paper_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
         rows = papers_repo.list_all(conn, venue)
         authors_by_paper = papers_repo.authors_for_papers(conn, [r["id"] for r in rows])
         return [
-            paper_dict(row, [author_brief(a) for a in authors_by_paper.get(row["id"], [])])
+            paper_dict(
+                row,
+                [author_brief(a) for a in authors_by_paper.get(row["id"], [])],
+                include_artifacts=True,
+            )
             for row in rows
         ]
     finally:
@@ -212,8 +219,11 @@ def export_papers(paths: Paths, *, venue: str | None, fmt: str) -> str:
             "acceptance_type": p["acceptance_type"] or "",
             "venue": p["venue"],
             "url": p["url"],
+            "pdf_url": p["pdf_url"] or "",
+            "supplementary_url": p["supplementary_url"] or "",
             "authors": "; ".join(a["name"] for a in p["authors"]),
             "keywords": "; ".join(p["keywords"]),
+            "bibtex": p["bibtex"] or "",
         }
         for p in rows
     ]

@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from confos import __version__
+from confos.db.migrate import SCHEMA_VERSION
 from tests.conftest import RunCli
 
 
@@ -39,7 +40,7 @@ def test_init_json_reports_created(run_cli: RunCli) -> None:
     assert payload["ok"] is True
     assert payload["command"] == "init"
     assert payload["data"]["created"] is True
-    assert payload["data"]["schema_version"] == 1
+    assert payload["data"]["schema_version"] == SCHEMA_VERSION
 
 
 def test_init_is_idempotent(run_cli: RunCli) -> None:

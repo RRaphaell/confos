@@ -43,11 +43,14 @@ CREATE TABLE IF NOT EXISTS papers (
     tldr            TEXT,
     keywords_json   TEXT NOT NULL DEFAULT '[]',    -- JSON array of raw keywords
     primary_area    TEXT,
-    status          TEXT NOT NULL DEFAULT 'unknown', -- accepted|under_review|withdrawn|desk_rejected|unknown
+    status          TEXT NOT NULL DEFAULT 'unknown', -- accepted|under_review|withdrawn|desk_rejected|rejected|unknown
     acceptance_type TEXT,                          -- oral|spotlight|poster|null
     raw_venueid     TEXT,                          -- the note's content.venueid value
     venue_string    TEXT,                          -- human 'NeurIPS 2025 poster'
     url             TEXT NOT NULL,
+    pdf_url         TEXT,                          -- absolute link to the PDF, or NULL
+    bibtex          TEXT,                          -- the note's _bibtex citation block
+    supplementary_url TEXT,                        -- absolute link to supplementary material
     pdate           INTEGER,                       -- publication date (ms epoch) if present
     tcdate          INTEGER,                       -- true creation date (ms epoch)
     tmdate          INTEGER,                       -- true modification date (ms epoch)

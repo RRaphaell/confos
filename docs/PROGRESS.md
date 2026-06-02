@@ -1,15 +1,41 @@
 # confos — Progress
 
-**Status:** living · **Last updated:** 2026-06-01
+**Status:** living · **Last updated:** 2026-06-02
 
 The running state of the build. I update this every session: what's done, what's in
 progress, what's next, and pointers to any research notes. Read this first when resuming.
 
 ---
 
+## Enrichment chapter (post-v0.1.0) — see [ENRICHMENT_PLAN.md](ENRICHMENT_PLAN.md)
+
+Turning the most-caveated, emptiest parts of v0.1.0 into real data, then building the
+features that data unlocks. Sequencing: M0 → Phase 0 → 1 → 2 → (4) → 5 (Phase 3 deferred).
+
+| Step | Name | Status |
+|---|---|---|
+| M0 | Incremental migrations (`db/migrate.py` registry) | ✅ done (D22) |
+| 0 | Capture pdf/bibtex/supplementary + `rejected` status | ✅ done (D23) |
+| 1 | Author profile enrichment (orgs/countries/links) | ⏳ next |
+| 2 | Review scores & quality intelligence | ⬜ planned |
+| 4 | OpenAlex citation enrichment | ⬜ planned (optional) |
+| 5 | `confos brief` (one-command landscape) | ⬜ planned |
+
+**M0 + Phase 0 (2026-06-02):** `SCHEMA_VERSION = 2`; fresh stores apply `schema.sql`,
+existing stores apply ordered additive `ALTER` steps (idempotent/crash-safe). Adapter reads
+`rejected_venue_id` + captures `pdf`/`_bibtex`/`supplementary_material`; `_derive_status`
+gained a `rejected` branch (explicit id → `/Rejected_Submission` suffix fallback). Surfaced
+in `papers show` + `export papers`; `paper_dict(include_artifacts=…)` keeps lean views lean.
+**Verified on the real neurips-2025 store:** a no-network `index rebuild` → `accepted 5286 /
+rejected 254` (was `5286/254-unknown`), pdf+bibtex 5540/5540, supplementary 2784/5540, ~17s.
+Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
+
+---
+
 ## Current state
 
 **Phase: 6 (Hardening & release polish) — COMPLETE. v0.1.0 tagged. All 7 phases done.**
+**Now in the post-release Enrichment chapter (above): M0 + Phase 0 shipped.**
 
 - ✅ **Phase 6 built (v0.1.0):** every command's `--help` has 2-3 examples (test-pinned);
   `confos schema` documents every `--json`-envelope command (drift-guarded); full

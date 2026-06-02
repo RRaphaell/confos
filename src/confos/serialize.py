@@ -22,10 +22,14 @@ def paper_dict(
     authors: list[dict[str, Any]],
     *,
     include_abstract: bool = False,
+    include_artifacts: bool = False,
     bm25: float | None = None,
 ) -> dict[str, Any]:
-    """A Paper object (SCHEMAS §2). ``abstract`` is included only when asked;
-    ``bm25`` (positive, bigger = more relevant) only on search/find results."""
+    """A Paper object (SCHEMAS §2). ``abstract`` and the ``pdf_url``/``bibtex``/
+    ``supplementary_url`` artifacts are included only when asked (lean by default for
+    list/search/context views); ``bm25`` (positive, bigger = more relevant) only on
+    search/find results. Callers that pass ``include_artifacts`` must select those columns
+    (``SELECT *`` / ``p.*`` rows carry them)."""
     data: dict[str, Any] = {"paper_id": row["id"], "title": row["title"]}
     if include_abstract:
         data["abstract"] = row["abstract"]
@@ -35,6 +39,10 @@ def paper_dict(
     data["acceptance_type"] = row["acceptance_type"]
     data["venue"] = row["venue_slug"]
     data["url"] = row["url"]
+    if include_artifacts:
+        data["pdf_url"] = row["pdf_url"]
+        data["bibtex"] = row["bibtex"]
+        data["supplementary_url"] = row["supplementary_url"]
     if bm25 is not None:
         data["bm25"] = round(bm25, 4)
     return data

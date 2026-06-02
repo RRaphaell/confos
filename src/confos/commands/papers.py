@@ -110,6 +110,7 @@ def show(
             ("type", str(paper["acceptance_type"] or "—")),
             ("keywords", keywords or "—"),
             ("url", paper["url"]),
+            ("pdf", str(paper.get("pdf_url") or "—")),
             ("abstract", paper.get("abstract", "")),
         ],
         title=paper["paper_id"],
