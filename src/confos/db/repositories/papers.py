@@ -176,6 +176,23 @@ def ranked_by_reviews(
     return conn.execute(sql, params).fetchall()
 
 
+def recent(
+    conn: sqlite3.Connection, *, venue: str | None = None, limit: int = 20
+) -> list[sqlite3.Row]:
+    """Most-recent papers (by publication/creation date), optionally scoped to a venue."""
+    clauses = []
+    params: dict[str, object] = {"limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    where = f"WHERE {' AND '.join(clauses)} " if clauses else ""
+    return conn.execute(
+        f"SELECT p.* FROM papers p {where}"
+        "ORDER BY COALESCE(p.pdate, p.tcdate, 0) DESC, p.id ASC LIMIT :limit",
+        params,
+    ).fetchall()
+
+
 def get(conn: sqlite3.Connection, paper_id: str) -> sqlite3.Row | None:
     row: sqlite3.Row | None = conn.execute(
         "SELECT * FROM papers WHERE id = ?", (paper_id,)

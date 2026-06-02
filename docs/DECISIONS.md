@@ -276,6 +276,27 @@ a later concern). **Deferred from the plan:** quality-weighting wired into
 search/find/trends (``--by rating``) — the headline ``papers top``/``controversial`` ship the
 signal; broader weighting can follow.
 
+### D26 — Phase 5: `confos brief` (one-command landscape) (2026-06-03, Enrichment)
+**What:** ``confos brief --venue <slug> [--topic <t>]`` composes the whole toolkit into one
+cited object: overview (status mix incl. ``rejected``), top papers, hot topics, rising orgs,
+people-to-know, and (topic-mode) thin areas. **Pure composition** over existing services
+(stats/orgs/search/ranking/export) — no new SQL beyond two small repo helpers
+(``recent`` papers, ``top_by_paper_count`` authors) for the venue-wide fallbacks. With
+``--topic`` it's a focused brief (relevance-ranked papers + ranked people with why-relevant +
+thin areas); without, the venue landscape (**top-rated papers when reviews exist, else
+most-recent**; most-prolific people). Default output is human Markdown (the launch demo);
+``--json`` is the agent primitive — a superset of ``export context``. **LLM-free.** **Why:**
+this is the entry point for all three personas (casual reader / attendee / agent) and the
+open-source headline; it's cheap once Phases 1–2 exist. **Graceful degradation is deliberate:**
+on an un-enriched store it still produces a useful brief (recent papers, ``Unknown``
+affiliations) and the ``notes`` line tells the user exactly how to fill the gaps
+(``enrich profiles`` / ``ingest --with-reviews``) — verified on the real neurips-2025 store.
+**Alternatives:** fold brief into ``export context`` (rejected — brief is venue-wide + human,
+context is topic-only + agent); require enrichment first (rejected — honest partial output
+beats an error). **Phase 4 (OpenAlex citations) intentionally not built this cycle** — the
+plan deprioritizes it (recent papers have ~0 citations; it serves "survey a field," not the
+attendee), and brief composes cleanly without it (citations can slot in later).
+
 ---
 
 ## Assumptions (verify before/while building)

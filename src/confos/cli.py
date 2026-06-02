@@ -18,6 +18,7 @@ from . import __version__
 from ._clickcompat import ClickAbort, ClickExit, ClickUsageError
 from .commands import (
     authors,
+    brief,
     doctor,
     enrich,
     export,
@@ -156,6 +157,7 @@ def _main(
 app.command("init")(global_output_options(init.run))
 app.command("doctor")(global_output_options(doctor.run))
 app.command("ingest")(global_output_options(ingest.run))
+app.command("brief")(global_output_options(brief.run))
 app.command("schema")(global_output_options(schema.run))
 app.add_typer(venues.app, name="venues")
 app.add_typer(papers.app, name="papers")

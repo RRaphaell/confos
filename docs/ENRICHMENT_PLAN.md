@@ -404,7 +404,12 @@ attendee persona.
 
 ---
 
-## Phase 5 — `confos brief` (the one-command landscape + launch demo)
+## Phase 5 — `confos brief` (the one-command landscape + launch demo) ✅ DONE (2026-06-03, D26)
+
+> **Shipped + verified on real neurips-2025.** `confos brief --venue <slug> [--topic t]`:
+> overview + top papers (rated→recent fallback) + hot topics + rising orgs + people-to-know +
+> thin areas. Human Markdown + `--json` (superset of `export context`). Pure composition;
+> graceful degradation + honest "how to enrich" notes on an un-enriched store.
 
 **Why:** Composes everything into the entry point for the three personas PRODUCT.md names
 (casual reader, attendee, agent). The `--json` form is a superset of today's `export context`

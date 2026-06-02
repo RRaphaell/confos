@@ -27,6 +27,10 @@ reading lists, find people on a topic, compute trends, and produce cited context
 ## Recipes
 
 ```bash
+# 0. The fastest start: one cited landscape of a venue (or a topic within it)
+confos brief --venue neurips-2025 --json                 # overview+papers+topics+orgs+people
+confos brief --venue neurips-2025 --topic "agent memory" --json
+
 # 1. Make sure a venue is available
 confos doctor --json
 confos venues list --json
@@ -63,11 +67,14 @@ confos schema export.context        # versioned field map for that command's --j
 # (export papers/authors are the exception: raw CSV/JSONL bulk dumps, not an envelope)
 ```
 
-## The context pack (your best primitive)
-`confos export context --topic T --venue V --json` returns one object (under `.data`) with
-top papers, authors, orgs, topic-scoped stats, thin-areas, and sources — everything needed
-to plan a literature review, a thread, or outreach, with every claim cited. Prefer it over
-many small queries when the task is "tell me about area X".
+## Your best primitives
+- `confos brief --venue V [--topic T] --json` is the broadest: one object with overview, top
+  papers, hot topics, orgs, people-to-know, and (with --topic) thin areas — the whole
+  landscape of a venue (or a topic in it). Start here for "tell me about venue V".
+- `confos export context --topic T --venue V --json` is the topic-focused pack: top papers
+  (with abstracts), ranked authors, orgs, topic-scoped stats, thin-areas, sources — everything
+  to plan a literature review, a thread, or outreach, with every claim cited.
+Prefer either over many small queries when the task is "tell me about area X".
 
 ## Cost & payload notes
 - `confos ingest <venue>` hits the network and takes minutes for a large venue (e.g.

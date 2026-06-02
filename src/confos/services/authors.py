@@ -27,6 +27,19 @@ def search_authors(paths: Paths, name: str, *, limit: int = 25) -> list[dict[str
         conn.close()
 
 
+def top_authors(
+    paths: Paths, *, venue: str | None = None, limit: int = 20
+) -> list[dict[str, Any]]:
+    """Most-prolific authors in a venue (for the venue-wide `brief` people list)."""
+    conn = connect(paths.db)
+    try:
+        migrate(conn)
+        rows = authors_repo.top_by_paper_count(conn, venue=venue, limit=limit)
+        return [{**author_dict(row), "paper_count": row["paper_count"]} for row in rows]
+    finally:
+        conn.close()
+
+
 def show_author(paths: Paths, author_id: str) -> dict[str, Any]:
     conn = connect(paths.db)
     try:

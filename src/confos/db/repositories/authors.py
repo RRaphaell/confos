@@ -105,6 +105,27 @@ def get_many(conn: sqlite3.Connection, author_ids: list[str]) -> dict[str, sqlit
     return {row["id"]: row for row in rows}
 
 
+def top_by_paper_count(
+    conn: sqlite3.Connection, *, venue: str | None = None, limit: int = 20
+) -> list[sqlite3.Row]:
+    """Most-prolific authors (by distinct paper count), optionally scoped to a venue."""
+    clauses = []
+    params: dict[str, object] = {"limit": limit}
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    where = f"WHERE {' AND '.join(clauses)} " if clauses else ""
+    return conn.execute(
+        "SELECT a.*, COUNT(DISTINCT pa.paper_id) AS paper_count "
+        "FROM authors a "
+        "JOIN paper_authors pa ON pa.author_id = a.id "
+        "JOIN papers p ON p.id = pa.paper_id "
+        f"{where}"
+        "GROUP BY a.id ORDER BY paper_count DESC, a.display_name ASC, a.id ASC LIMIT :limit",
+        params,
+    ).fetchall()
+
+
 def coauthors(conn: sqlite3.Connection, author_id: str, *, limit: int = 50) -> list[sqlite3.Row]:
     """Co-authors ranked by number of shared papers (deterministic tiebreak by id)."""
     return conn.execute(

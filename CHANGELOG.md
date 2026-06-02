@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Enrichment Phase 5 — `confos brief`.** One command (`confos brief --venue <slug>
+  [--topic t]`) produces a complete, cited conference landscape: overview, top papers (rated
+  if reviews are ingested, else recent), hot topics, rising orgs, people-to-know, and
+  (topic-mode) thin areas. Human Markdown by default; `--json` is an agent primitive (a
+  superset of `export context`). LLM-free, and it degrades gracefully on an un-enriched store
+  (telling you how to fill the gaps).
 - **Enrichment Phase 2 — review scores & quality intelligence.** Ingesting with `confos
   ingest <venue> --with-reviews` now captures public Official_Review scores: papers carry
   `review_count`, `rating_mean`, `rating_std` (controversy), `confidence_mean`, and the

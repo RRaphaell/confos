@@ -18,8 +18,16 @@ features that data unlocks. Sequencing: M0 → Phase 0 → 1 → 2 → (4) → 5
 | 0 | Capture pdf/bibtex/supplementary + `rejected` status | ✅ done (D23) |
 | 1 | Author profile enrichment (orgs/countries/links) | ✅ done (D24) |
 | 2 | Review scores & quality intelligence | ✅ done (D25) |
-| 4 | OpenAlex citation enrichment | ⏳ next (optional) |
-| 5 | `confos brief` (one-command landscape) | ⬜ planned |
+| 5 | `confos brief` (one-command landscape) | ✅ done (D26) |
+| 4 | OpenAlex citation enrichment | ⬜ deferred (optional, deprioritized) |
+
+**Phase 5 (2026-06-03):** `confos brief --venue <slug> [--topic t]` — pure composition over
+stats/orgs/search/ranking/export into one cited landscape (overview, top papers, hot topics,
+rising orgs, people-to-know, thin areas). Human Markdown + `--json` (superset of export
+context). Top papers rank by rating when reviews exist, else recent; people are ranked
+(find_authors) with --topic, else most-prolific. Two small repo helpers added (recent papers,
+top-authors-by-count). **Verified on the real neurips-2025 store** — full landscape, graceful
+degradation on the un-enriched store, honest "how to enrich" notes. +9 tests.
 
 **Phase 2 (2026-06-03):** capture public Official_Review scores (they ride in
 `details=replies`) → `reviews` table + paper aggregates (review_count/rating_mean/rating_std/
@@ -59,7 +67,7 @@ Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
 ## Current state
 
 **Phase: 6 (Hardening & release polish) — COMPLETE. v0.1.0 tagged. All 7 phases done.**
-**Now in the post-release Enrichment chapter (above): M0 + Phase 0 + Phase 1 + Phase 2 shipped.**
+**Now in the post-release Enrichment chapter (above): M0 + Phases 0, 1, 2, 5 shipped (Phase 4 deferred).**
 
 - ✅ **Phase 6 built (v0.1.0):** every command's `--help` has 2-3 examples (test-pinned);
   `confos schema` documents every `--json`-envelope command (drift-guarded); full

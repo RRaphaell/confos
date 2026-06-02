@@ -133,6 +133,19 @@ def search_papers(
         conn.close()
 
 
+def recent_papers(
+    paths: Paths, *, venue: str | None = None, limit: int = 20
+) -> list[dict[str, Any]]:
+    """Most-recent papers in a venue (the `brief` fallback when no reviews are ingested)."""
+    conn = connect(paths.db)
+    try:
+        migrate(conn)
+        rows = papers_repo.recent(conn, venue=venue, limit=limit)
+        return assemble_papers(conn, rows, include_abstract=False, with_bm25=False)
+    finally:
+        conn.close()
+
+
 def get_paper(paths: Paths, paper_id: str, *, with_related: bool = False) -> dict[str, Any]:
     conn = connect(paths.db)
     try:

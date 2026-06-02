@@ -178,6 +178,22 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "notes": "string",
         },
     },
+    "brief": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "type": "confos.brief",
+            "venue": "string|null",
+            "topic": "string|null",
+            "overview": "stats.overview shape (papers, status, authors, orgs, topics, venues)",
+            "top_papers": {"ranked_by": "rating|relevance|recent", "papers": [_PAPER]},
+            "hot_topics": "[{key, papers}]",
+            "rising_orgs": "[{key, papers}]",
+            "people_to_know": "[Author] (ranked FoundAuthor with --topic, else top-by-count)",
+            "thin_areas": "string[] (heuristic; only with --topic)",
+            "data_quality": {"orgs": _STATS["data_quality"]},
+            "notes": "string",
+        },
+    },
     "venues.list": {"envelope": _ENVELOPE, "data": [_VENUE]},
     "venues.search": {
         "envelope": _ENVELOPE,
