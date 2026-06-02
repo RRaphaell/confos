@@ -2,37 +2,56 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 
 from ...models import NormalizedAuthor
 
 
 def upsert_author(conn: sqlite3.Connection, author: NormalizedAuthor) -> None:
-    """Insert or refresh an author. Existing affiliation/profile are kept if the new
-    record lacks them (COALESCE), so a later note can only *add* signal, not erase it."""
+    """Insert or refresh an author. Existing affiliation/profile/links are kept if the new
+    record lacks them (COALESCE), so a later note can only *add* signal, not erase it.
+
+    ``expertise`` is NULL on an un-enriched (paper-only) note and the JSON list on an
+    enriched run; ``COALESCE(:expertise, …)`` therefore writes ``'[]'`` on a fresh insert
+    and never wipes a profile's expertise list when a later bare note re-touches the row.
+    """
+    expertise = json.dumps(author.expertise, ensure_ascii=False) if author.expertise else None
     conn.execute(
         """
         INSERT INTO authors (
             id, profile_id, display_name, aliases_json, affiliation_current,
-            affiliation_country, data_quality, profile_url
-        ) VALUES (?, ?, ?, '[]', ?, ?, ?, ?)
+            affiliation_country, data_quality, profile_url, homepage, gscholar, dblp,
+            expertise_json
+        ) VALUES (
+            :id, :profile_id, :display_name, '[]', :affiliation, :country, :data_quality,
+            :profile_url, :homepage, :gscholar, :dblp, COALESCE(:expertise, '[]')
+        )
         ON CONFLICT(id) DO UPDATE SET
             display_name=excluded.display_name,
             profile_id=COALESCE(excluded.profile_id, authors.profile_id),
             affiliation_current=COALESCE(excluded.affiliation_current, authors.affiliation_current),
             affiliation_country=COALESCE(excluded.affiliation_country, authors.affiliation_country),
             data_quality=excluded.data_quality,
-            profile_url=COALESCE(excluded.profile_url, authors.profile_url)
+            profile_url=COALESCE(excluded.profile_url, authors.profile_url),
+            homepage=COALESCE(excluded.homepage, authors.homepage),
+            gscholar=COALESCE(excluded.gscholar, authors.gscholar),
+            dblp=COALESCE(excluded.dblp, authors.dblp),
+            expertise_json=COALESCE(:expertise, authors.expertise_json)
         """,
-        (
-            author.author_id,
-            author.profile_id,
-            author.display_name,
-            author.affiliation,
-            author.country,
-            author.data_quality,
-            author.profile_url,
-        ),
+        {
+            "id": author.author_id,
+            "profile_id": author.profile_id,
+            "display_name": author.display_name,
+            "affiliation": author.affiliation,
+            "country": author.country,
+            "data_quality": author.data_quality,
+            "profile_url": author.profile_url,
+            "homepage": author.homepage,
+            "gscholar": author.gscholar,
+            "dblp": author.dblp,
+            "expertise": expertise,
+        },
     )
 
 

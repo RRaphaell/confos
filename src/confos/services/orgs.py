@@ -30,14 +30,15 @@ def top_orgs(paths: Paths, *, venue: str | None = None, limit: int = 50) -> dict
         ]
         total = stats_repo.papers_total(conn, venue)
         with_signal = stats_repo.papers_with_affiliation(conn, venue)
+        low = stats_repo.papers_with_affiliation(conn, venue, confidence="low")
         return {
             "rows": rows,
             "data_quality": {
                 "papers_total": total,
                 "papers_with_signal": with_signal,
                 "unknown": total - with_signal,
-                "low_confidence": with_signal,
-                "method": "author_affiliation_domain_v1",
+                "low_confidence": low,
+                "method": "author_affiliation_profile_v1",
             },
         }
     finally:

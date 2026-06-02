@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from .countries import country_from_domain
+from .countries import country_from_domain, country_from_iso_alpha2
 
 # Seed map: email domain → (display name, country). Small + high-confidence by design.
 _DOMAIN_ORG_SEED: dict[str, tuple[str, str]] = {
@@ -87,6 +87,50 @@ def org_from_email(
         return _DOMAIN_ORG_SEED[domain]
     derived = _registrable_name(domain)
     return derived, _country(derived)
+
+
+def org_from_institution(
+    name: str | None,
+    domain: str | None,
+    country_code: str | None,
+    *,
+    org_aliases: dict[str, str] | None = None,
+    country_aliases: dict[str, str] | None = None,
+) -> tuple[str, str | None] | None:
+    """Best-effort ``(org_name, country)`` from a profile ``history[].institution`` entry.
+
+    Profiles carry a real institution *name* + *domain* + explicit *country* (ISO alpha-2),
+    so this is much stronger than the email-domain guess. Resolution order:
+
+    * **name:** user ``orgs.yml`` alias (by domain) → built-in seed (by domain) → the
+      profile's own institution name → the domain.
+    * **country:** the profile's explicit ISO code → ``countries.yml`` (by domain/name) →
+      domain-TLD heuristic → the seed's country.
+
+    Returns None if the entry has neither a name nor a domain.
+    """
+    org_aliases = org_aliases or {}
+    country_aliases = country_aliases or {}
+    domain = (domain or "").strip().lower() or None
+    name = (name or "").strip() or None
+    if not name and not domain:
+        return None
+
+    if domain and domain in org_aliases:
+        org_name = org_aliases[domain]
+    elif domain and domain in _DOMAIN_ORG_SEED:
+        org_name = _DOMAIN_ORG_SEED[domain][0]
+    else:
+        org_name = name or domain or ""
+
+    country = (
+        country_from_iso_alpha2(country_code)
+        or (country_aliases.get(domain) if domain else None)
+        or country_aliases.get(org_name.lower())
+        or (country_from_domain(domain) if domain else None)
+        or (_DOMAIN_ORG_SEED[domain][1] if domain in _DOMAIN_ORG_SEED else None)
+    )
+    return org_name, country
 
 
 def org_slug(name: str) -> str:

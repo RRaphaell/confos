@@ -49,11 +49,17 @@ def paper_dict(
 
 
 def author_dict(row: sqlite3.Row) -> dict[str, Any]:
-    """An Author object (SCHEMAS §3). Affiliation falls back to ``"Unknown"`` (honest)."""
+    """An Author object (SCHEMAS §3). Affiliation falls back to ``"Unknown"`` (honest);
+    profile-enrichment fields (country/links/expertise) are null/empty until enriched."""
     return {
         "author_id": row["id"],
         "display_name": row["display_name"],
         "affiliation_current": row["affiliation_current"] or "Unknown",
+        "affiliation_country": row["affiliation_country"],
         "data_quality": row["data_quality"],
         "profile_url": row["profile_url"],
+        "homepage": row["homepage"],
+        "gscholar": row["gscholar"],
+        "dblp": row["dblp"],
+        "expertise": json.loads(row["expertise_json"] or "[]"),
     }

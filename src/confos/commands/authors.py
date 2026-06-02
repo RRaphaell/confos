@@ -120,14 +120,20 @@ def show(
     if app_ctx.is_plain:
         key_value_plain(app_ctx.out, [(k, v) for k, v in author.items() if k != "venues"])
         return
+    expertise = ", ".join(author["expertise"]) if author["expertise"] else "—"
     key_value_table(
         app_ctx.out,
         [
             ("name", author["display_name"]),
             ("affiliation", author["affiliation_current"]),
+            ("country", str(author["affiliation_country"] or "—")),
             ("data quality", author["data_quality"]),
             ("papers", str(author["paper_count"])),
             ("profile", str(author["profile_url"] or "—")),
+            ("homepage", str(author["homepage"] or "—")),
+            ("scholar", str(author["gscholar"] or "—")),
+            ("dblp", str(author["dblp"] or "—")),
+            ("expertise", expertise),
         ],
         title=author["author_id"],
     )

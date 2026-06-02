@@ -23,8 +23,9 @@ from importlib.resources import files
 
 from ..errors import ConfigError
 
-# Bumped by each schema-changing phase. v2 = Phase 0 (pdf/bibtex/supplementary columns).
-SCHEMA_VERSION = 2
+# Bumped by each schema-changing phase. v2 = Phase 0 (pdf/bibtex/supplementary columns);
+# v3 = Phase 1 (author profile-enrichment columns).
+SCHEMA_VERSION = 3
 
 # Derived (rebuildable) FTS tables — dropped/recreated by `index rebuild`.
 _DERIVED_TABLES = ("papers_fts", "authors_fts", "orgs_fts")
@@ -58,6 +59,18 @@ _MIGRATIONS: tuple[tuple[int, _Migration], ...] = (
         _add_columns(
             "papers",
             [("pdf_url", "TEXT"), ("bibtex", "TEXT"), ("supplementary_url", "TEXT")],
+        ),
+    ),
+    (
+        3,  # Phase 1 — author profile enrichment (homepage/scholar/dblp/expertise).
+        _add_columns(
+            "authors",
+            [
+                ("homepage", "TEXT"),
+                ("gscholar", "TEXT"),
+                ("dblp", "TEXT"),
+                ("expertise_json", "TEXT NOT NULL DEFAULT '[]'"),
+            ],
         ),
     ),
 )

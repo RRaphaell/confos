@@ -57,15 +57,17 @@ def orgs(paths: Paths, venue: str | None = None, *, limit: int = 50) -> dict[str
         migrate(conn)
         total = stats_repo.papers_total(conn, venue)
         with_signal = stats_repo.papers_with_affiliation(conn, venue)
+        low = stats_repo.papers_with_affiliation(conn, venue, confidence="low")
         rows = [
             {"key": r["key"], "papers": r["papers"]}
             for r in stats_repo.org_counts(conn, venue, limit=limit)
         ]
-        # v1 affiliations come only from email domains → all low-confidence (honest).
+        # Affiliations are profile-derived (high) where a profile snapshot exists, else an
+        # email-domain guess (low). `low_confidence` reports only the latter (honest).
         return {
             "rows": rows,
             "data_quality": _quality(
-                total, with_signal, low=with_signal, method="author_affiliation_domain_v1"
+                total, with_signal, low=low, method="author_affiliation_profile_v1"
             ),
         }
     finally:
@@ -78,14 +80,17 @@ def countries(paths: Paths, venue: str | None = None, *, limit: int = 50) -> dic
         migrate(conn)
         total = stats_repo.papers_total(conn, venue)
         with_signal = stats_repo.papers_with_country(conn, venue)
+        low = stats_repo.papers_with_affiliation(conn, venue, confidence="low")
         rows = [
             {"key": r["key"], "papers": r["papers"]}
             for r in stats_repo.country_counts(conn, venue, limit=limit)
         ]
+        # Country comes from the profile's explicit ISO code (authoritative) or, for
+        # email-derived affiliations, a domain-TLD guess (low).
         return {
             "rows": rows,
             "data_quality": _quality(
-                total, with_signal, low=with_signal, method="affiliation_country_domain_v1"
+                total, with_signal, low=low, method="affiliation_country_profile_v1"
             ),
         }
     finally:

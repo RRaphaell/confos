@@ -61,12 +61,17 @@ def rebuild(paths: Paths) -> dict[str, Any]:
         for venue_dir in _snapshots(paths):
             ref = _load_ref(venue_dir)
             adapter = _adapter_for(ref.source)
+            profiles = _load_profiles(venue_dir)  # optional Phase-1 enrichment snapshot
             papers = []
             for line in (venue_dir / "submissions.jsonl").read_text("utf-8").splitlines():
                 if not line.strip():
                     continue
                 try:
-                    papers.append(adapter.normalize(json.loads(line), ref, aliases=aliases))
+                    papers.append(
+                        adapter.normalize(
+                            json.loads(line), ref, aliases=aliases, profiles=profiles
+                        )
+                    )
                 except Exception:  # skip an unparseable/invalid note line, keep going
                     failed += 1
             prepared.append((ref, papers))
@@ -85,6 +90,30 @@ def rebuild(paths: Paths) -> dict[str, Any]:
         return {"venues": len(prepared), "papers": papers_done, "failed": failed}
     finally:
         conn.close()
+
+
+def _load_profiles(venue_dir: Path) -> dict[str, Any]:
+    """Load ``profiles.jsonl`` (handle → raw profile) if present, else an empty map.
+
+    Best-effort: bad lines and profiles missing usable content (e.g. ``not_found``
+    markers, kept so we don't re-fetch them) are skipped. The map drives author
+    enrichment during rebuild with no network (D3).
+    """
+    path = venue_dir / "profiles.jsonl"
+    if not path.exists():
+        return {}
+    profiles: dict[str, Any] = {}
+    for line in path.read_text("utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        handle = record.get("id")
+        if isinstance(handle, str) and record.get("content"):
+            profiles[handle] = record
+    return profiles
 
 
 def _load_ref(venue_dir: Path) -> VenueRef:

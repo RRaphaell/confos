@@ -192,15 +192,15 @@ def test_stats_orgs_is_honest_about_sparsity(corpus: Paths) -> None:
     assert dq["papers_total"] == 6
     assert dq["papers_with_signal"] == 1  # only bbb2 (bob@mit.edu) has an affiliation
     assert dq["unknown"] == 5
-    assert dq["low_confidence"] == 1  # all v1 affiliations are email-domain → low confidence
-    assert dq["method"] == "author_affiliation_domain_v1"
+    assert dq["low_confidence"] == 1  # the email-domain affiliation is low confidence
+    assert dq["method"] == "author_affiliation_profile_v1"
     assert any(r["key"] == "MIT" for r in result["rows"])
 
 
 def test_stats_countries(corpus: Paths) -> None:
     result = stats_service.countries(corpus)
     assert any(r["key"] == "United States" for r in result["rows"])  # MIT → US
-    assert result["data_quality"]["method"] == "affiliation_country_domain_v1"
+    assert result["data_quality"]["method"] == "affiliation_country_profile_v1"
 
 
 def test_index_rebuild_is_idempotent(corpus: Paths) -> None:

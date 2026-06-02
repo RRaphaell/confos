@@ -78,19 +78,30 @@ def test_future_schema_version_rejected(tmp_path: Path) -> None:
         conn.close()
 
 
+# Minimal stand-ins for a real v0.1.0 (v1) store's tables that the incremental steps
+# ALTER — enough for the migration ladder to run without the full schema.
+_V1_TABLES = (
+    "CREATE TABLE papers (id TEXT PRIMARY KEY, title TEXT)",
+    "CREATE TABLE authors (id TEXT PRIMARY KEY, display_name TEXT)",
+)
+
+
 def test_incremental_upgrade_v1_to_latest_adds_columns(tmp_path: Path) -> None:
-    # An existing v0.1.0 store (user_version=1, no Phase-0 columns) must upgrade in place:
-    # apply only the additive ALTER steps and stamp the latest version — no re-init.
+    # An existing v0.1.0 store (user_version=1, no enrichment columns) must upgrade in
+    # place: apply every additive ALTER step and stamp the latest version — no re-init.
     conn = connect(tmp_path / "confos.db")
     try:
-        conn.execute("CREATE TABLE papers (id TEXT PRIMARY KEY, title TEXT)")
+        for ddl in _V1_TABLES:
+            conn.execute(ddl)
         conn.execute("PRAGMA user_version = 1")
         conn.commit()
         assert current_version(conn) == 1
         assert migrate(conn) is True
         assert current_version(conn) == SCHEMA_VERSION
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
-        assert {"pdf_url", "bibtex", "supplementary_url"} <= cols
+        paper_cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
+        assert {"pdf_url", "bibtex", "supplementary_url"} <= paper_cols
+        author_cols = {row[1] for row in conn.execute("PRAGMA table_info(authors)")}
+        assert {"homepage", "gscholar", "dblp", "expertise_json"} <= author_cols
         assert migrate(conn) is False  # idempotent once caught up
     finally:
         conn.close()
@@ -101,13 +112,16 @@ def test_incremental_upgrade_is_crash_safe(tmp_path: Path) -> None:
     # must add only the missing columns (no "duplicate column name" error).
     conn = connect(tmp_path / "confos.db")
     try:
-        conn.execute("CREATE TABLE papers (id TEXT PRIMARY KEY)")
+        for ddl in _V1_TABLES:
+            conn.execute(ddl)
         conn.execute("ALTER TABLE papers ADD COLUMN pdf_url TEXT")
         conn.execute("PRAGMA user_version = 1")
         conn.commit()
         assert migrate(conn) is True
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
-        assert {"pdf_url", "bibtex", "supplementary_url"} <= cols
+        paper_cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
+        assert {"pdf_url", "bibtex", "supplementary_url"} <= paper_cols
+        author_cols = {row[1] for row in conn.execute("PRAGMA table_info(authors)")}
+        assert {"homepage", "gscholar", "dblp", "expertise_json"} <= author_cols
     finally:
         conn.close()
 

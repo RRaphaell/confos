@@ -8,7 +8,7 @@ from confos.adapters.base import RawNote, extract_year, slugify_venue_id
 from confos.adapters.openreview import OpenReviewAdapter
 from confos.errors import UsageError
 from confos.models import NormalizedPaper
-from tests.synthetic import FAKE_REF, make_note
+from tests.synthetic import FAKE_REF, make_note, make_profile
 
 ADAPTER = OpenReviewAdapter()
 
@@ -129,6 +129,63 @@ def test_author_identity_variants() -> None:
     assert carol.data_quality == "unresolved"
     # positions preserved (S6)
     assert [a.position for a in paper.authors] == [0, 1, 2]
+
+
+def test_profile_enrichment_maps_institution_links_and_expertise() -> None:
+    profiles = {
+        "~Alice_Smith1": make_profile(
+            "~Alice_Smith1",
+            name="EleutherAI",
+            domain="eleuther.ai",
+            country="US",
+            homepage="https://alice.example",
+            gscholar="https://scholar.google.com/citations?user=abc",
+            dblp="https://dblp.org/pid/1/2",
+            expertise=["language models", "Language Models", "interpretability"],
+        )
+    }
+    note = make_note("pe", authors=["Alice Smith"], authorids=["~Alice_Smith1"])
+    author = ADAPTER.normalize(note, FAKE_REF, profiles=profiles).authors[0]
+    assert author.affiliation == "EleutherAI"
+    assert author.country == "United States"  # ISO 'US' → display name
+    assert author.homepage == "https://alice.example"
+    assert author.gscholar == "https://scholar.google.com/citations?user=abc"
+    assert author.dblp == "https://dblp.org/pid/1/2"
+    assert author.expertise == ["language models", "interpretability"]  # de-duped, order kept
+    assert author.data_quality == "resolved"
+
+
+def test_profile_current_institution_prefers_open_ended_entry() -> None:
+    history: list[dict[str, object]] = [
+        {"start": 2020, "end": 2021, "institution": {"name": "Old U", "domain": "old.edu"}},
+        {
+            "start": 2022,
+            "end": None,
+            "institution": {"name": "Current Lab", "domain": "current.ai", "country": "GB"},
+        },
+    ]
+    profiles = {"~Bob_Tan1": make_profile("~Bob_Tan1", history=history)}
+    note = make_note("pc", authors=["Bob Tan"], authorids=["~Bob_Tan1"])
+    author = ADAPTER.normalize(note, FAKE_REF, profiles=profiles).authors[0]
+    assert author.affiliation == "Current Lab"
+    assert author.country == "United Kingdom"
+
+
+def test_profile_without_institution_keeps_resolved_identity_no_affiliation() -> None:
+    profiles = {"~Carol_X1": make_profile("~Carol_X1", history=[])}
+    note = make_note("pn", authors=["Carol X"], authorids=["~Carol_X1"])
+    author = ADAPTER.normalize(note, FAKE_REF, profiles=profiles).authors[0]
+    assert author.affiliation is None
+    assert author.country is None
+    assert author.expertise == []
+    assert author.data_quality == "resolved"  # tilde identity is still resolved
+
+
+def test_normalize_without_profiles_is_unchanged() -> None:
+    # The enrichment path is fully opt-in: no profiles map → no affiliation/links (the
+    # pre-Phase-1 behavior for a tilde author).
+    author = _normalize(make_note("p0", authors=["Dee"], authorids=["~Dee1"])).authors[0]
+    assert author.affiliation is None and author.homepage is None and author.expertise == []
 
 
 def test_topics_and_provenance_url() -> None:

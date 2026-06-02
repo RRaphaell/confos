@@ -134,9 +134,17 @@ def country_counts(
     ).fetchall()
 
 
-def papers_with_affiliation(conn: sqlite3.Connection, venue: str | None = None) -> int:
+def papers_with_affiliation(
+    conn: sqlite3.Connection, venue: str | None = None, *, confidence: str | None = None
+) -> int:
+    """Papers with an affiliation signal, optionally restricted to a confidence tier
+    (``'high'`` = profile-derived, ``'low'`` = email-domain guess)."""
     clause, params = _scope(venue)
-    where = f"WHERE {clause}" if clause else ""
+    conds = [clause] if clause else []
+    if confidence is not None:
+        conds.append("aa.confidence = :confidence")
+        params = {**params, "confidence": confidence}
+    where = f"WHERE {' AND '.join(conds)}" if conds else ""
     return int(
         conn.execute(
             "SELECT COUNT(DISTINCT p.id) FROM papers p "

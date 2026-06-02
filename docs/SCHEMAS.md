@@ -62,11 +62,18 @@ venueid suffix); papers there used to mislabel as `unknown`.
   "author_id": "~Alice_Smith1",             // profile id, or "email:a@mit.edu", or "name:alice-smith#1" (C3/S5)
   "display_name": "Alice Smith",
   "affiliation_current": "MIT" ,            // or "Unknown"
+  "affiliation_country": "United States",   // null if unknown (profile ISO code → name, else domain TLD)
   "data_quality": "resolved|low|unresolved",
-  "profile_url": "https://openreview.net/profile?id=~Alice_Smith1"  // null if no profile
+  "profile_url": "https://openreview.net/profile?id=~Alice_Smith1",  // null if no profile
+  "homepage": "https://…",                  // null until profile-enriched (`confos enrich profiles`)
+  "gscholar": "https://scholar.google.com/…", // null until enriched
+  "dblp": "https://dblp.org/pid/…",         // null until enriched
+  "expertise": ["language models", "…"]      // self-declared keywords; [] until enriched
 }
 ```
-`authors find` extends this with the ranking fields in [RANKING.md](RANKING.md) §2.
+`affiliation_country`/`homepage`/`gscholar`/`dblp`/`expertise` come from author **profile
+enrichment** (Phase 1) — populated by `confos enrich profiles --venue <slug>` (or absent/empty
+until then). `authors find` extends this with the ranking fields in [RANKING.md](RANKING.md) §2.
 
 ## 4. Stats object (topics/orgs/countries; `orgs top` carries it too)
 Every stats payload includes a `data_quality` block — confos never fakes clean numbers.

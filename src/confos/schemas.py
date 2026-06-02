@@ -47,8 +47,13 @@ _AUTHOR = {
     "author_id": "string (profile id | email:<addr> | name:<slug>#…)",
     "display_name": "string",
     "affiliation_current": "string ('Unknown' if absent)",
+    "affiliation_country": "string|null (profile ISO code → name, else domain heuristic)",
     "data_quality": "resolved|low|unresolved",
-    "profile_url": "string|null",
+    "profile_url": "string|null (OpenReview profile)",
+    "homepage": "string|null (from profile enrichment)",
+    "gscholar": "string|null (Google Scholar URL, from profile)",
+    "dblp": "string|null (DBLP URL, from profile)",
+    "expertise": "string[] (self-declared keywords from profile; [] until enriched)",
 }
 
 _FOUND_AUTHOR = {

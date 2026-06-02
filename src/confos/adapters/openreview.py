@@ -17,9 +17,9 @@ from ..aliases import NormalizeAliases
 from ..config import DEFAULT_OPENREVIEW_BASEURL
 from ..errors import NetworkError, UsageError
 from ..models import NormalizedAuthor, NormalizedPaper, PaperStatus, VenueRef
-from ..normalize.orgs import org_from_email
+from ..normalize.orgs import org_from_email, org_from_institution
 from ..normalize.topics import normalize_keywords
-from .base import RawNote, extract_year, slugify_venue_id
+from .base import RawNote, RawProfile, extract_year, slugify_venue_id
 
 # Curated alias map for major venues. Workshops/arbitrary venues use a raw id or
 # `venues add` — we never derive ids algorithmically (research §3).
@@ -225,7 +225,12 @@ class OpenReviewAdapter:
             offset += len(notes)
 
     def normalize(
-        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+        self,
+        raw: RawNote,
+        ref: VenueRef,
+        *,
+        aliases: NormalizeAliases | None = None,
+        profiles: dict[str, RawProfile] | None = None,
     ) -> NormalizedPaper:
         content = raw.get("content") or {}
         paper_id = str(raw.get("id") or "")
@@ -264,7 +269,7 @@ class OpenReviewAdapter:
             pdate=raw.get("pdate"),
             tcdate=raw.get("tcdate"),
             tmdate=raw.get("tmdate"),
-            authors=_normalize_authors(content, paper_id, aliases),
+            authors=_normalize_authors(content, paper_id, aliases, profiles),
             topics=normalize_keywords(keywords),
         )
 
@@ -407,7 +412,10 @@ def _derive_acceptance_type(venue_string: str | None, details: Any) -> str | Non
 
 
 def _normalize_authors(
-    content: dict[str, Any], paper_id: str, aliases: NormalizeAliases | None
+    content: dict[str, Any],
+    paper_id: str,
+    aliases: NormalizeAliases | None,
+    profiles: dict[str, RawProfile] | None,
 ) -> list[NormalizedAuthor]:
     names_raw = _unwrap(content, "authors")
     ids_raw = _unwrap(content, "authorids")
@@ -418,14 +426,21 @@ def _normalize_authors(
         if not isinstance(name, str):
             continue
         raw_id = ids[position] if position < len(ids) and isinstance(ids[position], str) else None
-        authors.append(_normalize_author(name, raw_id, paper_id, position, aliases))
+        authors.append(_normalize_author(name, raw_id, paper_id, position, aliases, profiles))
     return authors
 
 
 def _normalize_author(
-    name: str, raw_id: str | None, paper_id: str, position: int, aliases: NormalizeAliases | None
+    name: str,
+    raw_id: str | None,
+    paper_id: str,
+    position: int,
+    aliases: NormalizeAliases | None,
+    profiles: dict[str, RawProfile] | None,
 ) -> NormalizedAuthor:
     if raw_id and raw_id.startswith("~"):
+        profile = profiles.get(raw_id) if profiles else None
+        enrichment = _profile_enrichment(profile, aliases) if profile else {}
         return NormalizedAuthor(
             author_id=raw_id,
             profile_id=raw_id,
@@ -433,7 +448,13 @@ def _normalize_author(
             position=position,
             raw_name=name,
             data_quality="resolved",
-            profile_url=f"https://openreview.net/profile?id={raw_id}",
+            profile_url=f"{_OPENREVIEW_WEB}/profile?id={raw_id}",
+            affiliation=enrichment.get("affiliation"),
+            country=enrichment.get("country"),
+            homepage=enrichment.get("homepage"),
+            gscholar=enrichment.get("gscholar"),
+            dblp=enrichment.get("dblp"),
+            expertise=enrichment.get("expertise", []),
         )
     if raw_id and "@" in raw_id:
         email = raw_id.strip().lower()
@@ -462,3 +483,83 @@ def _normalize_author(
         raw_name=name,
         data_quality="unresolved",
     )
+
+
+# --- profile enrichment (Phase 1) ------------------------------------------------
+# Profile ``content`` is FLAT (unlike note content, it is not wrapped in {"value": …}).
+
+
+def _profile_enrichment(
+    profile: RawProfile | None, aliases: NormalizeAliases | None
+) -> dict[str, Any]:
+    """Affiliation/country/links/expertise from one profile snapshot (best-effort)."""
+    content = (profile.get("content") if isinstance(profile, dict) else None) or {}
+    affiliation: str | None = None
+    country: str | None = None
+    institution = _current_institution(content)
+    if institution is not None:
+        resolved = org_from_institution(
+            institution.get("name"),
+            institution.get("domain"),
+            institution.get("country"),
+            org_aliases=aliases.orgs if aliases else None,
+            country_aliases=aliases.countries if aliases else None,
+        )
+        if resolved is not None:
+            affiliation, country = resolved
+    return {
+        "affiliation": affiliation,
+        "country": country,
+        "homepage": _profile_link(content, "homepage"),
+        "gscholar": _profile_link(content, "gscholar"),
+        "dblp": _profile_link(content, "dblp"),
+        "expertise": _profile_expertise(content),
+    }
+
+
+def _year(value: Any) -> int:
+    return value if isinstance(value, int) else 0
+
+
+def _current_institution(content: dict[str, Any]) -> dict[str, Any] | None:
+    """The author's current institution: the ``history`` entry that is still open
+    (``end is None``), else the most recent one (latest start, then end)."""
+    history = content.get("history")
+    if not isinstance(history, list):
+        return None
+    entries = [
+        h for h in history if isinstance(h, dict) and isinstance(h.get("institution"), dict)
+    ]
+    if not entries:
+        return None
+    current = max(
+        entries,
+        key=lambda h: (h.get("end") is None, _year(h.get("start")), _year(h.get("end"))),
+    )
+    institution = current.get("institution")
+    return institution if isinstance(institution, dict) else None
+
+
+def _profile_link(content: dict[str, Any], key: str) -> str | None:
+    value = content.get(key)
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _profile_expertise(content: dict[str, Any], *, cap: int = 20) -> list[str]:
+    """Flattened, de-duplicated expertise keywords (order preserved, bounded)."""
+    raw = content.get("expertise")
+    if not isinstance(raw, list):
+        return []
+    out: list[str] = []
+    seen: set[str] = set()
+    for entry in raw:
+        keywords = entry.get("keywords") if isinstance(entry, dict) else None
+        if not isinstance(keywords, list):
+            continue
+        for keyword in keywords:
+            if isinstance(keyword, str) and keyword.strip():
+                key = keyword.strip().lower()
+                if key not in seen:
+                    seen.add(key)
+                    out.append(keyword.strip())
+    return out[:cap]

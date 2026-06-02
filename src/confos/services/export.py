@@ -168,8 +168,13 @@ _AUTHOR_COLUMNS = [
     "author_id",
     "display_name",
     "affiliation_current",
+    "affiliation_country",
     "data_quality",
     "profile_url",
+    "homepage",
+    "gscholar",
+    "dblp",
+    "expertise",
 ]
 
 
@@ -200,8 +205,13 @@ def _author_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
                 "author_id": r["id"],
                 "display_name": r["display_name"],
                 "affiliation_current": r["affiliation_current"] or "Unknown",
+                "affiliation_country": r["affiliation_country"] or "",
                 "data_quality": r["data_quality"],
                 "profile_url": r["profile_url"],
+                "homepage": r["homepage"] or "",
+                "gscholar": r["gscholar"] or "",
+                "dblp": r["dblp"] or "",
+                "expertise": "; ".join(json.loads(r["expertise_json"] or "[]")),
             }
             for r in authors_repo.list_for_export(conn, venue)
         ]

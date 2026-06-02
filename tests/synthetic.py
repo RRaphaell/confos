@@ -71,6 +71,46 @@ def make_note(
     }
 
 
+def make_profile(
+    handle: str,
+    *,
+    name: str | None = "EleutherAI",
+    domain: str | None = "eleuther.ai",
+    country: str | None = "US",
+    homepage: str | None = None,
+    gscholar: str | None = None,
+    dblp: str | None = None,
+    expertise: list[str] | None = None,
+    history: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
+    """A profiles.jsonl-shaped record (``{id, content}``) for enrichment tests.
+
+    By default it has one open-ended (current) institution; pass ``history=[]`` for a
+    profile with no institution, or a custom ``history`` list to test selection.
+    """
+    content: dict[str, object] = {}
+    if history is not None:
+        content["history"] = history
+    elif name or domain:
+        content["history"] = [
+            {
+                "start": 2022,
+                "end": None,
+                "position": "Researcher",
+                "institution": {"name": name, "domain": domain, "country": country},
+            }
+        ]
+    if homepage is not None:
+        content["homepage"] = homepage
+    if gscholar is not None:
+        content["gscholar"] = gscholar
+    if dblp is not None:
+        content["dblp"] = dblp
+    if expertise is not None:
+        content["expertise"] = [{"keywords": expertise, "start": 2022, "end": None}]
+    return {"id": handle, "content": content}
+
+
 class FakeAdapter:
     """A SourceAdapter that yields canned notes; normalize uses the real OpenReview logic.
 
@@ -112,8 +152,13 @@ class FakeAdapter:
         yield from collected.values()
 
     def normalize(
-        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+        self,
+        raw: RawNote,
+        ref: VenueRef,
+        *,
+        aliases: NormalizeAliases | None = None,
+        profiles: dict[str, dict[str, object]] | None = None,
     ) -> NormalizedPaper:
         if raw.get("id") == "BAD-NOTE":
             raise ValueError("synthetic normalize failure")
-        return self._real.normalize(raw, ref, aliases=aliases)
+        return self._real.normalize(raw, ref, aliases=aliases, profiles=profiles)

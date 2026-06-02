@@ -133,7 +133,10 @@ def upsert_normalized_paper(conn: sqlite3.Connection, paper: NormalizedPaper) ->
         authors_repo.upsert_author(conn, author)
         if author.affiliation:
             org_id = orgs_repo.upsert_org(conn, author.affiliation, author.country)
-            orgs_repo.link_affiliation(conn, author.author_id, org_id, confidence="low")
+            # A tilde-profile affiliation is profile-derived (high); an email-domain one is
+            # a best-effort guess (low). profile_id is set iff the org came from a profile.
+            confidence = "high" if author.profile_id else "low"
+            orgs_repo.link_affiliation(conn, author.author_id, org_id, confidence=confidence)
     return papers_repo.upsert_paper(conn, paper)
 
 

@@ -62,6 +62,11 @@ class NormalizedAuthor(BaseModel):
     country: str | None = None
     data_quality: DataQuality = "resolved"
     profile_url: str | None = None
+    # Profile-enrichment fields (Phase 1) — populated when a profile snapshot is available.
+    homepage: str | None = None
+    gscholar: str | None = None
+    dblp: str | None = None
+    expertise: list[str] = Field(default_factory=list)
 
 
 class NormalizedPaper(BaseModel):

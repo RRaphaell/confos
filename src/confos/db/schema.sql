@@ -68,7 +68,11 @@ CREATE TABLE IF NOT EXISTS authors (
     affiliation_current TEXT,                      -- normalized org name, or NULL
     affiliation_country TEXT,                      -- normalized country, or NULL
     data_quality        TEXT NOT NULL DEFAULT 'resolved', -- resolved|low|unresolved
-    profile_url         TEXT
+    profile_url         TEXT,
+    homepage            TEXT,                      -- personal/lab homepage (from profile)
+    gscholar            TEXT,                      -- Google Scholar profile URL
+    dblp                TEXT,                      -- DBLP author URL
+    expertise_json      TEXT NOT NULL DEFAULT '[]' -- JSON array of self-declared expertise keywords
 );
 
 CREATE TABLE IF NOT EXISTS paper_authors (

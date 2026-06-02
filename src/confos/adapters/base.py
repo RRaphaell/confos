@@ -11,6 +11,8 @@ from ..models import IngestOptions, NormalizedPaper, VenueRef
 
 # A raw note is the source's payload, snapshotted verbatim to JSONL (the truth, D3).
 RawNote = dict[str, Any]
+# A raw author profile, snapshotted to profiles.jsonl (Phase 1) and replayed at rebuild.
+RawProfile = dict[str, Any]
 
 
 @runtime_checkable
@@ -36,12 +38,19 @@ class SourceAdapter(Protocol):
         ...
 
     def normalize(
-        self, raw: RawNote, ref: VenueRef, *, aliases: NormalizeAliases | None = None
+        self,
+        raw: RawNote,
+        ref: VenueRef,
+        *,
+        aliases: NormalizeAliases | None = None,
+        profiles: dict[str, RawProfile] | None = None,
     ) -> NormalizedPaper:
         """Turn one raw note into a normalized paper (pure; safe to replay from JSONL).
 
         ``aliases`` (org/country) are applied during normalization so re-running with
         better alias files (via ``index rebuild``) improves the index without re-fetch.
+        ``profiles`` (handle → raw profile, Phase 1) enriches each author's affiliation,
+        country, and links when present — also replayable from ``profiles.jsonl``.
         """
         ...
 
