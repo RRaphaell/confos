@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import math
 import os
 import re
 from collections.abc import Iterable, Iterator
@@ -482,7 +483,7 @@ def _parse_score(raw: Any) -> int | None:
     if isinstance(raw, int):
         return raw
     if isinstance(raw, float):
-        return int(raw)
+        return int(raw) if math.isfinite(raw) else None  # NaN/Inf (json.loads can emit) → None
     if isinstance(raw, str):
         match = _LEADING_INT.match(raw)
         if match:
@@ -501,16 +502,26 @@ def _reviewer_key(reply: dict[str, Any]) -> str:
 
 
 def _parse_reviews(details: Any) -> list[NormalizedReview]:
-    """Parse Official_Review replies (rating/confidence/sub-scores) from a note's details."""
+    """Parse Official_Review replies (rating/confidence/sub-scores) from a note's details.
+
+    De-duplicated by ``reviewer_key`` (keeping the first): the reviews table PK is
+    ``(paper_id, reviewer_key)``, so a duplicate signature would be dropped on write — we
+    drop it here too, keeping the stored rows and the aggregates computed from one set.
+    """
     if not isinstance(details, dict):
         return []
     reviews: list[NormalizedReview] = []
+    seen: set[str] = set()
     for reply in details.get("replies") or []:
         if not isinstance(reply, dict):
             continue
         invitations = reply.get("invitations") or []
         if not any(str(inv).endswith("Official_Review") for inv in invitations):
             continue
+        reviewer_key = _reviewer_key(reply)
+        if reviewer_key in seen:
+            continue
+        seen.add(reviewer_key)
         content = reply.get("content") or {}
         rating_raw = _unwrap(content, "rating")
         sub_scores = {
@@ -520,7 +531,7 @@ def _parse_reviews(details: Any) -> list[NormalizedReview]:
         }
         reviews.append(
             NormalizedReview(
-                reviewer_key=_reviewer_key(reply),
+                reviewer_key=reviewer_key,
                 rating=_parse_score(rating_raw),
                 confidence=_parse_score(_unwrap(content, "confidence")),
                 sub_scores=sub_scores,

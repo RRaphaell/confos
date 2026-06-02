@@ -48,7 +48,7 @@ def build_brief(
         people = ranking_service.find_authors(paths, topic, venue=venue, limit=author_limit)[
             "authors"
         ]
-        thin_areas = export_service.build_context_pack(paths, topic, venue=venue)["thin_areas"]
+        thin_areas = export_service.topic_thin_areas(paths, topic, venue=venue)
     else:
         # Venue landscape: top-rated papers (reviews) → recent fallback; most-prolific people.
         top = search_service.top_papers(paths, order="rating", venue=venue, limit=paper_limit)
@@ -105,7 +105,8 @@ def brief_markdown(brief: dict[str, Any]) -> str:
     if brief["rising_orgs"]:
         lines.append("## Organisations")
         for org in brief["rising_orgs"]:
-            lines.append(f"- {org['key']}: {org['papers']} paper(s)")
+            country = f" ({org['country']})" if org.get("country") else ""
+            lines.append(f"- {org['name']}{country}: {org['papers']} paper(s)")
         lines.append("")
 
     if brief["people_to_know"]:

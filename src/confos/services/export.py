@@ -80,6 +80,21 @@ def build_context_pack(
     }
 
 
+def topic_thin_areas(paths: Paths, topic: str, *, venue: str | None = None) -> list[str]:
+    """Just the thin-areas heuristic for a topic (no people/abstract assembly).
+
+    Used by ``confos brief`` so it doesn't build a whole context pack for one field.
+    """
+    conn = connect(paths.db)
+    try:
+        migrate(conn)
+        fts = topic_query(topic, load_topic_aliases(paths))
+        rows = papers_repo.search(conn, fts, venue=venue, limit=_PACK_CAP)
+        return _thin_areas(conn, [r["id"] for r in rows])
+    finally:
+        conn.close()
+
+
 def _top_orgs(conn: Any, rows: list[Any], *, limit: int = 10) -> list[dict[str, Any]]:
     if not rows:
         return []

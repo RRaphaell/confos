@@ -186,6 +186,18 @@ Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
 
 ## Validation log
 _(one line per subagent pass, per phase — added as the build proceeds)_
+- 2026-06-03 · Enrichment chapter (Phases 0,1,2,5) · adversarial multi-agent review (4
+  dimensions × find→verify, 15 reported → 9 confirmed, 6 dismissed — the migration ladder,
+  schema parity, and rebuild were all confirmed correct) → fixed: **[HIGH]** `confos brief`
+  human/`--plain` crashed `KeyError('key')` on any venue with org affiliations (`brief_markdown`
+  read `org['key']` but `top_orgs` rows are `{name,country,papers}`) — my real-store check
+  missed it because that store has 0 orgs; **[MED]** `schema brief` rising_orgs shape corrected
+  to `[{name,country,papers}]`; **[MED]** review aggregate counted duplicate reviewers that the
+  table's `OR IGNORE` dropped → dedup by `reviewer_key` at parse time; **[LOW]** `_parse_score`
+  crashed on NaN/Inf floats (`json.loads` can emit them) → `math.isfinite` guard; **[LOW]**
+  `brief` thin-areas re-ran a full context pack → extracted a `topic_thin_areas` helper. Noted
+  (not fixed): controversial's `≥2` counts rating-less reviews (std-0 papers sort last);
+  topic-matcher alias edge in brief. +4 regression tests (244 total); gate green.
 - 2026-06-02 · Enrichment M0+Phase 0 · adversarial multi-agent review (4 dimensions ×
   find→verify, 11 reported → 4 confirmed, 7 dismissed) → fixed: **[MED]** `doctor` reported
   an upgradable v1 store as `fail: unsupported` (M0 regression) → now `warn: needs migration`,

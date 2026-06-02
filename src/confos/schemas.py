@@ -187,7 +187,7 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "overview": "stats.overview shape (papers, status, authors, orgs, topics, venues)",
             "top_papers": {"ranked_by": "rating|relevance|recent", "papers": [_PAPER]},
             "hot_topics": "[{key, papers}]",
-            "rising_orgs": "[{key, papers}]",
+            "rising_orgs": "[{name, country, papers}]",
             "people_to_know": "[Author] (ranked FoundAuthor with --topic, else top-by-count)",
             "thin_areas": "string[] (heuristic; only with --topic)",
             "data_quality": {"orgs": _STATS["data_quality"]},

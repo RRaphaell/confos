@@ -240,6 +240,37 @@ def test_note_without_replies_has_no_reviews() -> None:
     assert paper.decision is None
 
 
+def test_duplicate_reviewer_signatures_are_deduped() -> None:
+    # The reviews table PK is (paper_id, reviewer_key); a duplicate signature must be dropped
+    # at parse time so the aggregate and the stored rows agree (keep the first).
+    note = make_note("pd")
+    note["details"] = {
+        "replies": [
+            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
+             "content": {"rating": {"value": 8}}},
+            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
+             "content": {"rating": {"value": 2}}},
+        ]
+    }
+    paper = _normalize(note)
+    assert len(paper.reviews) == 1
+    assert paper.reviews[0].rating == 8  # first kept
+
+
+def test_non_finite_rating_does_not_crash() -> None:
+    # json.loads can emit NaN/Infinity; int(nan) would raise and drop the whole paper.
+    note = make_note("pnan")
+    note["details"] = {
+        "replies": [
+            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
+             "content": {"rating": {"value": float("nan")}, "confidence": {"value": float("inf")}}}
+        ]
+    }
+    paper = _normalize(note)  # must not raise
+    assert paper.reviews[0].rating is None
+    assert paper.reviews[0].confidence is None
+
+
 def test_topics_and_provenance_url() -> None:
     paper = _normalize(make_note("aBcD", keywords=["LLM Agents", "llm agents", "Memory"]))
     assert paper.topics == ["llm agents", "memory"]

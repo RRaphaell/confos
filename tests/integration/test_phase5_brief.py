@@ -90,6 +90,23 @@ def test_brief_markdown(tmp_path: Path) -> None:
     assert "## Top papers" in md and "## People to know" in md
 
 
+def test_brief_markdown_with_orgs_renders(tmp_path: Path) -> None:
+    # Regression: top_orgs rows are {name, country, papers} (NOT {key,...}); the Markdown
+    # render must not KeyError. The synthetic reviewed corpus has no affiliations, so this
+    # uses an email author (→ MIT org) to make rising_orgs non-empty.
+    paths = Paths(home=tmp_path / "store")
+    note = make_note("p1", title="agents", keywords=["agents"], venueid=PUB,
+                     authors=["Bob"], authorids=["bob@mit.edu"])
+    ingest_venue(
+        paths=paths, adapter=FakeAdapter(FAKE_REF, [note]), handle="test-venue",
+        opts=IngestOptions(),
+    )
+    brief = brief_service.build_brief(paths, venue="test-venue")
+    assert brief["rising_orgs"] and brief["rising_orgs"][0]["name"] == "MIT"
+    md = brief_service.brief_markdown(brief)  # must NOT raise KeyError('key')
+    assert "## Organisations" in md and "MIT" in md
+
+
 # --- CLI ---------------------------------------------------------------------
 
 
