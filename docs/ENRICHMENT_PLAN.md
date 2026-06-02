@@ -233,7 +233,14 @@ with `Rejected_Submission`.
 
 ---
 
-## Phase 1 — Author profile enrichment (fixes orgs / countries / contacts)
+## Phase 1 — Author profile enrichment (fixes orgs / countries / contacts) ✅ DONE (2026-06-02, D24)
+
+> **Shipped.** `confos enrich profiles --venue <slug>` (schema v3). **Open decisions 2 & 3
+> decided:** dedicated, opt-in `enrich` command (not an ingest default). **Finding:** the
+> batched `tools.get_profiles`/`search_profiles` endpoint is **403 for anonymous**, so the
+> fetcher is **per-profile** `get_profile` (works anonymously), thread-pooled, best-effort,
+> and resumable via `profiles.jsonl`; `index rebuild` replays it offline. Fills orgs/countries/
+> homepage/scholar/dblp/expertise + high/low affiliation confidence. Cassette is PII-scrubbed.
 
 **Why:** Fixes all four "no data" commands **and** supercharges the "find people working on X"
 differentiator (homepage, Scholar, DBLP, expertise). The write-path already exists —

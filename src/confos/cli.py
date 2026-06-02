@@ -19,6 +19,7 @@ from ._clickcompat import ClickAbort, ClickExit, ClickUsageError
 from .commands import (
     authors,
     doctor,
+    enrich,
     export,
     index,
     ingest,
@@ -165,6 +166,7 @@ app.add_typer(trends.app, name="trends")
 app.add_typer(viz.app, name="viz")
 app.add_typer(export.app, name="export")
 app.add_typer(index.app, name="index")
+app.add_typer(enrich.app, name="enrich")
 
 
 # --- error handling + entry point --------------------------------------------

@@ -224,6 +224,33 @@ present); putting bibtex in every view (rejected — bloats search/context outpu
 **Verified:** real-store rebuild → `accepted 5286 / rejected 254`, pdf+bibtex 5540/5540,
 supplementary 2784/5540, offline in ~17s.
 
+### D24 — Phase 1: author profile enrichment via anonymous per-profile fetch (2026-06-02)
+**What:** a new `confos enrich profiles --venue <slug>` fetches each tilde-handle author's
+OpenReview profile and fills `authors.affiliation_current/affiliation_country/homepage/
+gscholar/dblp/expertise` + the `orgs`/`author_affiliations` rows — fixing the four
+previously-empty surfaces (`orgs top`, `stats orgs`, `stats countries`, `viz orgs`). Current
+institution = the `history` entry that is still open (`end is None`), else the most recent;
+country comes from the profile's explicit ISO alpha-2 code (authoritative) mapped to a
+display name. Profiles snapshot to `raw/<venue>/profiles.jsonl` (one record per handle,
+including `not_found` markers); `index rebuild` replays them offline (D3). Profile-derived
+affiliations are **high**-confidence, email-domain ones **low** — stats report the split.
+**Key findings (verified live):** (a) the batched `search_profiles`/`tools.get_profiles`
+endpoint is **403 for anonymous** users, but **per-profile `get_profile(handle)` works
+anonymously**; (b) OpenReview **rate-limits `/profiles` to ~20 requests/min per IP** (HTTP
+429) — a *total* cap, so concurrency doesn't help (measured: 8 workers @ 0.33/s was slightly
+*slower* than sequential @ 0.39/s, just 429 churn). So the fetcher is per-profile and
+**sequential** (the client's built-in 429-retry self-paces on the window reset), best-effort
+(genuine "Profile Not Found" → record; transient error → don't record, retried on resume),
+and **resumable** (skip handles already in the snapshot). For neurips-2025 that's ~23k
+one-time fetches at ~20/min (≈ several hours, run incrementally), cached forever. A
+`--workers` knob was considered and **cut** (D11 — it never helps against a total cap). **Why:** the product's "find people working on X, ranked" wedge was
+affiliation-blind; this is the single biggest credibility fix (`stats orgs --explain` went
+from `0/5540`). **Alternatives:** batched fetch (rejected — auth-only); fetch during base
+`ingest` (rejected — keeps base ingest fast + offline-after; opt-in `enrich` matches "raw is
+truth"). **Resolves open decisions 2 (dedicated `enrich` command) + 3 (opt-in, not
+ingest-default).** **Framing:** we surface where people work + their public links, **not**
+emails (the API redacts email local-parts for anonymous reads, and we drop them anyway).
+
 ---
 
 ## Assumptions (verify before/while building)

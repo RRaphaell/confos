@@ -198,6 +198,21 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "raw_path": "string|null (the JSONL snapshot written)",
         },
     },
+    "enrich.profiles": {
+        "envelope": _ENVELOPE,
+        "data": {
+            "venue": "string (resolved slug)",
+            "handles_total": "int (unique tilde author handles in the venue)",
+            "already_enriched": "int (skipped — already in profiles.jsonl)",
+            "attempted": "int (handles tried this run)",
+            "fetched": "int (profiles found this run)",
+            "not_found": "int (handles with no public profile — recorded, won't retry)",
+            "errors": "int (transient failures this run — NOT recorded, a re-run retries them)",
+            "capped": "bool (true if --limit truncated this run)",
+            "profiles_path": "string (the profiles.jsonl snapshot)",
+            "papers_reindexed": "int (papers re-derived by the trailing rebuild)",
+        },
+    },
     "index.rebuild": {
         "envelope": _ENVELOPE,
         "data": {"venues": "int", "papers": "int", "failed": "int (notes skipped)"},

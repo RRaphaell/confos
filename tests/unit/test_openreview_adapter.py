@@ -181,6 +181,20 @@ def test_profile_without_institution_keeps_resolved_identity_no_affiliation() ->
     assert author.data_quality == "resolved"  # tilde identity is still resolved
 
 
+def test_fetch_profile_suppresses_client_stdout_noise(capsys: pytest.CaptureFixture[str]) -> None:
+    # openreview-py print()s 429/retry noise to stdout; fetch_profile must swallow it so a
+    # `enrich --json` run keeps stdout pure. (The client is hammered by the rate limit.)
+    class _NoisyClient:
+        def get_profile(self, handle: str) -> object:
+            print("Retrying request: GET /profiles?id=... 429 Too many requests")
+            raise RuntimeError("Profile Not Found")
+
+    adapter = OpenReviewAdapter(client=_NoisyClient())
+    snapshot, status = adapter.fetch_profile("~Someone1")
+    assert (snapshot, status) == (None, "not_found")
+    assert "Retrying request" not in capsys.readouterr().out  # stdout stayed clean
+
+
 def test_normalize_without_profiles_is_unchanged() -> None:
     # The enrichment path is fully opt-in: no profiles map → no affiliation/links (the
     # pre-Phase-1 behavior for a tilde author).

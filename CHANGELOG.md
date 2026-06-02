@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Enrichment Phase 1 — author profile enrichment.** New `confos enrich profiles --venue
+  <slug>` fetches each author's OpenReview profile (anonymous, best-effort, resumable) to fill
+  the previously-empty people/orgs surfaces: `stats orgs`, `stats countries`, `orgs top`, and
+  `viz orgs` now return real data, and authors gain `affiliation_country`, `homepage`,
+  `gscholar`, `dblp`, and `expertise`. Profiles are cached in `raw/<venue>/profiles.jsonl`, so
+  a later `confos index rebuild` reproduces all of it offline. Profile-derived affiliations are
+  high-confidence; email-domain ones stay low (reported honestly via `--explain`).
 - **Enrichment Phase 0 — capture dropped fields + the `rejected` status.** Papers now carry
   `pdf_url`, `bibtex`, and `supplementary_url` (all already downloaded, previously dropped) —
   surfaced in `confos papers show` and `confos export papers`. A new `rejected` status
@@ -17,6 +24,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
   JSONL snapshot with **no re-download**.
 
 ### Changed
+- `--json` Author objects gain `affiliation_country`/`homepage`/`gscholar`/`dblp`/`expertise`
+  (additive; populated by `enrich profiles`). `export authors` CSV/JSONL gained the matching
+  columns. `stats orgs`/`countries` `data_quality.method` now reflects the profile source and
+  `low_confidence` counts only the email-domain affiliations.
 - `--json` Paper objects gain `pdf_url`/`bibtex`/`supplementary_url` in `show` + `export
   papers` (additive; omitted from lean search/list views). `export papers` CSV/JSONL gained
   `pdf_url`, `supplementary_url`, and `bibtex` columns. SCHEMAS.md + `confos schema` updated.

@@ -285,6 +285,35 @@ A grab-bag of things that bite new builders:
 
 ---
 
+## Addendum — Profile fetch, verified live (2026-06-02, Enrichment Phase 1)
+
+§9/§10 above recommended `openreview.tools.get_profiles(client, ids)` as the clean batched
+path. **That is wrong for anonymous clients.** Verified against the live API on 2026-06-02:
+
+- **Batched `client.search_profiles(ids=…)` (which `tools.get_profiles` calls) returns
+  HTTP 403 `ForbiddenError` for a guest** ("You must be logged in to access this resource").
+  This is the post-2025-disclosure lockdown of `/profiles/search` (see §14). So the batched
+  path needs credentials.
+- **Per-profile `client.get_profile("~Handle1")` works anonymously.** It returns the full
+  profile with `content.history[].institution {name, domain, country}` (country is an
+  explicit **ISO 3166-1 alpha-2** code, e.g. `US`/`GB`/`CN` — map it to a display name),
+  plus `homepage`, `gscholar`, `dblp`, `expertise[].keywords`, `names`, `relations`. The
+  current institution is the `history` entry with `end == null` (else the most recent).
+- A handle with no public profile raises `OpenReviewException(['Profile Not Found'])` —
+  distinct from a transient HTTP/throttle error. confos records the former (won't re-fetch)
+  but **not** the latter (a resume retries it).
+- **`/profiles` is rate-limited to ~20 requests/min per IP** (HTTP 429 `RateLimitError`,
+  `{limit: 20, resetTime: <~60s out>}`). It's a *total* cap, so concurrency doesn't beat it —
+  measured 8 workers @ 0.33/s vs sequential @ 0.39/s (concurrency was slightly slower, all
+  429 churn). confos fetches **sequentially** and lets the client's built-in 429-retry
+  self-pace; the whole pass is resumable (snapshot to `raw/<venue>/profiles.jsonl`). A large
+  venue (~23k authors) is therefore a multi-hour, run-it-incrementally backfill.
+- Anonymous reads **redact email local-parts** (`****@domain`), so emails aren't harvestable;
+  confos doesn't store them anyway (it keeps only history/links/expertise).
+
+**confos implementation:** `OpenReviewAdapter.fetch_profile(s)` + `services/enrich.py` +
+`confos enrich profiles --venue <slug>`. See DECISIONS D24.
+
 ## Practical Takeaways for `confos`
 
 - Target API v2, anonymous-by-default

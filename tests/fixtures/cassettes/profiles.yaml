@@ -1,0 +1,193 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - openreview-py/2.2.1 (Python/3.12)
+    method: GET
+    uri: https://api2.openreview.net/profiles?id=~Nora_Belrose1
+  response:
+    body:
+      string: '{"profiles": [{"id": "~Nora_Belrose1", "invitation": "~/-/profiles",
+        "active": true, "content": {"homepage": "https://twitter.com/norabelrose",
+        "gscholar": "https://scholar.google.com/citations?user=p_oBc64AAAAJ", "dblp":
+        "https://dblp.org/pid/332/2248", "history": [{"position": "Researcher", "start":
+        2022, "end": null, "institution": {"domain": "eleuther.ai", "name": "EleutherAI",
+        "country": "US"}}, {"position": "Researcher", "start": 2022, "end": 2022,
+        "institution": {"domain": "far.ai", "name": "FAR AI"}}, {"position": "PhD
+        student", "start": 2020, "end": 2021, "institution": {"domain": "ucsd.edu",
+        "name": "University of California, San Diego"}}], "expertise": [{"keywords":
+        ["language models", "interpretability", "adversarial robustness"], "start":
+        2022, "end": null}]}, "tcdate": 1664298291772, "tmdate": 1765471933507, "tauthor":
+        "OpenReview.net", "state": "Active Institutional"}]}'
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-store, no-cache, must-revalidate, proxy-revalidate
+      content-length:
+      - '2020'
+      content-security-policy:
+      - 'default-src ''self''; worker-src ''self'' blob:; style-src ''self'' ''unsafe-inline''
+        https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        script-src ''self'' ''unsafe-inline'' ''unsafe-eval'' https://unpkg.com https://challenges.cloudflare.com/turnstile/v0/api.js
+        https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.googletagmanager.com
+        https://*.google-analytics.com https://www.paypalobjects.com/ https://www.paypal.com/
+        https://js.stripe.com/v3/buy-button.js; font-src ''self'' https://cdn.jsdelivr.net
+        https://fonts.gstatic.com; connect-src ''self'' https://*.google-analytics.com
+        https://api.openreview.net https://api2.openreview.net wss://api2.openreview.net
+        https://arxiv.org https://export.arxiv.org https://dblp.org https://dblp.uni-trier.de
+        https://huggingface.co https://pub.orcid.org; img-src ''self'' https://t.paypal.com/
+        data: https://*.google-analytics.com; frame-src ''self'' https://challenges.cloudflare.com/
+        https://api.draftable.com https://js.stripe.com/; frame-ancestors ''self'';
+        base-uri ''self''; form-action ''self'' http://127.0.0.1:* https://ecopyright.ieee.org/ECTT/IntroPage.jsp'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Jun 2026 19:33:47 GMT
+      etag:
+      - W/"7e4-n4/eDP//aP2vnhN354OquqvjfdY"
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      ratelimit-limit:
+      - '20'
+      ratelimit-policy:
+      - 20;w=60
+      ratelimit-remaining:
+      - '19'
+      ratelimit-reset:
+      - '60'
+      server:
+      - nginx
+      set-cookie:
+      - GCILB="c6bcb2e7eeecd99c"; Path=/; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubdomains; preload
+      surrogate-control:
+      - no-store
+      via:
+      - 1.1 google, 1.1 google
+      x-content-type-options:
+      - nosniff
+      x-dns-prefetch-control:
+      - 'off'
+      x-download-options:
+      - noopen
+      x-frame-options:
+      - SAMEORIGIN
+      x-ratelimit-limit:
+      - '20'
+      x-ratelimit-remaining:
+      - '19'
+      x-ratelimit-reset:
+      - '1780428888'
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - openreview-py/2.2.1 (Python/3.12)
+    method: GET
+    uri: https://api2.openreview.net/profiles?id=~Yoshua_Bengio1
+  response:
+    body:
+      string: '{"profiles": [{"active": true, "tmdate": 1773862878479, "tcdate": 1473703013000,
+        "id": "~Yoshua_Bengio1", "invitation": "~/-/profiles", "tauthor": "OpenReview.net",
+        "content": {"homepage": "http://yoshuabengio.org", "dblp": "https://dblp.org/pid/56/953",
+        "gscholar": "https://scholar.google.com/citations?user=kukA0LcAAAAJ&hl=fr&oi=ao",
+        "history": [{"position": "Full Professor", "start": 1993, "end": null, "institution":
+        {"domain": "umontreal.ca", "name": "University of Montreal", "country": "CA",
+        "stateProvince": "Quebec", "city": "Montreal", "department": "computer science
+        and operations research"}}], "expertise": [{"keywords": ["Deep Learning"],
+        "start": null, "end": null}, {"keywords": ["AI safety"], "start": null, "end":
+        null}, {"keywords": ["Probabilistic machine learning"], "start": null, "end":
+        null}]}, "state": "Active Institutional"}], "fromCache": true}'
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - no-store, no-cache, must-revalidate, proxy-revalidate
+      content-length:
+      - '10947'
+      content-security-policy:
+      - 'default-src ''self''; worker-src ''self'' blob:; style-src ''self'' ''unsafe-inline''
+        https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        script-src ''self'' ''unsafe-inline'' ''unsafe-eval'' https://unpkg.com https://challenges.cloudflare.com/turnstile/v0/api.js
+        https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.googletagmanager.com
+        https://*.google-analytics.com https://www.paypalobjects.com/ https://www.paypal.com/
+        https://js.stripe.com/v3/buy-button.js; font-src ''self'' https://cdn.jsdelivr.net
+        https://fonts.gstatic.com; connect-src ''self'' https://*.google-analytics.com
+        https://api.openreview.net https://api2.openreview.net wss://api2.openreview.net
+        https://arxiv.org https://export.arxiv.org https://dblp.org https://dblp.uni-trier.de
+        https://huggingface.co https://pub.orcid.org; img-src ''self'' https://t.paypal.com/
+        data: https://*.google-analytics.com; frame-src ''self'' https://challenges.cloudflare.com/
+        https://api.draftable.com https://js.stripe.com/; frame-ancestors ''self'';
+        base-uri ''self''; form-action ''self'' http://127.0.0.1:* https://ecopyright.ieee.org/ECTT/IntroPage.jsp'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Jun 2026 19:33:48 GMT
+      etag:
+      - W/"2ac3-p9o4ov+FNcG3wB6oRJZUdJHIFtc"
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      ratelimit-limit:
+      - '20'
+      ratelimit-policy:
+      - 20;w=60
+      ratelimit-remaining:
+      - '18'
+      ratelimit-reset:
+      - '60'
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubdomains; preload
+      surrogate-control:
+      - no-store
+      via:
+      - 1.1 google, 1.1 google
+      x-content-type-options:
+      - nosniff
+      x-dns-prefetch-control:
+      - 'off'
+      x-download-options:
+      - noopen
+      x-frame-options:
+      - SAMEORIGIN
+      x-ratelimit-limit:
+      - '20'
+      x-ratelimit-remaining:
+      - '18'
+      x-ratelimit-reset:
+      - '1780428888'
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

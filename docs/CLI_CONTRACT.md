@@ -77,6 +77,13 @@ confos
     rebuild                          re-normalize from raw JSONL (no network)
     status
 
+  enrich
+    profiles --venue V [--force] [--limit N]
+        # network, one-time, resumable: fetch author profiles → affiliations,
+        # countries, homepage/Scholar/DBLP/expertise. OpenReview rate-limits to
+        # ~20/min, so a big venue is slow but resumable (cached in raw/<venue>/
+        # profiles.jsonl; a later `index rebuild` reproduces it offline).
+
   schema <command>                   print JSON schema for a command's --json output
 ```
 
@@ -142,7 +149,7 @@ Keep this set small; don't invent per-command codes without a real scripting nee
 | Class | Commands | Network | Writes DB | Guard |
 |---|---|---|---|---|
 | local-read | search, show, related, find, stats, trends, viz, export, venues list/show | no | no | none |
-| network | ingest, venues search | yes | yes (ingest) | explicit command; progress on stderr |
+| network | ingest, venues search, enrich profiles | yes | yes | explicit command; progress on stderr; enrich is resumable |
 | local-write | index rebuild, venues add | no | yes | none (idempotent) |
 | destructive | future prune/reset (not in v1) | maybe | yes | confirm (TTY) or `--force` (non-interactive) |
 

@@ -8,10 +8,12 @@ credentials come from env only (never flags, never logged).
 
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import re
-from collections.abc import Iterator
-from typing import Any
+from collections.abc import Iterable, Iterator
+from typing import Any, Literal
 
 from ..aliases import NormalizeAliases
 from ..config import DEFAULT_OPENREVIEW_BASEURL
@@ -37,6 +39,10 @@ BUILTIN_VENUE_ALIASES: dict[str, str] = {
 }
 
 _ACCEPTANCE_TYPES = ("oral", "spotlight", "poster")
+
+# Outcome of one profile fetch: a real hit, a genuine miss (record it), or a transient
+# failure (don't record — a resume retries it). See OpenReviewAdapter.fetch_profile.
+FetchStatus = Literal["found", "not_found", "error"]
 
 # Files (pdf, attachments) are served from the web host, not the API host the client
 # talks to; note content stores them as server-relative paths (e.g. ``/pdf/<hash>.pdf``).
@@ -272,6 +278,50 @@ class OpenReviewAdapter:
             authors=_normalize_authors(content, paper_id, aliases, profiles),
             topics=normalize_keywords(keywords),
         )
+
+    # --- profile enrichment (Phase 1) ----------------------------------------
+    def fetch_profile(self, handle: str) -> tuple[RawProfile | None, FetchStatus]:
+        """Fetch one author profile snapshot. Returns ``(snapshot|None, status)``.
+
+        Anonymous per-profile read (the batched ``search_profiles`` endpoint is auth-only).
+        Status distinguishes a genuine miss (``"not_found"`` — a handle with no public
+        profile, safe to record so we never re-fetch it) from a transient failure
+        (``"error"`` — throttle/network, NOT recorded so a resume retries it). We keep only
+        ``content`` (+ stamps); identity/ACL cruft and the ``password`` field are dropped.
+        """
+        try:
+            # openreview-py print()s 429/retry noise straight to stdout; swallow it so a
+            # `--json` caller keeps stdout pure (the rate limit is hit constantly here).
+            with contextlib.redirect_stdout(io.StringIO()):
+                profile = self.client.get_profile(handle)
+        except Exception as exc:  # classify; never propagate
+            miss = "not found" in str(exc).lower()
+            return None, "not_found" if miss else "error"
+        content = getattr(profile, "content", None)
+        if not isinstance(content, dict):
+            return None, "not_found"
+        snapshot: RawProfile = {
+            "id": getattr(profile, "id", handle) or handle,
+            "content": content,
+            "tcdate": getattr(profile, "tcdate", None),
+            "tmdate": getattr(profile, "tmdate", None),
+        }
+        return snapshot, "found"
+
+    def fetch_profiles(
+        self, handles: Iterable[str]
+    ) -> Iterator[tuple[str, RawProfile | None, FetchStatus]]:
+        """Yield ``(handle, snapshot|None, status)`` per handle, sequentially (best-effort).
+
+        Sequential by design: OpenReview rate-limits ``/profiles`` to ~20 requests/minute
+        per IP, a *total* cap, so concurrency only triggers 429 retry churn (measured: it is
+        slightly slower, not faster). The client retries a 429 after the window resets, so
+        this self-paces. Results stream so the caller can append to ``profiles.jsonl`` and
+        resume after an interruption.
+        """
+        for handle in handles:
+            snapshot, status = self.fetch_profile(handle)
+            yield handle, snapshot, status
 
     def search_venues(self, query: str, *, limit: int = 25) -> list[dict[str, str]]:
         """Find venues matching a free-text query (network, best-effort).

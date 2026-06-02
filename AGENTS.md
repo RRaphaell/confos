@@ -50,6 +50,9 @@ confos stats topics --venue neurips-2025 --json          # + stats orgs/countrie
 confos viz network --topic "agents" --venue neurips-2025 --format mermaid
 confos export papers --venue neurips-2025 --format jsonl   # bulk; large — prefer the pack
 
+# 7. Affiliations/countries/homepages empty? Enrich author profiles once (network, resumable)
+confos enrich profiles --venue neurips-2025               # then stats orgs / countries fill in
+
 # Discover a command's output contract (every command that emits a --json envelope)
 confos schema export.context        # versioned field map for that command's --json
 # (export papers/authors are the exception: raw CSV/JSONL bulk dumps, not an envelope)
@@ -74,4 +77,5 @@ versioned (`schema_version`); rely on field names, not column order.
 ## Don't
 - Don't scrape OpenReview directly — confos already normalized it with provenance.
 - Don't treat "likely relevant" as fact — it's a labelled ranking, not ground truth.
-- `venues search` and `ingest` are the only network commands; everything else is offline.
+- `venues search`, `ingest`, and `enrich profiles` are the only network commands; everything
+  else is offline. If `stats orgs`/`countries` report low coverage, run `enrich profiles` once.

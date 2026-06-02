@@ -16,10 +16,24 @@ features that data unlocks. Sequencing: M0 → Phase 0 → 1 → 2 → (4) → 5
 |---|---|---|
 | M0 | Incremental migrations (`db/migrate.py` registry) | ✅ done (D22) |
 | 0 | Capture pdf/bibtex/supplementary + `rejected` status | ✅ done (D23) |
-| 1 | Author profile enrichment (orgs/countries/links) | ⏳ next |
-| 2 | Review scores & quality intelligence | ⬜ planned |
+| 1 | Author profile enrichment (orgs/countries/links) | ✅ done (D24) |
+| 2 | Review scores & quality intelligence | ⏳ next |
 | 4 | OpenAlex citation enrichment | ⬜ planned (optional) |
 | 5 | `confos brief` (one-command landscape) | ⬜ planned |
+
+**Phase 1 (2026-06-02):** `confos enrich profiles --venue <slug>` (schema v3). Anonymous
+per-profile fetch (batched `search_profiles` is 403 for guests — verified live), best-effort,
+**resumable** via `raw/<venue>/profiles.jsonl`; `index rebuild` replays it offline. Fills
+`authors.affiliation_current/affiliation_country/homepage/gscholar/dblp/expertise` + orgs +
+high/low affiliation confidence → fixes the four empty surfaces (`stats orgs`/`countries`,
+`orgs top`, `viz orgs`). Author JSON + `export authors` gained the fields (additive). Cassette
+test (scrubbed of PII) + fake-fetcher service tests (resume/limit/error-retry/snapshot). The
+cassette recorder strips emails/relations/metaContent — only public affiliation/links committed.
+**Rate limit (verified live):** OpenReview caps anonymous `/profiles` at ~20 req/min per IP
+(HTTP 429, a total cap) — concurrency doesn't beat it (measured slightly slower), so the fetch
+is **sequential** (no `--workers`); the full neurips-2025 venue (~23k authors) is a multi-hour
+resumable backfill (run incrementally / `--limit`). Genuine "Profile Not Found" is recorded;
+transient errors are not (retried on resume).
 
 **M0 + Phase 0 (2026-06-02):** `SCHEMA_VERSION = 2`; fresh stores apply `schema.sql`,
 existing stores apply ordered additive `ALTER` steps (idempotent/crash-safe). Adapter reads
@@ -35,7 +49,7 @@ Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
 ## Current state
 
 **Phase: 6 (Hardening & release polish) — COMPLETE. v0.1.0 tagged. All 7 phases done.**
-**Now in the post-release Enrichment chapter (above): M0 + Phase 0 shipped.**
+**Now in the post-release Enrichment chapter (above): M0 + Phase 0 + Phase 1 shipped.**
 
 - ✅ **Phase 6 built (v0.1.0):** every command's `--help` has 2-3 examples (test-pinned);
   `confos schema` documents every `--json`-envelope command (drift-guarded); full
