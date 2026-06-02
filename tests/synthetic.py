@@ -42,6 +42,8 @@ def make_note(
     pdf: str | None = "/pdf/abc123.pdf",
     bibtex: str | None = "@inproceedings{x2025, title={A Paper}}",
     supplementary_material: str | None = None,
+    reviews: list[dict[str, object]] | None = None,
+    decision: str | None = None,
     tcdate: int = 1000,
     tmdate: int = 2000,
     number: int = 1,
@@ -61,7 +63,7 @@ def make_note(
         content["_bibtex"] = {"value": bibtex}
     if supplementary_material is not None:
         content["supplementary_material"] = {"value": supplementary_material}
-    return {
+    note: RawNote = {
         "id": note_id,
         "number": number,
         "tcdate": tcdate,
@@ -69,6 +71,47 @@ def make_note(
         "pdate": None,
         "content": content,
     }
+    replies = _make_replies(note_id, reviews, decision)
+    if replies:
+        note["details"] = {"replies": replies}
+    return note
+
+
+def _make_replies(
+    note_id: str, reviews: list[dict[str, object]] | None, decision: str | None
+) -> list[dict[str, object]]:
+    """Build details.replies (Official_Review + Decision notes) for a synthetic note.
+
+    Each review dict may carry ``rating`` (int or '8: accept' string), ``confidence``, and
+    a ``sub_scores`` dict (e.g. {'quality': 3}).
+    """
+    base = "Test.cc/2025/Conference/Submission1"
+    replies: list[dict[str, object]] = []
+    for index, review in enumerate(reviews or []):
+        rcontent: dict[str, object] = {}
+        if "rating" in review:
+            rcontent["rating"] = {"value": review["rating"]}
+        if "confidence" in review:
+            rcontent["confidence"] = {"value": review["confidence"]}
+        sub_scores = review.get("sub_scores")
+        if isinstance(sub_scores, dict):
+            for field, score in sub_scores.items():
+                rcontent[field] = {"value": score}
+        replies.append(
+            {
+                "invitations": [f"{base}/-/Official_Review"],
+                "signatures": [f"{base}/Reviewer_{index}"],
+                "content": rcontent,
+            }
+        )
+    if decision is not None:
+        replies.append(
+            {
+                "invitations": [f"{base}/-/Decision"],
+                "content": {"decision": {"value": decision}},
+            }
+        )
+    return replies
 
 
 def make_profile(

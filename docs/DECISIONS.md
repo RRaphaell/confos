@@ -251,6 +251,31 @@ truth"). **Resolves open decisions 2 (dedicated `enrich` command) + 3 (opt-in, n
 ingest-default).** **Framing:** we surface where people work + their public links, **not**
 emails (the API redacts email local-parts for anonymous reads, and we drop them anyway).
 
+### D25 — Phase 2: review scores & quality intelligence (2026-06-03, Enrichment)
+**What:** capture public ``Official_Review`` scores (which ride in the ``details=replies``
+payload) into a ``reviews`` table + aggregate columns on ``papers`` (``review_count``,
+``rating_mean``, ``rating_std`` = controversy, ``confidence_mean``, ``decision``), and add
+``confos papers top`` (highest mean rating) + ``papers controversial`` (highest rating
+variance, ≥2 reviews), both topic/venue-scoped. Schema v4. **Open decisions resolved:**
+**#1** — ``--with-reviews`` is the clear ingest flag, ``--include-decisions`` kept as a
+legacy alias (both fetch replies); **#5** — store *both* raw per-review rows (provenance)
+*and* aggregates on papers (fast single-query ranking); **#6** — the rating parser extracts
+the **leading integer** of the rating field, which covers every format seen
+(``'5'`` NeurIPS, ``'8: accept'`` ICLR/ICML) — unparseable values → ``None`` (skipped, never
+mis-scaled). Scales differ per venue, so means are only comparable **within** a venue (the
+commands default to ``--venue``). Reviewer identities stay anonymous (``reviewer_key`` is an
+opaque signature segment, never a profile). **Why:** this is the line between "keyword search
+over abstracts" and quality intelligence the website doesn't surface — and it's cheap because
+the reviews already arrive with the decisions confos fetches. **Upgrade path:** one-time
+re-ingest ``confos ingest <venue> --with-reviews`` puts replies in raw; thereafter
+``index rebuild`` reproduces the scores offline (D3). **Verified on real neurips-2025 data:**
+4 reviews/paper, correct mean/std, decisions ``Accept (poster|spotlight)`` / ``Reject``.
+**Alternatives:** aggregates-only (rejected — loses provenance); a per-venue scale-normalized
+rating (deferred — within-venue ranking needs only the raw mean; cross-venue normalization is
+a later concern). **Deferred from the plan:** quality-weighting wired into
+search/find/trends (``--by rating``) — the headline ``papers top``/``controversial`` ship the
+signal; broader weighting can follow.
+
 ---
 
 ## Assumptions (verify before/while building)

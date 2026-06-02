@@ -20,9 +20,17 @@ from ..services.ingest import ingest_venue
 def run(
     ctx: typer.Context,
     venue: Annotated[str, typer.Argument(help="Venue slug to ingest, e.g. neurips-2025.")],
+    with_reviews: Annotated[
+        bool,
+        typer.Option(
+            "--with-reviews",
+            help="Also fetch reviews + decisions (enables `papers top`/`controversial`; "
+            "larger download).",
+        ),
+    ] = False,
     include_decisions: Annotated[
         bool,
-        typer.Option("--include-decisions", help="Also fetch Decision notes (acceptance type)."),
+        typer.Option("--include-decisions", help="Alias for --with-reviews (legacy name)."),
     ] = False,
     force: Annotated[
         bool, typer.Option("--force", help="Ignore sync watermarks and do a full re-pull.")
@@ -43,7 +51,9 @@ def run(
       confos ingest iclr-2025 --dry-run --json
     """
     app_ctx = bind_command(ctx, "ingest")
-    opts = IngestOptions(include_decisions=include_decisions, force=force, dry_run=dry_run)
+    # --with-reviews is the clear name; --include-decisions is kept as a legacy alias.
+    fetch_reviews = with_reviews or include_decisions
+    opts = IngestOptions(include_decisions=fetch_reviews, force=force, dry_run=dry_run)
     adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
 
     result = ingest_venue(
@@ -59,7 +69,7 @@ def run(
         "venue": venue,
         "force": force,
         "dry_run": dry_run,
-        "include_decisions": include_decisions,
+        "with_reviews": fetch_reviews,
     }
 
     if app_ctx.is_json:

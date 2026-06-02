@@ -1,7 +1,7 @@
 # confos — Enrichment & Quality Intelligence Plan
 
 **Created:** 2026-06-02
-**Status:** In progress. **M0 + Phase 0 shipped (2026-06-02)** — see D22/D23 + PROGRESS.md. Phase 1 is next.
+**Status:** In progress. **M0 + Phases 0, 1, 2 shipped** (D22–D25, PROGRESS.md). Phase 4 (citations, optional) + Phase 5 (`brief`) remain.
 **Owner:** Raphael
 **Scope:** Phases 0, 1, 2, 4, 5. **Phase 3 (semantic/clusters/map) is intentionally deferred** (big infra lift; see §Phase 3).
 
@@ -300,7 +300,13 @@ email-harvesting (emails are usually redacted for other users; there's no Linked
 
 ---
 
-## Phase 2 — Review scores & quality intelligence (the flagship)
+## Phase 2 — Review scores & quality intelligence (the flagship) ✅ DONE (2026-06-03, D25)
+
+> **Shipped + verified on real neurips data.** reviews table + paper aggregates (schema v4);
+> `papers top`/`controversial`; rating parser (leading int → handles `5` + `8: accept`);
+> `--with-reviews` flag (`--include-decisions` = alias). **Open decisions 1/5/6 resolved**
+> (see D25). Re-ingest `confos ingest neurips-2025 --with-reviews` to populate; `index rebuild`
+> offline after. **Deferred:** `--by rating` quality-weighting across search/find/trends.
 
 **Why:** This is the line between "keyword search over abstracts" and "quality intelligence
 the website doesn't give you." And it's cheap: the reviews already arrive in the

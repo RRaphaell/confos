@@ -43,9 +43,21 @@ class IngestOptions(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    include_decisions: bool = False
+    include_decisions: bool = False  # fetch reply notes (reviews + decisions) into raw
     force: bool = False
     dry_run: bool = False
+
+
+class NormalizedReview(BaseModel):
+    """One Official_Review on a paper: parsed scores + the raw content for provenance."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    reviewer_key: str  # opaque anonymous reviewer signature (e.g. 'Reviewer_abcd')
+    rating: int | None = None  # leading int of the rating field (scale varies by venue)
+    confidence: int | None = None
+    sub_scores: dict[str, int] = Field(default_factory=dict)  # quality/clarity/soundness/…
+    raw_rating: str | None = None  # the rating field verbatim (e.g. '5' or '8: accept')
 
 
 class NormalizedAuthor(BaseModel):
@@ -93,8 +105,10 @@ class NormalizedPaper(BaseModel):
     pdate: int | None = None
     tcdate: int | None = None
     tmdate: int | None = None
+    decision: str | None = None  # the Decision note's verdict, e.g. 'Accept (poster)' | 'Reject'
     authors: list[NormalizedAuthor] = Field(default_factory=list)
     topics: list[str] = Field(default_factory=list)
+    reviews: list[NormalizedReview] = Field(default_factory=list)
 
 
 class IngestResult(BaseModel):

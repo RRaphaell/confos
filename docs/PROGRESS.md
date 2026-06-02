@@ -17,9 +17,19 @@ features that data unlocks. Sequencing: M0 → Phase 0 → 1 → 2 → (4) → 5
 | M0 | Incremental migrations (`db/migrate.py` registry) | ✅ done (D22) |
 | 0 | Capture pdf/bibtex/supplementary + `rejected` status | ✅ done (D23) |
 | 1 | Author profile enrichment (orgs/countries/links) | ✅ done (D24) |
-| 2 | Review scores & quality intelligence | ⏳ next |
-| 4 | OpenAlex citation enrichment | ⬜ planned (optional) |
+| 2 | Review scores & quality intelligence | ✅ done (D25) |
+| 4 | OpenAlex citation enrichment | ⏳ next (optional) |
 | 5 | `confos brief` (one-command landscape) | ⬜ planned |
+
+**Phase 2 (2026-06-03):** capture public Official_Review scores (they ride in
+`details=replies`) → `reviews` table + paper aggregates (review_count/rating_mean/rating_std/
+confidence_mean/decision), schema v4. New `papers top` (mean rating) + `papers controversial`
+(rating variance), topic/venue-scoped. Rating parser extracts the leading int (`5` NeurIPS /
+`8: accept` ICLR). `--with-reviews` ingest flag (`--include-decisions` = legacy alias). Verified
+on **real neurips-2025 reviews**: 4 reviews/paper, correct mean/std, decisions Accept(poster/
+spotlight)/Reject. Synthetic + parser unit tests + schema-parity test (33 Phase-2-relevant
+asserts). Re-ingest with `--with-reviews` is the one-time opt-in; `index rebuild` is offline
+after. Deferred: `--by rating` quality-weighting in search/find/trends.
 
 **Phase 1 (2026-06-02):** `confos enrich profiles --venue <slug>` (schema v3). Anonymous
 per-profile fetch (batched `search_profiles` is 403 for guests — verified live), best-effort,
@@ -49,7 +59,7 @@ Gate green (ruff + mypy --strict + pytest); +12 tests (202 total).
 ## Current state
 
 **Phase: 6 (Hardening & release polish) — COMPLETE. v0.1.0 tagged. All 7 phases done.**
-**Now in the post-release Enrichment chapter (above): M0 + Phase 0 + Phase 1 shipped.**
+**Now in the post-release Enrichment chapter (above): M0 + Phase 0 + Phase 1 + Phase 2 shipped.**
 
 - ✅ **Phase 6 built (v0.1.0):** every command's `--help` has 2-3 examples (test-pinned);
   `confos schema` documents every `--json`-envelope command (drift-guarded); full

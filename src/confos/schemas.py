@@ -40,6 +40,11 @@ _PAPER = {
     "pdf_url": "string|null (present in show + `export papers`; omitted in list/search views)",
     "bibtex": "string|null (present in show + `export papers`; omitted in list/search views)",
     "supplementary_url": "string|null (present in show + `export papers`; omitted elsewhere)",
+    "review_count": "int (present in show + papers top/controversial; 0 until reviews ingested)",
+    "rating_mean": "number|null (mean review rating; scale varies per venue)",
+    "rating_std": "number|null (rating std = controversy)",
+    "confidence_mean": "number|null (mean reviewer confidence)",
+    "decision": "string|null (the Decision verdict, e.g. 'Accept (poster)')",
     "bm25": "number (search/find only; bigger = more relevant)",
 }
 
@@ -94,6 +99,8 @@ SCHEMAS: dict[str, dict[str, Any]] = {
         "data": {**_PAPER, "related": "[Paper] (with --with related)"},
     },
     "papers.related": {"envelope": _ENVELOPE, "data": [_PAPER]},
+    "papers.top": {"envelope": _ENVELOPE, "data": [_PAPER]},
+    "papers.controversial": {"envelope": _ENVELOPE, "data": [_PAPER]},
     "authors.find": {"envelope": _ENVELOPE, "data": [_FOUND_AUTHOR]},
     "authors.search": {"envelope": _ENVELOPE, "data": [{**_AUTHOR, "paper_count": "int"}]},
     "authors.show": {

@@ -53,6 +53,7 @@ def assemble_papers(
     *,
     include_abstract: bool,
     with_bm25: bool,
+    include_reviews: bool = False,
 ) -> list[dict[str, Any]]:
     ids = [row["id"] for row in rows]
     authors_map = papers_repo.authors_for_papers(conn, ids)
@@ -61,8 +62,48 @@ def assemble_papers(
         briefs = [author_brief(a) for a in authors_map.get(row["id"], [])]
         # with_bm25 callers pass search() rows, which always carry a 'relevance' column.
         bm25 = row["relevance"] if with_bm25 else None
-        out.append(paper_dict(row, briefs, include_abstract=include_abstract, bm25=bm25))
+        out.append(
+            paper_dict(
+                row,
+                briefs,
+                include_abstract=include_abstract,
+                include_reviews=include_reviews,
+                bm25=bm25,
+            )
+        )
     return out
+
+
+def top_papers(
+    paths: Paths,
+    *,
+    order: str,
+    topic: str | None = None,
+    venue: str | None = None,
+    year: int | None = None,
+    min_reviews: int = 1,
+    limit: int = 20,
+) -> list[dict[str, Any]]:
+    """Reviewed papers ranked by a review signal (``rating`` | ``controversy``), optionally
+    scoped to a topic (FTS) + venue/year. Carries the review signals in each Paper object."""
+    conn = connect(paths.db)
+    try:
+        migrate(conn)
+        fts = match_query(topic) if topic else None
+        rows = papers_repo.ranked_by_reviews(
+            conn,
+            order=order,
+            fts_query=fts,
+            venue=venue,
+            year=year,
+            min_reviews=min_reviews,
+            limit=limit,
+        )
+        return assemble_papers(
+            conn, rows, include_abstract=False, with_bm25=False, include_reviews=True
+        )
+    finally:
+        conn.close()
 
 
 def search_papers(
@@ -105,7 +146,9 @@ def get_paper(paths: Paths, paper_id: str, *, with_related: bool = False) -> dic
         briefs = [
             author_brief(a) for a in papers_repo.authors_for_papers(conn, [paper_id])[paper_id]
         ]
-        data = paper_dict(row, briefs, include_abstract=True, include_artifacts=True)
+        data = paper_dict(
+            row, briefs, include_abstract=True, include_artifacts=True, include_reviews=True
+        )
         if with_related:
             data["related"] = _related_for_row(conn, row, limit=10)
         return data

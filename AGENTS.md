@@ -53,6 +53,11 @@ confos export papers --venue neurips-2025 --format jsonl   # bulk; large — pre
 # 7. Affiliations/countries/homepages empty? Enrich author profiles once (network, resumable)
 confos enrich profiles --venue neurips-2025               # then stats orgs / countries fill in
 
+# 8. The GOOD papers, not just the matching ones (needs reviews ingested once)
+confos ingest neurips-2025 --with-reviews                 # one-time; adds review scores
+confos papers top --topic "agent memory" --venue neurips-2025 --json   # highest-rated
+confos papers controversial --venue neurips-2025 --json                # most divisive
+
 # Discover a command's output contract (every command that emits a --json envelope)
 confos schema export.context        # versioned field map for that command's --json
 # (export papers/authors are the exception: raw CSV/JSONL bulk dumps, not an envelope)

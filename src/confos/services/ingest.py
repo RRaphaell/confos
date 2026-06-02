@@ -22,9 +22,11 @@ from ..db.repositories import authors as authors_repo
 from ..db.repositories import now_iso
 from ..db.repositories import orgs as orgs_repo
 from ..db.repositories import papers as papers_repo
+from ..db.repositories import reviews as reviews_repo
 from ..db.repositories import venues as venues_repo
 from ..models import IngestOptions, IngestResult, IngestStatus, NormalizedPaper, VenueRef
 from ..paths import Paths
+from .reviews import aggregate as aggregate_reviews
 
 ProgressFn = Callable[[str], None]
 
@@ -137,7 +139,11 @@ def upsert_normalized_paper(conn: sqlite3.Connection, paper: NormalizedPaper) ->
             # a best-effort guess (low). profile_id is set iff the org came from a profile.
             confidence = "high" if author.profile_id else "low"
             orgs_repo.link_affiliation(conn, author.author_id, org_id, confidence=confidence)
-    return papers_repo.upsert_paper(conn, paper)
+    inserted = papers_repo.upsert_paper(conn, paper)
+    # Reviews (present only when ingested with decisions): replace rows + refresh aggregates.
+    reviews_repo.replace_reviews(conn, paper.paper_id, paper.reviews)
+    reviews_repo.write_aggregates(conn, paper.paper_id, aggregate_reviews(paper.reviews))
+    return inserted
 
 
 def _resolve(conn: sqlite3.Connection, adapter: SourceAdapter, handle: str) -> VenueRef:

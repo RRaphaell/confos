@@ -24,6 +24,7 @@ CORE_TABLES = {
     "orgs",
     "author_affiliations",
     "paper_topics",
+    "reviews",
     "ingest_runs",
 }
 FTS_TABLES = {"papers_fts", "authors_fts", "orgs_fts"}
@@ -99,12 +100,39 @@ def test_incremental_upgrade_v1_to_latest_adds_columns(tmp_path: Path) -> None:
         assert migrate(conn) is True
         assert current_version(conn) == SCHEMA_VERSION
         paper_cols = {row[1] for row in conn.execute("PRAGMA table_info(papers)")}
-        assert {"pdf_url", "bibtex", "supplementary_url"} <= paper_cols
+        assert {"pdf_url", "bibtex", "supplementary_url"} <= paper_cols  # v2
+        assert {"review_count", "rating_mean", "rating_std", "decision"} <= paper_cols  # v4
         author_cols = {row[1] for row in conn.execute("PRAGMA table_info(authors)")}
-        assert {"homepage", "gscholar", "dblp", "expertise_json"} <= author_cols
+        assert {"homepage", "gscholar", "dblp", "expertise_json"} <= author_cols  # v3
+        assert "reviews" in _table_names(conn)  # v4 reviews table created
         assert migrate(conn) is False  # idempotent once caught up
     finally:
         conn.close()
+
+
+def test_reviews_schema_parity_fresh_vs_migrated(tmp_path: Path) -> None:
+    # schema.sql (fresh) and the migrate.py reviews DDL (existing-store upgrade) must agree —
+    # else a fresh store and a migrated one diverge. Guards the duplicated reviews table DDL.
+    fresh = connect(tmp_path / "fresh.db")
+    migrated = connect(tmp_path / "migrated.db")
+    try:
+        migrate(fresh)
+        for ddl in _V1_TABLES:
+            migrated.execute(ddl)
+        migrated.execute("PRAGMA user_version = 1")
+        migrated.commit()
+        migrate(migrated)
+
+        def cols(conn: object, table: str) -> set[str]:
+            return {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}  # type: ignore[attr-defined]
+
+        assert cols(fresh, "reviews") == cols(migrated, "reviews")
+        assert {"review_count", "rating_mean", "rating_std", "confidence_mean", "decision"} <= cols(
+            fresh, "papers"
+        )
+    finally:
+        fresh.close()
+        migrated.close()
 
 
 def test_incremental_upgrade_is_crash_safe(tmp_path: Path) -> None:

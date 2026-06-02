@@ -17,19 +17,24 @@ def author_brief(row: sqlite3.Row) -> dict[str, Any]:
     return {"author_id": row["author_id"], "name": row["raw_name"], "position": row["position"]}
 
 
+def _round(value: Any, ndigits: int) -> float | None:
+    return round(value, ndigits) if isinstance(value, int | float) else None
+
+
 def paper_dict(
     row: sqlite3.Row,
     authors: list[dict[str, Any]],
     *,
     include_abstract: bool = False,
     include_artifacts: bool = False,
+    include_reviews: bool = False,
     bm25: float | None = None,
 ) -> dict[str, Any]:
-    """A Paper object (SCHEMAS §2). ``abstract`` and the ``pdf_url``/``bibtex``/
-    ``supplementary_url`` artifacts are included only when asked (lean by default for
-    list/search/context views); ``bm25`` (positive, bigger = more relevant) only on
-    search/find results. Callers that pass ``include_artifacts`` must select those columns
-    (``SELECT *`` / ``p.*`` rows carry them)."""
+    """A Paper object (SCHEMAS §2). ``abstract``, the ``pdf_url``/``bibtex``/
+    ``supplementary_url`` artifacts, and the review signals are included only when asked
+    (lean by default for list/search/context views); ``bm25`` (positive, bigger = more
+    relevant) only on search/find results. Callers that pass ``include_artifacts``/
+    ``include_reviews`` must select those columns (``SELECT *`` / ``p.*`` rows carry them)."""
     data: dict[str, Any] = {"paper_id": row["id"], "title": row["title"]}
     if include_abstract:
         data["abstract"] = row["abstract"]
@@ -43,6 +48,12 @@ def paper_dict(
         data["pdf_url"] = row["pdf_url"]
         data["bibtex"] = row["bibtex"]
         data["supplementary_url"] = row["supplementary_url"]
+    if include_reviews:
+        data["review_count"] = row["review_count"]
+        data["rating_mean"] = _round(row["rating_mean"], 2)
+        data["rating_std"] = _round(row["rating_std"], 2)
+        data["confidence_mean"] = _round(row["confidence_mean"], 2)
+        data["decision"] = row["decision"]
     if bm25 is not None:
         data["bm25"] = round(bm25, 4)
     return data

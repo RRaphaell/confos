@@ -18,7 +18,7 @@ from typing import Any, Literal
 from ..aliases import NormalizeAliases
 from ..config import DEFAULT_OPENREVIEW_BASEURL
 from ..errors import NetworkError, UsageError
-from ..models import NormalizedAuthor, NormalizedPaper, PaperStatus, VenueRef
+from ..models import NormalizedAuthor, NormalizedPaper, NormalizedReview, PaperStatus, VenueRef
 from ..normalize.orgs import org_from_email, org_from_institution
 from ..normalize.topics import normalize_keywords
 from .base import RawNote, RawProfile, extract_year, slugify_venue_id
@@ -52,6 +52,14 @@ _OPENREVIEW_WEB = "https://openreview.net"
 # a venue group doesn't expose ``rejected_venue_id`` (and to reclassify already-ingested
 # snapshots whose venue.json predates that field) — see _derive_status.
 _REJECTED_SUFFIX = "/Rejected_Submission"
+
+# Numeric per-review sub-scores we recognise across venue families (NeurIPS uses the first
+# group, ICLR/ICML the second); each is captured when present + parseable as a leading int.
+_SUB_SCORE_FIELDS = (
+    "quality", "clarity", "originality", "significance",  # NeurIPS-style
+    "soundness", "presentation", "contribution",  # ICLR/ICML-style
+)
+_LEADING_INT = re.compile(r"^\s*(-?\d+)")
 
 
 def _unwrap(content: dict[str, Any], key: str) -> Any:
@@ -245,6 +253,7 @@ class OpenReviewAdapter:
         raw_venueid = _unwrap(content, "venueid")
         venue_string = _unwrap(content, "venue")
         status = _derive_status(raw_venueid, ref)
+        details = raw.get("details")
         keywords_raw = _unwrap(content, "keywords")
         keywords = (
             [k for k in keywords_raw if isinstance(k, str)]
@@ -262,9 +271,7 @@ class OpenReviewAdapter:
             primary_area=_unwrap(content, "primary_area"),
             status=status,
             acceptance_type=(
-                _derive_acceptance_type(venue_string, raw.get("details"))
-                if status == "accepted"
-                else None
+                _derive_acceptance_type(venue_string, details) if status == "accepted" else None
             ),
             raw_venueid=raw_venueid,
             venue_string=venue_string,
@@ -275,8 +282,10 @@ class OpenReviewAdapter:
             pdate=raw.get("pdate"),
             tcdate=raw.get("tcdate"),
             tmdate=raw.get("tmdate"),
+            decision=_parse_decision(details),
             authors=_normalize_authors(content, paper_id, aliases, profiles),
             topics=normalize_keywords(keywords),
+            reviews=_parse_reviews(details),
         )
 
     # --- profile enrichment (Phase 1) ----------------------------------------
@@ -458,6 +467,81 @@ def _derive_acceptance_type(venue_string: str | None, details: Any) -> str | Non
                 for kind in _ACCEPTANCE_TYPES:
                     if kind in decision:
                         return kind
+    return None
+
+
+def _parse_score(raw: Any) -> int | None:
+    """Extract the leading integer of a rating/score field (``5`` or ``'8: accept'``).
+
+    Ratings come bare-int (NeurIPS) or ``'<n>: <label>'`` (ICLR/ICML) depending on venue;
+    the leading int is the venue-agnostic signal. Unparseable values → None (skipped, not
+    mis-scaled). Scales differ across venues, so means are only comparable within a venue.
+    """
+    if isinstance(raw, bool):
+        return None
+    if isinstance(raw, int):
+        return raw
+    if isinstance(raw, float):
+        return int(raw)
+    if isinstance(raw, str):
+        match = _LEADING_INT.match(raw)
+        if match:
+            return int(match.group(1))
+    return None
+
+
+def _reviewer_key(reply: dict[str, Any]) -> str:
+    """An opaque, stable key for a review's (anonymous) reviewer — the last signature segment."""
+    signatures = reply.get("signatures") or []
+    if signatures and isinstance(signatures[0], str):
+        # '.../Submission123/Reviewer_abcd' → 'Reviewer_abcd'
+        return signatures[0].rsplit("/", 1)[-1]
+    rid = reply.get("id")
+    return str(rid) if rid else "anonymous"
+
+
+def _parse_reviews(details: Any) -> list[NormalizedReview]:
+    """Parse Official_Review replies (rating/confidence/sub-scores) from a note's details."""
+    if not isinstance(details, dict):
+        return []
+    reviews: list[NormalizedReview] = []
+    for reply in details.get("replies") or []:
+        if not isinstance(reply, dict):
+            continue
+        invitations = reply.get("invitations") or []
+        if not any(str(inv).endswith("Official_Review") for inv in invitations):
+            continue
+        content = reply.get("content") or {}
+        rating_raw = _unwrap(content, "rating")
+        sub_scores = {
+            field: score
+            for field in _SUB_SCORE_FIELDS
+            if (score := _parse_score(_unwrap(content, field))) is not None
+        }
+        reviews.append(
+            NormalizedReview(
+                reviewer_key=_reviewer_key(reply),
+                rating=_parse_score(rating_raw),
+                confidence=_parse_score(_unwrap(content, "confidence")),
+                sub_scores=sub_scores,
+                raw_rating=str(rating_raw) if rating_raw is not None else None,
+            )
+        )
+    return reviews
+
+
+def _parse_decision(details: Any) -> str | None:
+    """The Decision reply's verdict string (e.g. 'Accept (poster)' | 'Reject'), if present."""
+    if not isinstance(details, dict):
+        return None
+    for reply in details.get("replies") or []:
+        if not isinstance(reply, dict):
+            continue
+        invitations = reply.get("invitations") or []
+        if any(str(inv).endswith("Decision") for inv in invitations):
+            decision = _unwrap(reply.get("content") or {}, "decision")
+            if isinstance(decision, str) and decision.strip():
+                return decision.strip()
     return None
 
 

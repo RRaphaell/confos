@@ -202,6 +202,44 @@ def test_normalize_without_profiles_is_unchanged() -> None:
     assert author.affiliation is None and author.homepage is None and author.expertise == []
 
 
+def test_parses_reviews_and_decision() -> None:
+    note = make_note(
+        "pr",
+        reviews=[
+            {"rating": "5", "confidence": "4", "sub_scores": {"quality": 3, "clarity": 4}},
+            {"rating": 7, "confidence": 3},
+        ],
+        decision="Accept (poster)",
+    )
+    paper = _normalize(note)
+    assert len(paper.reviews) == 2
+    first = paper.reviews[0]
+    assert (first.rating, first.confidence) == (5, 4)
+    assert first.sub_scores == {"quality": 3, "clarity": 4}
+    assert first.reviewer_key == "Reviewer_0"
+    assert paper.reviews[1].rating == 7
+    assert paper.decision == "Accept (poster)"
+
+
+def test_parses_iclr_style_label_rating() -> None:
+    paper = _normalize(make_note("pi", reviews=[{"rating": "8: accept", "confidence": "5"}]))
+    assert paper.reviews[0].rating == 8  # leading int
+    assert paper.reviews[0].raw_rating == "8: accept"  # verbatim for provenance
+
+
+def test_unparseable_review_scores_are_none() -> None:
+    paper = _normalize(make_note("pu", reviews=[{"rating": "N/A", "confidence": "borderline"}]))
+    assert paper.reviews[0].rating is None
+    assert paper.reviews[0].confidence is None
+
+
+def test_note_without_replies_has_no_reviews() -> None:
+    # A note ingested without --with-reviews carries no details → no reviews/decision.
+    paper = _normalize(make_note("pnr"))
+    assert paper.reviews == []
+    assert paper.decision is None
+
+
 def test_topics_and_provenance_url() -> None:
     paper = _normalize(make_note("aBcD", keywords=["LLM Agents", "llm agents", "Memory"]))
     assert paper.topics == ["llm agents", "memory"]

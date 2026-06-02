@@ -1,6 +1,6 @@
 # confos — Ranking & Topic Matching Spec
 
-**Status:** canonical · **Last updated:** 2026-05-31
+**Status:** canonical · **Last updated:** 2026-06-03
 
 `authors find --topic` is the product's differentiator, and `--topic` matching underlies
 `trends`, `stats topics`, `viz topics`, and `export context`. This doc pins down exactly
@@ -93,3 +93,20 @@ A fixture venue with a hand-constructed set of papers/authors has a **known expe
 ranking** committed in `tests/fixtures/`. The Phase 3 DoD requires `authors find` to
 reproduce it exactly (including tie-break order). This is what makes the wedge testable
 rather than vibes.
+
+## 4. Review-based ranking — `papers top` / `papers controversial` (Phase 2)
+When a venue is ingested with `--with-reviews`, each paper carries aggregates derived from
+its public `Official_Review` scores: `rating_mean`, `rating_std` (= controversy),
+`confidence_mean`, `review_count`, `decision`.
+
+- **`papers top`** orders by `rating_mean DESC, review_count DESC, paper_id ASC`; only papers
+  with ≥1 review and a non-null mean are eligible. Optional `--topic` scopes by FTS (the §1
+  machinery); `--venue`/`--year` filter.
+- **`papers controversial`** orders by `rating_std DESC, …`, requiring ≥2 reviews (variance
+  needs disagreement to measure).
+
+**Rating parser:** the rating is the *leading integer* of the field — covering `5` (NeurIPS)
+and `8: accept` (ICLR/ICML); unparseable values are skipped (`None`), never mis-scaled.
+**Scales differ per venue**, so means are comparable only *within* one venue — the commands
+default to `--venue`, and cross-venue ranking is intentionally not offered. Deterministic
+tie-breaks keep the order stable; reviewer identities stay anonymous.

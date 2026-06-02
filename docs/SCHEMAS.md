@@ -49,9 +49,17 @@ Error form:
   "pdf_url": "https://openreview.net/pdf/…",         // present in `show` + `export papers`; omitted in list/search; null if absent
   "bibtex": "@inproceedings{…}",                     // present in `show` + `export papers`; the note's _bibtex, verbatim
   "supplementary_url": "https://openreview.net/attachment/…",  // present in `show` + `export papers`; null if absent
+  "review_count": 4,                         // present in `show` + papers top/controversial; 0 until reviews ingested
+  "rating_mean": 4.75,                       // mean review rating (scale varies per venue); null if no reviews
+  "rating_std": 0.43,                        // rating std = controversy; null if no reviews
+  "confidence_mean": 3.5,                    // mean reviewer confidence; null if none
+  "decision": "Accept (poster)",             // the Decision verdict; null until reviews ingested
   "bm25": 7.4                                // search/find only; relevance score
 }
 ```
+The review fields come from ingesting with `confos ingest <venue> --with-reviews`; they're
+present in `papers show` + `papers top`/`controversial` (0/null until then). Rating scales
+differ per venue, so means are only comparable within one venue.
 `status` gained **`rejected`** (the post-review reject bucket, derived locally from the
 venue's `rejected_venue_id`, falling back to the conventional `…/Rejected_Submission`
 venueid suffix); papers there used to mislabel as `unknown`.

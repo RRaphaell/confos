@@ -24,8 +24,8 @@ from importlib.resources import files
 from ..errors import ConfigError
 
 # Bumped by each schema-changing phase. v2 = Phase 0 (pdf/bibtex/supplementary columns);
-# v3 = Phase 1 (author profile-enrichment columns).
-SCHEMA_VERSION = 3
+# v3 = Phase 1 (author profile-enrichment columns); v4 = Phase 2 (review aggregates + table).
+SCHEMA_VERSION = 4
 
 # Derived (rebuildable) FTS tables — dropped/recreated by `index rebuild`.
 _DERIVED_TABLES = ("papers_fts", "authors_fts", "orgs_fts")
@@ -51,6 +51,36 @@ def _add_columns(table: str, columns: list[tuple[str, str]]) -> _Migration:
     return _apply
 
 
+# Phase 2 reviews table (mirrors schema.sql; CREATE … IF NOT EXISTS keeps it idempotent).
+_REVIEWS_TABLE = """
+    CREATE TABLE IF NOT EXISTS reviews (
+        paper_id        TEXT NOT NULL REFERENCES papers(id) ON DELETE CASCADE,
+        reviewer_key    TEXT NOT NULL,
+        rating          INTEGER,
+        confidence      INTEGER,
+        sub_scores_json TEXT NOT NULL DEFAULT '{}',
+        raw_rating      TEXT,
+        PRIMARY KEY (paper_id, reviewer_key)
+    )
+"""
+
+
+def _phase2_reviews(conn: sqlite3.Connection) -> None:
+    """v4: review-aggregate columns on papers + the reviews table (additive, idempotent)."""
+    _add_columns(
+        "papers",
+        [
+            ("review_count", "INTEGER NOT NULL DEFAULT 0"),
+            ("rating_mean", "REAL"),
+            ("rating_std", "REAL"),
+            ("confidence_mean", "REAL"),
+            ("decision", "TEXT"),
+        ],
+    )(conn)
+    conn.execute(_REVIEWS_TABLE)
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_reviews_paper ON reviews(paper_id)")
+
+
 # Ordered upgrade steps for EXISTING stores (a fresh store gets schema.sql directly and
 # skips these). Each (target_version, step) runs when target_version > the store's version.
 _MIGRATIONS: tuple[tuple[int, _Migration], ...] = (
@@ -73,6 +103,7 @@ _MIGRATIONS: tuple[tuple[int, _Migration], ...] = (
             ],
         ),
     ),
+    (4, _phase2_reviews),  # Phase 2 — review aggregates on papers + the reviews table.
 )
 
 

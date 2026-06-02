@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Added
+- **Enrichment Phase 2 — review scores & quality intelligence.** Ingesting with `confos
+  ingest <venue> --with-reviews` now captures public Official_Review scores: papers carry
+  `review_count`, `rating_mean`, `rating_std` (controversy), `confidence_mean`, and the
+  `decision` verdict, with raw per-review rows for provenance. New `confos papers top`
+  (highest mean rating) and `confos papers controversial` (highest rating variance) rank by
+  quality, scoped to a topic/venue. The rating parser handles every venue format (`5`,
+  `8: accept`). A later `index rebuild` reproduces it all offline.
 - **Enrichment Phase 1 — author profile enrichment.** New `confos enrich profiles --venue
   <slug>` fetches each author's OpenReview profile (anonymous, best-effort, resumable) to fill
   the previously-empty people/orgs surfaces: `stats orgs`, `stats countries`, `orgs top`, and

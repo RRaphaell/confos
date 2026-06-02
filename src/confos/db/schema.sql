@@ -54,6 +54,12 @@ CREATE TABLE IF NOT EXISTS papers (
     pdate           INTEGER,                       -- publication date (ms epoch) if present
     tcdate          INTEGER,                       -- true creation date (ms epoch)
     tmdate          INTEGER,                       -- true modification date (ms epoch)
+    -- Review aggregates (Phase 2; populated when reviews are ingested, else 0/NULL).
+    review_count    INTEGER NOT NULL DEFAULT 0,    -- number of Official_Reviews
+    rating_mean     REAL,                          -- mean review rating (scale varies by venue)
+    rating_std      REAL,                          -- population std of ratings (= controversy)
+    confidence_mean REAL,                          -- mean reviewer confidence
+    decision        TEXT,                          -- the Decision verdict, e.g. 'Accept (poster)'
     created_at      TEXT NOT NULL,                 -- when confos first ingested it
     updated_at      TEXT NOT NULL
 );
@@ -108,6 +114,19 @@ CREATE TABLE IF NOT EXISTS paper_topics (
     PRIMARY KEY (paper_id, topic)
 );
 CREATE INDEX IF NOT EXISTS idx_paper_topics_topic ON paper_topics(topic);
+
+-- Per-review rows (Phase 2; derived from raw details.replies, rebuilt with papers). Reviewer
+-- identities are anonymous — reviewer_key is an opaque signature segment, never a profile.
+CREATE TABLE IF NOT EXISTS reviews (
+    paper_id        TEXT NOT NULL REFERENCES papers(id) ON DELETE CASCADE,
+    reviewer_key    TEXT NOT NULL,                 -- opaque anonymous reviewer signature segment
+    rating          INTEGER,                       -- leading int of the rating (scale varies)
+    confidence      INTEGER,
+    sub_scores_json TEXT NOT NULL DEFAULT '{}',    -- {field: int} numeric sub-scores
+    raw_rating      TEXT,                          -- the rating field verbatim (provenance)
+    PRIMARY KEY (paper_id, reviewer_key)
+);
+CREATE INDEX IF NOT EXISTS idx_reviews_paper ON reviews(paper_id);
 
 CREATE TABLE IF NOT EXISTS ingest_runs (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,

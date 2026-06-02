@@ -58,6 +58,42 @@ def render_papers(
     ctx.out.print(table)
 
 
+def render_rated_papers(ctx: AppContext, papers: list[dict[str, Any]]) -> None:
+    """Review-ranked results table (`papers top`/`controversial`): rating ± std + count."""
+    venue_set = {p["venue"] for p in papers}
+    single_venue = next(iter(venue_set)) if len(venue_set) == 1 else None
+    table = Table(
+        caption=f"venue: {single_venue}" if single_venue else None, caption_justify="left"
+    )
+    table.add_column("#", justify="right", no_wrap=True)
+    table.add_column("title", overflow="ellipsis", no_wrap=True)
+    table.add_column("authors", overflow="ellipsis", no_wrap=True)
+    if single_venue is None:
+        table.add_column("venue", no_wrap=True)
+    table.add_column("rating", justify="right", no_wrap=True)
+    table.add_column("±std", justify="right", no_wrap=True)
+    table.add_column("reviews", justify="right", no_wrap=True)
+    for index, paper in enumerate(papers, start=1):
+        rating, std = paper.get("rating_mean"), paper.get("rating_std")
+        row = [str(index), str(paper["title"]), _authors_label(paper["authors"])]
+        if single_venue is None:
+            row.append(str(paper["venue"]))
+        row += [
+            f"{rating:.2f}" if rating is not None else "—",
+            f"{std:.2f}" if std is not None else "—",
+            str(paper.get("review_count", 0)),
+        ]
+        table.add_row(*row)
+    ctx.out.print(table)
+
+
+def rated_papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
+    return [
+        (p["paper_id"], p["title"], p["venue"], p.get("rating_mean", ""), p.get("review_count", 0))
+        for p in papers
+    ]
+
+
 def papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
     return [(p["paper_id"], p["title"], p["venue"], p["status"], p.get("bm25", "")) for p in papers]
 

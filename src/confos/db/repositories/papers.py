@@ -22,11 +22,11 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
         INSERT INTO papers (
             id, venue_slug, number, title, abstract, tldr, keywords_json, primary_area,
             status, acceptance_type, raw_venueid, venue_string, url, pdf_url, bibtex,
-            supplementary_url, pdate, tcdate, tmdate, created_at, updated_at
+            supplementary_url, pdate, tcdate, tmdate, decision, created_at, updated_at
         ) VALUES (
             :id, :venue_slug, :number, :title, :abstract, :tldr, :keywords_json, :primary_area,
             :status, :acceptance_type, :raw_venueid, :venue_string, :url, :pdf_url, :bibtex,
-            :supplementary_url, :pdate, :tcdate, :tmdate, :now, :now
+            :supplementary_url, :pdate, :tcdate, :tmdate, :decision, :now, :now
         )
         ON CONFLICT(id) DO UPDATE SET
             venue_slug=excluded.venue_slug,
@@ -47,6 +47,7 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
             pdate=excluded.pdate,
             tcdate=excluded.tcdate,
             tmdate=excluded.tmdate,
+            decision=excluded.decision,
             updated_at=excluded.updated_at
         """,
         {
@@ -69,6 +70,7 @@ def upsert_paper(conn: sqlite3.Connection, paper: NormalizedPaper) -> bool:
             "pdate": paper.pdate,
             "tcdate": paper.tcdate,
             "tmdate": paper.tmdate,
+            "decision": paper.decision,
             "now": now,
         },
     )
@@ -127,6 +129,49 @@ def search(
         "JOIN venues v ON v.slug = p.venue_slug "
         f"WHERE {' AND '.join(clauses)} "
         "ORDER BY relevance DESC, p.id ASC LIMIT :limit"
+    )
+    return conn.execute(sql, params).fetchall()
+
+
+# Allow-listed ORDER BY clauses for review-ranked queries (never interpolate user input).
+_REVIEW_ORDERS = {
+    "rating": "p.rating_mean DESC, p.review_count DESC, p.id ASC",
+    "controversy": "p.rating_std DESC, p.review_count DESC, p.id ASC",
+}
+
+
+def ranked_by_reviews(
+    conn: sqlite3.Connection,
+    *,
+    order: str,
+    fts_query: str | None = None,
+    venue: str | None = None,
+    year: int | None = None,
+    min_reviews: int = 1,
+    limit: int = 20,
+) -> list[sqlite3.Row]:
+    """Reviewed papers ordered by a review signal (``rating`` | ``controversy``).
+
+    Optional ``fts_query`` scopes to a topic (same FTS machinery as search); only papers
+    with at least ``min_reviews`` reviews and a non-null mean rating are returned.
+    """
+    order_sql = _REVIEW_ORDERS[order]
+    clauses = ["p.review_count >= :min_reviews", "p.rating_mean IS NOT NULL"]
+    params: dict[str, object] = {"min_reviews": min_reviews, "limit": limit}
+    joins = "JOIN venues v ON v.slug = p.venue_slug"
+    if fts_query is not None:
+        joins = "JOIN papers_fts ON papers_fts.paper_id = p.id " + joins
+        clauses.append("papers_fts MATCH :q")
+        params["q"] = fts_query
+    if venue is not None:
+        clauses.append("p.venue_slug = :venue")
+        params["venue"] = venue
+    if year is not None:
+        clauses.append("v.year = :year")
+        params["year"] = year
+    sql = (
+        f"SELECT p.* FROM papers p {joins} "
+        f"WHERE {' AND '.join(clauses)} ORDER BY {order_sql} LIMIT :limit"
     )
     return conn.execute(sql, params).fetchall()
 

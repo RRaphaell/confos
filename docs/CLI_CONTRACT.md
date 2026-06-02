@@ -30,7 +30,9 @@ confos
     add --slug S --openreview-id ID register a custom venue
     aliases                         show built-in alias map
 
-  ingest <venue> [--include-decisions] [--force] [--dry-run]
+  ingest <venue> [--with-reviews] [--force] [--dry-run]
+        #   --with-reviews also fetches reviews + decisions (enables papers
+        #   top/controversial); --include-decisions is a legacy alias. Larger download.
         # pulls the full submission set; status derived locally (see ARCHITECTURE §8).
         # --include-decisions: also fetch Decision notes to populate acceptance_type
         #   (oral/spotlight/poster); off by default (heavier fetch). --force ignores
@@ -41,6 +43,9 @@ confos
     search <query> [--venue V] [--year Y] [--org O] [--accepted-only] [--limit N]
     show <paper-id> [--with related]   # authors + abstract are always included
     related <paper-id> [--limit N]
+    top [--topic T] [--venue V] [--year Y] [--limit N]            # highest mean review rating
+    controversial [--topic T] [--venue V] [--year Y] [--limit N]  # highest rating variance
+        #   top/controversial need reviews ingested (`ingest --with-reviews`).
 
   authors
     find --topic T [--venue V] [--limit N]      # ranked people working on a topic
