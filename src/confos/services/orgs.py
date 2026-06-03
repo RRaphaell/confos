@@ -53,9 +53,19 @@ def org_papers(
         migrate(conn)
         org_row = orgs_repo.find_by_name(conn, org)
         if org_row is None:
+            # The org name didn't resolve. Distinguish "nothing is enriched yet" (the whole
+            # org index is empty, so NOTHING would resolve) from "this particular org isn't
+            # here" — same not-found exit code, but an actionable message instead of one that
+            # misleadingly implies this org specifically has zero papers.
+            if stats_repo.papers_with_affiliation(conn) == 0:
+                raise NotFoundError(
+                    f"No organisation data is enriched yet, so '{org}' can't be resolved.",
+                    hint="Populate affiliations with `confos enrich profiles --venue <slug>` "
+                    "(v1 org coverage is sparse without it).",
+                )
             raise NotFoundError(
-                f"Organisation '{org}' has no papers in the local store.",
-                hint="Org coverage is best-effort in v1; see `confos orgs top`.",
+                f"Organisation '{org}' isn't in the local store.",
+                hint="Names use the normalised form — see `confos orgs top` for what's available.",
             )
         rows = papers_repo.list_by_org(conn, org_row["id"], venue=venue, limit=limit)
         papers = assemble_papers(conn, rows, include_abstract=False, with_bm25=False)

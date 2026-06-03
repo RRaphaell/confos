@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Fixed
+- `orgs papers <org>` now gives an actionable not-found message: when no profiles are
+  enriched yet it points at `enrich profiles` (instead of misleadingly implying the org
+  itself has zero papers); otherwise it points at `orgs top`. Exit code unchanged (1).
+
 ## [0.2.0] - 2026-06-03
 
 ### Added

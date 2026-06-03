@@ -96,6 +96,25 @@ def test_orgs_top_json(run_cli: RunCli, ingested: Path) -> None:
     assert "data_quality" in data  # honesty parity with stats orgs
 
 
+def test_orgs_papers_unknown_org_is_not_found(run_cli: RunCli, ingested: Path) -> None:
+    # Org data exists (MIT) but this name doesn't resolve → not_found, pointed at `orgs top`.
+    result = run_cli("orgs", "papers", "Nonexistent Lab", "--json")
+    assert result.exit_code == 1
+    err = result.json()["error"]
+    assert err["type"] == "not_found"
+    assert "isn't in the local store" in err["message"]
+
+
+def test_orgs_papers_with_no_affiliations_points_to_enrich(
+    run_cli: RunCli, initialized_home: Path
+) -> None:
+    # No profiles enriched → the whole org index is empty, so the message must point at
+    # `enrich profiles`, not imply this specific org has zero papers (smoke-test finding).
+    result = run_cli("orgs", "papers", "Google")
+    assert result.exit_code == 1
+    assert "enrich profiles" in result.stderr.lower()
+
+
 def test_index_status_and_rebuild(run_cli: RunCli, ingested: Path) -> None:
     status = run_cli("index", "status", "--json")
     assert status.exit_code == 0
