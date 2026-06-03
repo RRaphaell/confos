@@ -153,7 +153,15 @@ def test_cli_brief_json(run_cli: RunCli, brief_home: Path) -> None:
     assert data["top_papers"]["papers"][0]["paper_id"] == "p1"
 
 
-def test_cli_brief_human_markdown(run_cli: RunCli, brief_home: Path) -> None:
+def test_cli_brief_human_dashboard(run_cli: RunCli, brief_home: Path) -> None:
     result = run_cli("brief", "--venue", "test-venue")
+    assert result.exit_code == 0
+    assert "confos brief" in result.stdout and "test-venue" in result.stdout
+    assert "TOP PAPERS" in result.stdout  # a dashboard section header (uppercased)
+    assert "\x1b" not in result.stdout  # no colour leaks on a non-TTY
+
+
+def test_cli_brief_plain_is_markdown(run_cli: RunCli, brief_home: Path) -> None:
+    result = run_cli("brief", "--venue", "test-venue", "--plain")
     assert result.exit_code == 0
     assert result.stdout.startswith("# confos brief: test-venue")
