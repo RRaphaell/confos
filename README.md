@@ -113,9 +113,10 @@ the full tour and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it works.
 
 ## Status
 
-**v0.2.0.** The full v1 surface — ingest · search · people · orgs · stats · trends · viz ·
-export · context packs · agent skill — plus the enrichment layer: `brief` (one-command
-landscape), review scores (`papers top`/`controversial`), and author-profile enrichment.
+**v0.3.0.** The full v1 surface — ingest · search · people · orgs · stats · trends · viz ·
+export · context packs · agent skill — the enrichment layer: `brief` (one-command landscape),
+review scores (`papers top`/`controversial`), author-profile enrichment — and a colored,
+`ft`-style human dashboard (`brief` + `viz`) that degrades cleanly to plain text when piped.
 All implemented, tested, and verified end-to-end against live OpenReview
 (`scripts/live-test.sh`). OpenReview is the only source today; more adapters, semantic
 search, an LLM `ask`, and an MCP server are designed-for-later (the seams exist, the code

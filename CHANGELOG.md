@@ -5,6 +5,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-04
+
 ### Added
 - **Human-output visual layer** (default mode only; `--json`/`--plain` stay byte-identical).
   A live spinner on stderr during `ingest` so a long network pull never looks hung; semantic
@@ -129,6 +131,7 @@ agent skill — all offline after ingest, all with provenance.
 - Blueprint complete: product spec, architecture, CLI contract, ranking/topic spec, JSON
   schemas, build plan, references, agent docs.
 
-[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/RRaphaell/confos/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/RRaphaell/confos/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/RRaphaell/confos/releases/tag/v0.1.0
