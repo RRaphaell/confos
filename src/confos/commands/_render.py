@@ -10,7 +10,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from rich.box import ASCII, ROUNDED
+from rich.console import Group
 from rich.markup import escape
+from rich.panel import Panel
 from rich.table import Table
 
 from ..console import AppContext
@@ -82,7 +85,11 @@ def render_papers(
         table.add_column("score", justify="right", no_wrap=True)
 
     for index, paper in enumerate(papers, start=1):
-        row = [str(index), escape(str(paper["title"])), escape(_authors_label(paper["authors"]))]
+        title = escape(str(paper["title"]))
+        if ctx.supports_hyperlinks:
+            # clickable in iTerm2/WezTerm/kitty/VS Code; Rich strips the link elsewhere.
+            title = f"[link=https://openreview.net/forum?id={paper['paper_id']}]{title}[/link]"
+        row = [str(index), title, escape(_authors_label(paper["authors"]))]
         if single_venue is None:
             row.append(escape(str(paper["venue"])))
         row.append(_status_cell(paper))
@@ -171,3 +178,61 @@ def render_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
             str(author["data_quality"]),
         )
     ctx.out.print(table)
+
+
+def _links_line(ctx: AppContext, forum: str, pdf: str) -> str:
+    """A footer of source links: real OSC-8 links in a capable terminal, else ``label: url``."""
+
+    def link(label: str, url: str) -> str:
+        if ctx.supports_hyperlinks:
+            return f"[link={url}][confos.accent]{label}[/][/link]"
+        return f"[confos.muted]{label}:[/] {escape(url)}"
+
+    parts = [link("forum", forum)]
+    if pdf:
+        parts.append(link("pdf", pdf))
+    return "   ".join(parts)
+
+
+def render_paper_detail(ctx: AppContext, paper: dict[str, Any]) -> None:
+    """A reading-friendly card for ``papers show``: header + abstract + a links footer.
+
+    Human path only — ``--json``/``--plain`` carry the same fields through their own
+    emitters. The border degrades to ASCII when the stream isn't Unicode-capable.
+    """
+    authors = ", ".join(escape(str(a["name"])) for a in paper["authors"]) or "—"
+    keywords = "; ".join(escape(str(k)) for k in paper["keywords"]) or "—"
+    # _status_cell already shows the finest label (oral/spotlight/poster, else the status).
+    status_line = f"{_status_cell(paper)}  [confos.muted]·[/]  {escape(str(paper['venue']))}"
+
+    header = Table.grid(padding=(0, 2))
+    header.add_column(style="confos.muted", justify="right", no_wrap=True)
+    header.add_column(overflow="fold")
+    header.add_row("authors", authors)
+    header.add_row("status", status_line)
+    if keywords != "—":
+        header.add_row("keywords", keywords)
+
+    forum = str(paper.get("url") or f"https://openreview.net/forum?id={paper['paper_id']}")
+    pdf = str(paper.get("pdf_url") or "")
+
+    body: list[Any] = [header]
+    abstract = str(paper.get("abstract") or "").strip()
+    if abstract:
+        body += ["", escape(abstract)]
+    body += ["", _links_line(ctx, forum, pdf)]
+
+    title = escape(str(paper["title"]))
+    if ctx.supports_hyperlinks:
+        title = f"[link={forum}]{title}[/link]"
+    ctx.out.print(
+        Panel(
+            Group(*body),
+            title=f"[confos.accent]{title}[/]",
+            title_align="left",
+            subtitle=f"[confos.muted]{escape(str(paper['paper_id']))}[/]",
+            subtitle_align="right",
+            box=ROUNDED if ctx.use_unicode else ASCII,
+            padding=(1, 2),
+        )
+    )

@@ -6,11 +6,11 @@ import typer
 
 from ..console import bind_command, global_output_options
 from ..output.plain import key_value_plain, tsv_rows
-from ..output.table import key_value_table
 from ..services import search as search_service
 from ._render import (
     papers_tsv,
     rated_papers_tsv,
+    render_paper_detail,
     render_papers,
     render_rated_papers,
     resolve_limit,
@@ -106,21 +106,7 @@ def show(
         flat["keywords"] = keywords
         key_value_plain(app_ctx.out, list(flat.items()))
         return
-    key_value_table(
-        app_ctx.out,
-        [
-            ("title", paper["title"]),
-            ("authors", authors),
-            ("venue", paper["venue"]),
-            ("status", paper["status"]),
-            ("type", str(paper["acceptance_type"] or "—")),
-            ("keywords", keywords or "—"),
-            ("url", paper["url"]),
-            ("pdf", str(paper.get("pdf_url") or "—")),
-            ("abstract", paper.get("abstract", "")),
-        ],
-        title=paper["paper_id"],
-    )
+    render_paper_detail(app_ctx, paper)
     related = paper.get("related") or []
     if related:
         app_ctx.out.print("\n[bold]Related[/bold]:" if app_ctx.use_color else "\nRelated:")
