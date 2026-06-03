@@ -40,6 +40,7 @@ from .console import (
     build_consoles,
     global_output_options,
     should_use_color,
+    should_use_unicode,
     stream_is_tty,
 )
 from .errors import EXIT_INTERRUPTED, EXIT_OK, EXIT_USAGE, ConfosError, UsageError
@@ -117,6 +118,7 @@ def _main(
 ) -> None:
     """Set up global state shared by every command."""
     use_color = should_use_color(no_color, stream_is_tty=stream_is_tty())
+    use_unicode = should_use_unicode()
     out, err = build_consoles(use_color)
 
     if json_ and plain:
@@ -142,6 +144,8 @@ def _main(
         verbose=verbose,
         no_input=no_input,
         use_color=use_color,
+        use_unicode=use_unicode,
+        supports_hyperlinks=out.is_terminal and use_unicode,
         paths=paths,
         config=config,
         venue=resolved_venue,

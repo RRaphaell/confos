@@ -26,6 +26,7 @@ from typing import Annotated, Any
 
 import typer
 from rich.console import Console
+from rich.theme import Theme
 
 from .config import Config
 from .errors import ConfosError, UsageError
@@ -52,6 +53,22 @@ def should_use_color(no_color_flag: bool, *, stream_is_tty: bool) -> bool:
     return stream_is_tty
 
 
+def should_use_unicode(*, stream: Any = None) -> bool:
+    """Whether to render Unicode glyphs (block bars, sparklines, box borders).
+
+    Deliberately *separate* from colour: a no-colour TTY still draws block glyphs fine,
+    but ``TERM=dumb``, an opt-out (``CONFOS_ASCII``), or a non-UTF-8 stream cannot — degrade
+    to ASCII then. See VISUAL.md §2.2.
+    """
+    if os.environ.get("CONFOS_ASCII"):
+        return False
+    if os.environ.get("TERM") == "dumb":
+        return False
+    target = stream if stream is not None else sys.stdout
+    encoding = (getattr(target, "encoding", None) or "").lower()
+    return "utf" in encoding
+
+
 @dataclass
 class AppContext:
     """Everything a command needs about the current invocation."""
@@ -61,6 +78,8 @@ class AppContext:
     verbose: int
     no_input: bool
     use_color: bool
+    use_unicode: bool
+    supports_hyperlinks: bool
     paths: Paths
     config: Config
     venue: str | None
@@ -148,10 +167,46 @@ class AppContext:
         return self.mode is OutputMode.PLAIN
 
 
+def confos_theme() -> Theme:
+    """The single colour vocabulary (VISUAL.md §2.1).
+
+    Named styles so call sites express *meaning* (``[status.oral]``, ``[dq.high]``) rather
+    than raw colours, and so everything collapses to plain text automatically under
+    ``no_color`` / ``NO_COLOR`` / a dumb terminal.
+    """
+    return Theme(
+        {
+            "confos.success": "green",
+            "confos.warn": "yellow",
+            "confos.error": "bold red",
+            "confos.muted": "dim",
+            "confos.accent": "bold cyan",
+            "confos.count": "bold",
+            "status.oral": "bold magenta",
+            "status.spotlight": "magenta",
+            "status.poster": "cyan",
+            "status.accepted": "green",
+            "status.active": "yellow",
+            "status.rejected": "dim red",
+            "status.withdrawn": "dim",
+            "dq.high": "green",
+            "dq.med": "yellow",
+            "dq.low": "red",
+            "score.hi": "bold",
+            "score.lo": "dim",
+        }
+    )
+
+
 def build_consoles(use_color: bool) -> tuple[Console, Console]:
-    """Create (stdout, stderr) consoles honouring the resolved colour decision."""
-    out = Console(no_color=not use_color, highlight=False, soft_wrap=False)
-    err = Console(stderr=True, no_color=not use_color, highlight=False)
+    """Create (stdout, stderr) consoles honouring the resolved colour decision.
+
+    Both carry :func:`confos_theme` so ``[status.*]`` / ``[dq.*]`` markup resolves
+    everywhere; ``no_color`` strips the colour while leaving the text intact.
+    """
+    theme = confos_theme()
+    out = Console(no_color=not use_color, highlight=False, soft_wrap=False, theme=theme)
+    err = Console(stderr=True, no_color=not use_color, highlight=False, theme=theme)
     return out, err
 
 
