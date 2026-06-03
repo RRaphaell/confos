@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Added
+- **Human-output visual layer** (default mode only; `--json`/`--plain` stay byte-identical).
+  A live spinner on stderr during `ingest` so a long network pull never looks hung; semantic
+  colour in results — acceptance status (oral/spotlight pop, rejected/withdrawn recede) plus a
+  green/yellow/red data-quality badge on `stats` coverage; clickable paper titles (OSC-8) in
+  search results and a reading-friendly `papers show` card (header + abstract + forum/pdf
+  links). Backed by a central Rich theme and `use_unicode`/hyperlink capability flags;
+  everything degrades to plain text on a pipe / `NO_COLOR` / a dumb terminal (`CONFOS_ASCII`
+  forces ASCII glyphs).
+
 ### Fixed
 - `orgs papers <org>` now gives an actionable not-found message: when no profiles are
   enriched yet it points at `enrich profiles` (instead of misleadingly implying the org

@@ -1,6 +1,13 @@
 # confos — Visual Enrichment (Human Output)
 
-**Status:** proposed (design spec — not yet implemented) · **Last updated:** 2026-06-02
+**Status:** P1–P4 implemented (theme + capability flags · ingest spinner · semantic colour ·
+clickable links + `papers show` card); P5–P6 still proposed · **Last updated:** 2026-06-03
+
+> **Implemented 2026-06-03:** P1–P4 landed on `main`, each gate-green and contract-safe.
+> Note P2 shipped as a **live spinner** rather than the determinate bar below: the full fetch
+> is a single blocking `get_all_notes` call with no per-page hook, so a determinate bar needs
+> the adapter paginated manually — deferred. P5 (sparklines + guided states) and P6 (terminal
+> co-authorship graph) remain proposed.
 
 How the **human** output path should evolve from "correct and plain" to "correct and
 delightful," without touching the machine contract. This doc is the implementation plan
