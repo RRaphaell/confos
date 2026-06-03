@@ -76,7 +76,8 @@ def bar_chart(
     """
     max_value = max((value for _, value in items), default=0) or 1
     table = Table(show_header=False, box=None, title=title, title_justify="left", pad_edge=False)
-    table.add_column("label", no_wrap=True, overflow="ellipsis")
+    # Cap the label column so a long label (e.g. a verbose org name) can't starve the bar.
+    table.add_column("label", no_wrap=True, overflow="ellipsis", max_width=32)
     table.add_column("bar")
     table.add_column("value", justify="right", no_wrap=True, style="confos.muted")
     for label, value in items:
