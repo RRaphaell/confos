@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
   links). Backed by a central Rich theme and `use_unicode`/hyperlink capability flags;
   everything degrades to plain text on a pipe / `NO_COLOR` / a dumb terminal (`CONFOS_ASCII`
   forces ASCII glyphs).
+- **`confos brief` is now an ft-style dashboard, plus colored charts.** A branded violet/teal
+  truecolor palette; the human `brief` renders as a sectioned dashboard — overview + a
+  status-composition bar, colored eighth-block topic/org bar charts, paper & people entry
+  lists with clickable titles, and a footer. `viz topics`/`viz orgs` bars are colored too, and
+  bar labels cap so long names can't starve the bar. `brief --json` and `--plain` (Markdown)
+  are unchanged.
 
 ### Fixed
 - `orgs papers <org>` now gives an actionable not-found message: when no profiles are
