@@ -16,7 +16,9 @@ from ._render import resolve_limit
 app = typer.Typer(no_args_is_help=False, help="Visualise the landscape (charts + graphs).")
 
 
-def _bar_command(app_ctx: AppContext, result: dict[str, object], *, label: str) -> None:
+def _bar_command(
+    app_ctx: AppContext, result: dict[str, object], *, label: str, hue: str = "confos.bar"
+) -> None:
     rows = result["rows"]
     assert isinstance(rows, list)
     if app_ctx.is_json:
@@ -28,7 +30,13 @@ def _bar_command(app_ctx: AppContext, result: dict[str, object], *, label: str) 
     if not rows:
         app_ctx.out.print("No data to chart yet.")
         return
-    bar_chart(app_ctx.out, [(str(r["key"]), int(r["papers"])) for r in rows], title=f"Top {label}")
+    bar_chart(
+        app_ctx.out,
+        [(str(r["key"]), int(r["papers"])) for r in rows],
+        title=f"[confos.heading]Top {label}[/]",
+        hue=hue,
+        unicode=app_ctx.use_unicode,
+    )
 
 
 @app.command()
@@ -66,7 +74,7 @@ def orgs(
     resolved_venue = venue or app_ctx.venue
     limit = resolve_limit(None, app_ctx.limit, 20)
     result = stats_service.orgs(app_ctx.paths, resolved_venue, limit=limit)
-    _bar_command(app_ctx, result, label="organisations")
+    _bar_command(app_ctx, result, label="organisations", hue="confos.bar2")
 
 
 @app.command()

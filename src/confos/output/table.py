@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 
@@ -44,20 +45,42 @@ def data_table(
     console.print(table)
 
 
+_EIGHTHS = "▏▎▍▌▋▊▉█"
+
+
+def _bar_glyphs(value: int, max_value: int, width: int, *, unicode: bool) -> str:
+    """A horizontal bar with sub-cell (eighth-block) precision; ASCII ``#`` when not Unicode."""
+    if value <= 0:
+        return ""
+    if not unicode:
+        return "#" * max(1, round(value / max_value * width))
+    eighths = max(1, round(value / max_value * width * 8))
+    full, rem = divmod(eighths, 8)
+    return "█" * full + (_EIGHTHS[rem - 1] if rem else "")
+
+
 def bar_chart(
     console: Console,
     items: Sequence[tuple[str, int]],
     *,
     title: str | None = None,
     width: int = 40,
+    hue: str = "confos.bar",
+    unicode: bool = True,
 ) -> None:
-    """A terminal horizontal bar chart (label · bar · value), scaled to the max value."""
+    """A horizontal bar chart (label · bar · value), scaled to the max value.
+
+    Bars are themed (``hue``) with eighth-block precision and the value recedes
+    (``confos.muted``); colour collapses to plain text without it, glyphs degrade to ASCII
+    when ``unicode`` is False. Human output only.
+    """
     max_value = max((value for _, value in items), default=0) or 1
     table = Table(show_header=False, box=None, title=title, title_justify="left", pad_edge=False)
     table.add_column("label", no_wrap=True, overflow="ellipsis")
     table.add_column("bar")
-    table.add_column("value", justify="right", no_wrap=True)
+    table.add_column("value", justify="right", no_wrap=True, style="confos.muted")
     for label, value in items:
-        bar = "█" * max(1, round(value / max_value * width)) if value else ""
-        table.add_row(str(label), bar, str(value))
+        glyphs = _bar_glyphs(value, max_value, width, unicode=unicode)
+        bar = f"[{hue}]{glyphs}[/]" if glyphs else ""
+        table.add_row(escape(str(label)), bar, str(value))
     console.print(table)

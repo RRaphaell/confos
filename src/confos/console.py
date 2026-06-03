@@ -180,7 +180,14 @@ def confos_theme() -> Theme:
             "confos.warn": "yellow",
             "confos.error": "bold red",
             "confos.muted": "dim",
-            "confos.accent": "bold cyan",
+            # Branded truecolor palette (violet primary + teal secondary). Rich coerces hex to
+            # the nearest 256/ANSI colour on lesser terminals and strips it under no-colour.
+            "confos.accent": "bold #a78bfa",  # violet — primary
+            "confos.accent2": "#2dd4bf",  # teal — secondary
+            "confos.heading": "bold #c4b5fd",  # section headers (lighter violet)
+            "confos.brand": "bold #a78bfa",
+            "confos.bar": "#a78bfa",  # violet bar fill
+            "confos.bar2": "#2dd4bf",  # teal bar fill
             "confos.count": "bold",
             "status.oral": "bold magenta",
             "status.spotlight": "magenta",

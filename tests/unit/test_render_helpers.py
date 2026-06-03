@@ -70,6 +70,21 @@ def test_spinner_noop_when_disabled_writes_nothing() -> None:
     assert cap.get() == ""
 
 
+def test_bar_chart_themed_and_ascii_degradable() -> None:
+    from confos.output.table import bar_chart
+
+    out, _ = build_consoles(use_color=False)
+    with out.capture() as cap:
+        bar_chart(out, [("agents", 10), ("evals", 4)], title="Top topics")
+    text = cap.get()
+    assert "\x1b" not in text  # no colour leaks when colour is off
+    assert "█" in text  # eighth-block bars by default
+    with out.capture() as cap2:
+        bar_chart(out, [("agents", 10)], unicode=False)
+    ascii_out = cap2.get()
+    assert "#" in ascii_out and "█" not in ascii_out
+
+
 def test_resolve_limit_precedence() -> None:
     assert resolve_limit(5, 20, 50) == 5  # command flag wins
     assert resolve_limit(None, 30, 50) == 30  # falls back to root --limit
