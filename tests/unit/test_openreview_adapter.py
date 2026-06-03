@@ -246,10 +246,16 @@ def test_duplicate_reviewer_signatures_are_deduped() -> None:
     note = make_note("pd")
     note["details"] = {
         "replies": [
-            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
-             "content": {"rating": {"value": 8}}},
-            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
-             "content": {"rating": {"value": 2}}},
+            {
+                "invitations": ["X/-/Official_Review"],
+                "signatures": ["X/S1/Reviewer_a"],
+                "content": {"rating": {"value": 8}},
+            },
+            {
+                "invitations": ["X/-/Official_Review"],
+                "signatures": ["X/S1/Reviewer_a"],
+                "content": {"rating": {"value": 2}},
+            },
         ]
     }
     paper = _normalize(note)
@@ -262,8 +268,14 @@ def test_non_finite_rating_does_not_crash() -> None:
     note = make_note("pnan")
     note["details"] = {
         "replies": [
-            {"invitations": ["X/-/Official_Review"], "signatures": ["X/S1/Reviewer_a"],
-             "content": {"rating": {"value": float("nan")}, "confidence": {"value": float("inf")}}}
+            {
+                "invitations": ["X/-/Official_Review"],
+                "signatures": ["X/S1/Reviewer_a"],
+                "content": {
+                    "rating": {"value": float("nan")},
+                    "confidence": {"value": float("inf")},
+                },
+            }
         ]
     }
     paper = _normalize(note)  # must not raise

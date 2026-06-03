@@ -57,8 +57,13 @@ _REJECTED_SUFFIX = "/Rejected_Submission"
 # Numeric per-review sub-scores we recognise across venue families (NeurIPS uses the first
 # group, ICLR/ICML the second); each is captured when present + parseable as a leading int.
 _SUB_SCORE_FIELDS = (
-    "quality", "clarity", "originality", "significance",  # NeurIPS-style
-    "soundness", "presentation", "contribution",  # ICLR/ICML-style
+    "quality",
+    "clarity",
+    "originality",
+    "significance",  # NeurIPS-style
+    "soundness",
+    "presentation",
+    "contribution",  # ICLR/ICML-style
 )
 _LEADING_INT = re.compile(r"^\s*(-?\d+)")
 
@@ -672,9 +677,7 @@ def _current_institution(content: dict[str, Any]) -> dict[str, Any] | None:
     history = content.get("history")
     if not isinstance(history, list):
         return None
-    entries = [
-        h for h in history if isinstance(h, dict) and isinstance(h.get("institution"), dict)
-    ]
+    entries = [h for h in history if isinstance(h, dict) and isinstance(h.get("institution"), dict)]
     if not entries:
         return None
     current = max(

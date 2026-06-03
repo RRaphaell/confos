@@ -68,9 +68,7 @@ def rebuild(paths: Paths) -> dict[str, Any]:
                     continue
                 try:
                     papers.append(
-                        adapter.normalize(
-                            json.loads(line), ref, aliases=aliases, profiles=profiles
-                        )
+                        adapter.normalize(json.loads(line), ref, aliases=aliases, profiles=profiles)
                     )
                 except Exception:  # skip an unparseable/invalid note line, keep going
                     failed += 1

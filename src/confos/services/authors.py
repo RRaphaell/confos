@@ -27,9 +27,7 @@ def search_authors(paths: Paths, name: str, *, limit: int = 25) -> list[dict[str
         conn.close()
 
 
-def top_authors(
-    paths: Paths, *, venue: str | None = None, limit: int = 20
-) -> list[dict[str, Any]]:
+def top_authors(paths: Paths, *, venue: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
     """Most-prolific authors in a venue (for the venue-wide `brief` people list)."""
     conn = connect(paths.db)
     try:

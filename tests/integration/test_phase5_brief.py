@@ -24,13 +24,32 @@ PUB = FAKE_REF.published_venueid or ""
 
 def _corpus_notes() -> list[RawNote]:
     return [
-        make_note("p1", title="agents one", keywords=["agents", "memory"], venueid=PUB,
-                  authors=["Alice", "Bob"], authorids=["~A1", "~B1"],
-                  reviews=[{"rating": 8}, {"rating": 7}]),
-        make_note("p2", title="agents two", keywords=["agents"], venueid=PUB,
-                  authors=["Alice"], authorids=["~A1"], reviews=[{"rating": 5}, {"rating": 5}]),
-        make_note("p3", title="vision work", keywords=["vision"], venueid=PUB,
-                  authors=["Carol"], authorids=["~C1"]),
+        make_note(
+            "p1",
+            title="agents one",
+            keywords=["agents", "memory"],
+            venueid=PUB,
+            authors=["Alice", "Bob"],
+            authorids=["~A1", "~B1"],
+            reviews=[{"rating": 8}, {"rating": 7}],
+        ),
+        make_note(
+            "p2",
+            title="agents two",
+            keywords=["agents"],
+            venueid=PUB,
+            authors=["Alice"],
+            authorids=["~A1"],
+            reviews=[{"rating": 5}, {"rating": 5}],
+        ),
+        make_note(
+            "p3",
+            title="vision work",
+            keywords=["vision"],
+            venueid=PUB,
+            authors=["Carol"],
+            authorids=["~C1"],
+        ),
     ]
 
 
@@ -75,7 +94,9 @@ def test_brief_recent_fallback_without_reviews(tmp_path: Path) -> None:
     paths = Paths(home=tmp_path / "store")
     note = make_note("only", title="solo", keywords=["agents"], venueid=PUB)
     ingest_venue(
-        paths=paths, adapter=FakeAdapter(FAKE_REF, [note]), handle="test-venue",
+        paths=paths,
+        adapter=FakeAdapter(FAKE_REF, [note]),
+        handle="test-venue",
         opts=IngestOptions(),
     )
     brief = brief_service.build_brief(paths, venue="test-venue")
@@ -95,10 +116,18 @@ def test_brief_markdown_with_orgs_renders(tmp_path: Path) -> None:
     # render must not KeyError. The synthetic reviewed corpus has no affiliations, so this
     # uses an email author (→ MIT org) to make rising_orgs non-empty.
     paths = Paths(home=tmp_path / "store")
-    note = make_note("p1", title="agents", keywords=["agents"], venueid=PUB,
-                     authors=["Bob"], authorids=["bob@mit.edu"])
+    note = make_note(
+        "p1",
+        title="agents",
+        keywords=["agents"],
+        venueid=PUB,
+        authors=["Bob"],
+        authorids=["bob@mit.edu"],
+    )
     ingest_venue(
-        paths=paths, adapter=FakeAdapter(FAKE_REF, [note]), handle="test-venue",
+        paths=paths,
+        adapter=FakeAdapter(FAKE_REF, [note]),
+        handle="test-venue",
         opts=IngestOptions(),
     )
     brief = brief_service.build_brief(paths, venue="test-venue")

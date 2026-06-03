@@ -26,12 +26,30 @@ PUB = FAKE_REF.published_venueid or ""
 
 def _reviewed_notes() -> list[RawNote]:
     return [
-        make_note("hi", title="high rated agents", keywords=["agents"], venueid=PUB,
-                  reviews=[{"rating": 8}, {"rating": 8}, {"rating": 7}], decision="Accept (oral)"),
-        make_note("mid", title="mid agents", keywords=["agents"], venueid=PUB,
-                  reviews=[{"rating": 5}, {"rating": 5}], decision="Accept (poster)"),
-        make_note("div", title="divisive agents", keywords=["agents"], venueid=PUB,
-                  reviews=[{"rating": 2}, {"rating": 9}], decision="Reject"),  # high variance
+        make_note(
+            "hi",
+            title="high rated agents",
+            keywords=["agents"],
+            venueid=PUB,
+            reviews=[{"rating": 8}, {"rating": 8}, {"rating": 7}],
+            decision="Accept (oral)",
+        ),
+        make_note(
+            "mid",
+            title="mid agents",
+            keywords=["agents"],
+            venueid=PUB,
+            reviews=[{"rating": 5}, {"rating": 5}],
+            decision="Accept (poster)",
+        ),
+        make_note(
+            "div",
+            title="divisive agents",
+            keywords=["agents"],
+            venueid=PUB,
+            reviews=[{"rating": 2}, {"rating": 9}],
+            decision="Reject",
+        ),  # high variance
         make_note("none", title="unreviewed agents", keywords=["agents"], venueid=PUB),
     ]
 
