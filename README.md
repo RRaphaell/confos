@@ -15,10 +15,11 @@ asking an LLM, every number is real and traceable, not guessed.
 
 ```bash
 confos ingest neurips-2025
+confos brief --venue neurips-2025                                  # the whole landscape, one command
 confos papers search "long-running agents" --venue neurips-2025
 confos authors find --topic "agent memory" --venue neurips-2025   # who works on this?
+confos papers top --venue neurips-2025                             # highest-rated (needs --with-reviews)
 confos trends topic "evals" --venues neurips-2024,neurips-2025      # what's rising?
-confos viz topics --venue neurips-2025                              # see the landscape
 confos export context --topic "agent evals" --venue neurips-2025 --json
 ```
 
@@ -39,9 +40,15 @@ surface to do real work, offline, repeatably.
 
 ## What you can do
 
+- **Brief** — `confos brief` gives a complete, cited conference landscape in one command:
+  overview, top papers, hot topics, rising orgs, and the people to know.
 - **Search** papers by full text (title, abstract, keywords) with ranking and filters.
 - **Find people** — rank the authors actually working on a topic, with their papers,
   affiliations, and a relevance explanation.
+- **Rank by quality** — ingest with `--with-reviews` to surface the highest-rated
+  (`confos papers top`) and most controversial (`confos papers controversial`) papers.
+- **Enrich** — `confos enrich profiles` fills author affiliations, countries, and links
+  from OpenReview profiles, powering the orgs/countries stats.
 - **Explore** authors, organizations, and topics; follow related papers.
 - **Analyze** — aggregate stats (topics, orgs, countries) with visible data-quality.
 - **Trends** — how a topic moves across years / venues; compare two venues head-to-head.
@@ -58,15 +65,21 @@ surface to do real work, offline, repeatably.
 
 ## Install
 
-Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/). confos isn't on PyPI yet, so
-install it from source:
+Requires Python 3.12+.
+
+```bash
+pip install confos              # plain pip
+# or: uv tool install confos    # isolated global install (recommended)
+# or: pipx install confos       # isolated global install
+# or: uvx confos ...            # run once, no install
+```
+
+Or from source (latest, unreleased `main`):
 
 ```bash
 git clone https://github.com/RRaphaell/confos
 cd confos
-uv tool install .               # install the `confos` command globally
-# or: uvx --from . confos ...   # run without installing
-# or: uv sync && uv run confos  # to develop on it
+uv sync && uv run confos        # to develop on it
 ```
 
 ## First run
@@ -88,6 +101,7 @@ the full tour and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it works.
 | [docs/PRODUCT.md](docs/PRODUCT.md) | Goal, the wedge, who uses it, worked examples for every capability |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, ASCII diagrams, components, data model, stack |
 | [docs/CLI_CONTRACT.md](docs/CLI_CONTRACT.md) | Full command tree, flags, output contract, exit codes, safety |
+| [docs/VISUAL.md](docs/VISUAL.md) | Human-output visual enrichment — progress, color theme, links, sparklines (**planned**) |
 | [docs/RANKING.md](docs/RANKING.md) | How `authors find` ranks people + how `--topic` matching works |
 | [docs/SCHEMAS.md](docs/SCHEMAS.md) | Stable `--json` output shapes (the agent/script contract) |
 | [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) | How the project is built: phases, standards, research/notes discipline, testing, validation |
@@ -99,13 +113,14 @@ the full tour and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it works.
 
 ## Status
 
-**v0.1.0.** The full v1 surface — ingest · search · people · orgs · stats · trends · viz ·
-export · context packs · agent skill — is implemented, tested, and verified end-to-end
-against live OpenReview (`scripts/live-test.sh`). OpenReview is the only source in v1; more
-adapters, semantic search, an LLM `ask`, and an MCP server are designed-for-later (the
-seams exist, the code doesn't — see [docs/PRODUCT.md](docs/PRODUCT.md) §8). Built in
-public-grade phases; see [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) and
-[docs/PROGRESS.md](docs/PROGRESS.md).
+**v0.2.0.** The full v1 surface — ingest · search · people · orgs · stats · trends · viz ·
+export · context packs · agent skill — plus the enrichment layer: `brief` (one-command
+landscape), review scores (`papers top`/`controversial`), and author-profile enrichment.
+All implemented, tested, and verified end-to-end against live OpenReview
+(`scripts/live-test.sh`). OpenReview is the only source today; more adapters, semantic
+search, an LLM `ask`, and an MCP server are designed-for-later (the seams exist, the code
+doesn't — see [docs/PRODUCT.md](docs/PRODUCT.md) §8). Built in public-grade phases; see
+[docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) and [docs/PROGRESS.md](docs/PROGRESS.md).
 
 ## Contributing
 

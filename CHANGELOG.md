@@ -5,6 +5,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-03
+
 ### Added
 - **Enrichment Phase 5 — `confos brief`.** One command (`confos brief --venue <slug>
   [--topic t]`) produces a complete, cited conference landscape: overview, top papers (rated
@@ -106,5 +108,6 @@ agent skill — all offline after ingest, all with provenance.
 - Blueprint complete: product spec, architecture, CLI contract, ranking/topic spec, JSON
   schemas, build plan, references, agent docs.
 
-[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/RRaphaell/confos/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/RRaphaell/confos/releases/tag/v0.1.0
