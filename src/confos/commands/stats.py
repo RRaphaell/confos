@@ -29,9 +29,13 @@ def _render_breakdown(
             [label, "papers"],
             [(str(r["key"]), str(r["papers"])) for r in rows],
         )
+    total = int(dq["papers_total"])
+    signal = int(dq["papers_with_signal"])
+    ratio = signal / total if total else 0.0
+    # Honest coverage IS the product, so make the number's quality visible: green/yellow/red.
+    badge = "dq.high" if ratio >= 0.66 else "dq.med" if ratio >= 0.33 else "dq.low"
     app_ctx.out.print(
-        f"coverage: {dq['papers_with_signal']}/{dq['papers_total']} papers have signal "
-        f"({dq['unknown']} unknown)"
+        f"coverage: [{badge}]{signal}/{total}[/] papers have signal ({dq['unknown']} unknown)"
     )
     if explain:
         key_value_table(

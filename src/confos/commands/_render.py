@@ -1,9 +1,16 @@
-"""Shared command-layer helpers: limit resolution + human paper/author tables."""
+"""Shared command-layer helpers: limit resolution + human paper/author tables.
+
+Free-text cells (titles, names, why-relevant) are escaped before they reach Rich so a
+bracket in a title can never be mis-parsed as markup; status/score styling uses the themed
+vocabulary (``console.confos_theme``), which collapses to plain text without colour. All of
+this lives on the human path only — ``--json``/``--plain`` go through separate emitters.
+"""
 
 from __future__ import annotations
 
 from typing import Any
 
+from rich.markup import escape
 from rich.table import Table
 
 from ..console import AppContext
@@ -27,6 +34,33 @@ def _authors_label(authors: list[dict[str, Any]]) -> str:
     return f"{names[0]} +{len(names) - 1}"
 
 
+# Acceptance status → themed style; finer acceptance types (oral/spotlight/poster) win when
+# present. Everything resolves to plain text under no-colour, so scanning still works there.
+_STATUS_STYLE: dict[str, str] = {
+    "accepted": "status.accepted",
+    "rejected": "status.rejected",
+    "desk_rejected": "status.rejected",
+    "withdrawn": "status.withdrawn",
+    "under_review": "status.active",
+    "active": "status.active",
+}
+_ACCEPTANCE_STYLE: dict[str, str] = {
+    "oral": "status.oral",
+    "spotlight": "status.spotlight",
+    "poster": "status.poster",
+}
+
+
+def _status_cell(paper: dict[str, Any]) -> str:
+    """Status as themed markup so accepted work pops and rejected/withdrawn recede."""
+    acceptance = str(paper.get("acceptance_type") or "").lower()
+    if acceptance in _ACCEPTANCE_STYLE:
+        return f"[{_ACCEPTANCE_STYLE[acceptance]}]{acceptance}[/]"
+    status = str(paper.get("status") or "")
+    style = _STATUS_STYLE.get(status)
+    return f"[{style}]{escape(status)}[/]" if style else escape(status)
+
+
 def render_papers(
     ctx: AppContext, papers: list[dict[str, Any]], *, show_score: bool = True
 ) -> None:
@@ -48,12 +82,14 @@ def render_papers(
         table.add_column("score", justify="right", no_wrap=True)
 
     for index, paper in enumerate(papers, start=1):
-        row = [str(index), str(paper["title"]), _authors_label(paper["authors"])]
+        row = [str(index), escape(str(paper["title"])), escape(_authors_label(paper["authors"]))]
         if single_venue is None:
-            row.append(str(paper["venue"]))
-        row.append(str(paper["status"]))
+            row.append(escape(str(paper["venue"])))
+        row.append(_status_cell(paper))
         if show_score:
-            row.append(f"{float(paper.get('bm25') or 0):.1f}")
+            score = f"{float(paper.get('bm25') or 0):.1f}"
+            # subtle heat: the strongest match pops, so a scanned list has an obvious #1.
+            row.append(f"[score.hi]{score}[/]" if index == 1 else score)
         table.add_row(*row)
     ctx.out.print(table)
 
@@ -75,9 +111,9 @@ def render_rated_papers(ctx: AppContext, papers: list[dict[str, Any]]) -> None:
     table.add_column("reviews", justify="right", no_wrap=True)
     for index, paper in enumerate(papers, start=1):
         rating, std = paper.get("rating_mean"), paper.get("rating_std")
-        row = [str(index), str(paper["title"]), _authors_label(paper["authors"])]
+        row = [str(index), escape(str(paper["title"])), escape(_authors_label(paper["authors"]))]
         if single_venue is None:
-            row.append(str(paper["venue"]))
+            row.append(escape(str(paper["venue"])))
         row += [
             f"{rating:.2f}" if rating is not None else "—",
             f"{std:.2f}" if std is not None else "—",
@@ -110,11 +146,11 @@ def render_found_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None
     for index, author in enumerate(authors, start=1):
         table.add_row(
             str(index),
-            author["display_name"],
-            author["affiliation_current"],
+            escape(str(author["display_name"])),
+            escape(str(author["affiliation_current"])),
             str(author["matched_paper_count"]),
             f"{author['score']:.2f}",
-            author["why_relevant"],
+            escape(str(author["why_relevant"])),
         )
     ctx.out.print(table)
 
@@ -128,10 +164,10 @@ def render_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
     table.add_column("quality", no_wrap=True)
     for author in authors:
         table.add_row(
-            author["author_id"],
-            author["display_name"],
-            author["affiliation_current"],
+            str(author["author_id"]),
+            escape(str(author["display_name"])),
+            escape(str(author["affiliation_current"])),
             str(author.get("paper_count", "")),
-            author["data_quality"],
+            str(author["data_quality"]),
         )
     ctx.out.print(table)
