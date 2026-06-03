@@ -9,6 +9,7 @@ import pytest
 
 from confos.commands._render import resolve_limit
 from confos.console import build_consoles, confos_theme, should_use_unicode
+from confos.output.progress import spinner
 
 
 class _Stream:
@@ -58,6 +59,15 @@ def test_theme_defines_the_expected_vocabulary() -> None:
     theme = confos_theme()
     for name in ("status.oral", "status.rejected", "dq.high", "score.hi", "confos.accent"):
         assert name in theme.styles
+
+
+def test_spinner_noop_when_disabled_writes_nothing() -> None:
+    # The disabled path is the contract-critical one: non-TTY / --quiet / --json must emit
+    # nothing, so scripted ingest output stays byte-identical.
+    _, err = build_consoles(use_color=True)
+    with err.capture() as cap, spinner(err, "working", enabled=False):
+        pass
+    assert cap.get() == ""
 
 
 def test_resolve_limit_precedence() -> None:

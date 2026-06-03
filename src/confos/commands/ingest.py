@@ -13,6 +13,7 @@ from ..console import bind_command
 from ..errors import EXIT_PARTIAL
 from ..models import IngestOptions
 from ..output.plain import key_value_plain
+from ..output.progress import spinner
 from ..output.table import key_value_table
 from ..services.ingest import ingest_venue
 
@@ -56,13 +57,21 @@ def run(
     opts = IngestOptions(include_decisions=fetch_reviews, force=force, dry_run=dry_run)
     adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
 
-    result = ingest_venue(
-        paths=app_ctx.paths,
-        adapter=adapter,
-        handle=venue,
-        opts=opts,
-        on_progress=app_ctx.info,
-    )
+    # A live spinner on stderr so a multi-minute network pull doesn't look hung. No-ops on
+    # non-TTY / --quiet / --json / --plain, so scripted output is unchanged (VISUAL.md §3.1).
+    human = not app_ctx.is_json and not app_ctx.is_plain
+    with spinner(
+        app_ctx.err,
+        f"Ingesting {venue}…",
+        enabled=human and app_ctx.err.is_terminal and not app_ctx.quiet,
+    ):
+        result = ingest_venue(
+            paths=app_ctx.paths,
+            adapter=adapter,
+            handle=venue,
+            opts=opts,
+            on_progress=app_ctx.info,
+        )
 
     data = result.model_dump()
     query = {
