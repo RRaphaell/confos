@@ -44,6 +44,7 @@ def _bar_command(
 def topics(
     ctx: typer.Context,
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
+    limit: Annotated[int | None, typer.Option("--limit", help="Cap the number of bars.")] = None,
 ) -> None:
     """Terminal bar chart of top topics.
 
@@ -54,7 +55,7 @@ def topics(
     app_ctx = bind_command(ctx, "viz.topics")
     resolved_venue = venue or app_ctx.venue
     validate_venue(app_ctx, resolved_venue)
-    limit = resolve_limit(None, app_ctx.limit, 20)
+    limit = resolve_limit(limit, app_ctx.limit, 20)
     result = stats_service.topics(app_ctx.paths, resolved_venue, limit=limit)
     _bar_command(app_ctx, result, label="topics")
 
@@ -64,6 +65,7 @@ def topics(
 def orgs(
     ctx: typer.Context,
     venue: Annotated[str | None, typer.Option("--venue", help="Limit to a venue slug.")] = None,
+    limit: Annotated[int | None, typer.Option("--limit", help="Cap the number of bars.")] = None,
 ) -> None:
     """Terminal bar chart of top organisations.
 
@@ -74,7 +76,7 @@ def orgs(
     app_ctx = bind_command(ctx, "viz.orgs")
     resolved_venue = venue or app_ctx.venue
     validate_venue(app_ctx, resolved_venue)
-    limit = resolve_limit(None, app_ctx.limit, 20)
+    limit = resolve_limit(limit, app_ctx.limit, 20)
     result = stats_service.orgs(app_ctx.paths, resolved_venue, limit=limit)
     _bar_command(app_ctx, result, label="organisations", hue="confos.bar2")
 
@@ -116,6 +118,10 @@ def network(
         return
     if format == "html":
         app_ctx.emit(to_html(f"confos co-authorship: {topic}", to_mermaid(nodes, edges)))
+        return
+    if app_ctx.is_plain:
+        # --plain is line/TSV, not a Rich box table: author<TAB>degree, most-connected first.
+        tsv_rows(app_ctx.out, [(n["label"], n["degree"]) for n in nodes])
         return
     if not nodes:
         app_ctx.out.print(f"No co-authorship graph for topic {topic!r} (no matching papers).")

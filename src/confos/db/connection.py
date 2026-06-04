@@ -17,6 +17,10 @@ def connect(db_path: Path, *, create_parents: bool = True) -> sqlite3.Connection
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    # WAL: the store is meant to be hit by parallel agents (README/AGENTS), so let readers
+    # and a writer proceed concurrently instead of blocking on the rollback journal. WAL is
+    # a persistent property of the DB file (adds -wal/-shm sidecars); harmless to re-assert.
+    conn.execute("PRAGMA journal_mode = WAL")
     return conn
 
 

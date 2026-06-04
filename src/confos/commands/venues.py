@@ -57,6 +57,7 @@ def list_(ctx: typer.Context) -> None:
 def search(
     ctx: typer.Context,
     query: Annotated[str, typer.Argument(help="Venue query, e.g. 'ICLR 2025'.")],
+    limit: Annotated[int | None, typer.Option("--limit", help="Cap suggestions returned.")] = None,
 ) -> None:
     """Find a venue on OpenReview (network).
 
@@ -69,7 +70,7 @@ def search(
     app_ctx = bind_command(ctx, "venues.search")
     app_ctx.info(f"Searching OpenReview for {query!r} …")
     adapter = OpenReviewAdapter(baseurl=app_ctx.config.openreview_baseurl)
-    limit = resolve_limit(None, app_ctx.limit, 25)  # honours an explicit --limit 0
+    limit = resolve_limit(limit, app_ctx.limit, 25)  # honours an explicit --limit 0
     matches = venues_service.search_venues(adapter, query, limit=limit)
     if app_ctx.is_json:
         app_ctx.render_json(matches, query={"q": query, "limit": limit}, sources=["openreview"])

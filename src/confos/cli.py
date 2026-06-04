@@ -7,6 +7,7 @@ introspect the ``Annotated[...]`` option types at runtime.
 """
 
 import os
+import sqlite3
 import sys
 from contextvars import ContextVar
 from pathlib import Path
@@ -43,7 +44,7 @@ from .console import (
     should_use_unicode,
     stream_is_tty,
 )
-from .errors import EXIT_INTERRUPTED, EXIT_OK, EXIT_USAGE, ConfosError, UsageError
+from .errors import EXIT_INTERRUPTED, EXIT_OK, EXIT_USAGE, ConfosError, NetworkError, UsageError
 from .output import json as jsonout
 from .paths import Paths
 
@@ -256,6 +257,19 @@ def main() -> None:
         sys.exit(int(getattr(exc, "exit_code", 0)))
     except SystemExit as exc:
         sys.exit(exc.code if isinstance(exc.code, int) else EXIT_OK)
+    except sqlite3.OperationalError as exc:
+        # A lock that outlasts the 5s busy_timeout (sustained concurrent writers) is a
+        # backend/retry condition (exit 4), not the catch-all "unexpected error" (exit 1).
+        if "locked" in str(exc).lower() or "busy" in str(exc).lower():
+            backend = NetworkError(
+                f"database is busy: {exc}",
+                hint="Another writer holds the store; retry shortly.",
+            )
+            _render_confos_error(backend, original=exc)
+            sys.exit(backend.exit_code)
+        wrapped = ConfosError(f"unexpected error: {exc}")
+        _render_confos_error(wrapped, original=exc)
+        sys.exit(wrapped.exit_code)
     except Exception as exc:
         # Last resort: never dump a raw traceback by default. The traceback is genuinely
         # useful for an unexpected crash, so attach it at -vv.

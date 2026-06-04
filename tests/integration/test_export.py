@@ -229,3 +229,11 @@ def test_cli_export_json_conflicts_with_explicit_csv(run_cli: RunCli, export_hom
     result = run_cli("export", "papers", "--json", "--format", "csv")
     assert result.exit_code == 2
     assert result.json()["error"]["type"] == "usage"
+
+
+def test_cli_export_context_plain_is_tsv(run_cli: RunCli, export_home: Path) -> None:
+    # P1-7: --plain must emit TSV rows, not the JSON envelope.
+    result = run_cli("export", "context", "--topic", "qq", "--plain")
+    assert result.exit_code == 0
+    assert not result.stdout.lstrip().startswith("{")  # not the JSON envelope
+    assert "\t" in result.stdout  # tab-separated paper rows

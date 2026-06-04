@@ -35,6 +35,10 @@ def profiles(
         int | None,
         typer.Option("--limit", help="Cap profiles fetched this run (resumable across runs)."),
     ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", help="Preview would-fetch counts; no network calls or writes."),
+    ] = False,
 ) -> None:
     """Fetch author profiles → affiliations, countries, homepage/Scholar/DBLP/expertise.
 
@@ -63,15 +67,31 @@ def profiles(
         fetcher=adapter,
         force=force,
         limit=limit,
+        dry_run=dry_run,
         on_progress=app_ctx.info,
     )
-    query = {"venue": resolved_venue, "force": force, "limit": limit}
+    query = {"venue": resolved_venue, "force": force, "limit": limit, "dry_run": dry_run}
 
     if app_ctx.is_json:
         app_ctx.render_json(result, query=query, venue=resolved_venue, sources=["openreview"])
         return
     if app_ctx.is_plain:
         key_value_plain(app_ctx.out, list(result.items()))
+        return
+
+    if dry_run:
+        key_value_table(
+            app_ctx.out,
+            [
+                ("venue", str(result["venue"])),
+                ("author handles", str(result["handles_total"])),
+                ("already enriched", str(result["already_enriched"])),
+                ("would fetch", str(result["would_fetch"])),
+                ("capped", str(result["capped"])),
+            ],
+            title=f"Dry run — enrich profiles: {result['venue']}",
+        )
+        app_ctx.info("Dry run: no profiles fetched, index not rebuilt. Drop --dry-run to run it.")
         return
 
     key_value_table(

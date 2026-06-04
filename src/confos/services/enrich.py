@@ -52,13 +52,16 @@ def enrich_profiles(
     source: str = "openreview",
     force: bool = False,
     limit: int | None = None,
+    dry_run: bool = False,
     on_progress: ProgressFn = _noop,
 ) -> dict[str, Any]:
     """Fetch + snapshot author profiles for an ingested venue, then rebuild the index.
 
     ``force`` refetches every handle (rewriting the snapshot); otherwise only handles not
     already in ``profiles.jsonl`` are fetched. ``limit`` caps how many are fetched this run
-    (resumable across runs). Returns a summary with honest coverage counts.
+    (resumable across runs). ``dry_run`` previews the would-fetch / already-cached counts and
+    returns before any network call or write (contract §8). Returns a summary with honest
+    coverage counts.
     """
     venue_dir = paths.raw_venue_dir(source, venue_slug)
     submissions = venue_dir / "submissions.jsonl"
@@ -80,8 +83,27 @@ def enrich_profiles(
     eta = f" — ~{eta_min} min at OpenReview's ~20/min limit" if eta_min > 1 else ""
     on_progress(
         f"{len(handles)} unique author handle(s); {len(already)} already enriched; "
-        f"fetching {len(todo)}" + (f" (capped at {limit})" if capped else "") + eta
+        f"{'would fetch' if dry_run else 'fetching'} {len(todo)}"
+        + (f" (capped at {limit})" if capped else "")
+        + eta
     )
+
+    if dry_run:
+        on_progress("dry-run: no profiles fetched, index not rebuilt.")
+        return {
+            "venue": venue_slug,
+            "dry_run": True,
+            "handles_total": len(handles),
+            "already_enriched": len(already),
+            "attempted": 0,
+            "would_fetch": len(todo),
+            "fetched": 0,
+            "not_found": 0,
+            "errors": 0,
+            "capped": capped,
+            "profiles_path": str(profiles_path),
+            "papers_reindexed": 0,
+        }
 
     fetched = not_found = errors = 0
     if todo:
@@ -110,9 +132,11 @@ def enrich_profiles(
 
     return {
         "venue": venue_slug,
+        "dry_run": False,
         "handles_total": len(handles),
         "already_enriched": len(already),
         "attempted": len(todo),
+        "would_fetch": len(todo),
         "fetched": fetched,
         "not_found": not_found,
         "errors": errors,
