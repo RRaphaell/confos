@@ -9,6 +9,7 @@ from ..console import AppContext, bind_command, global_output_options
 from ..errors import UsageError
 from ..paths import Paths
 from ..services import export as export_service
+from ._render import validate_venue
 
 app = typer.Typer(
     no_args_is_help=False, help="Export context packs and bulk data (built for agents)."
@@ -38,12 +39,14 @@ def context(
     app_ctx = bind_command(ctx, "export.context")
     if format not in ("json", "markdown"):
         raise UsageError(f"Unknown --format {format!r}.", hint="Use json or markdown.")
-    pack = export_service.build_context_pack(app_ctx.paths, topic, venue=venue or app_ctx.venue)
-    query = {"topic": topic, "venue": venue or app_ctx.venue}
+    resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
+    pack = export_service.build_context_pack(app_ctx.paths, topic, venue=resolved_venue)
+    query = {"topic": topic, "venue": resolved_venue}
     if format == "markdown" and not app_ctx.is_json:
         app_ctx.emit(export_service.context_pack_markdown(pack))
         return
-    app_ctx.render_json(pack, query=query, venue=venue or app_ctx.venue)
+    app_ctx.render_json(pack, query=query, venue=resolved_venue)
 
 
 def _emit_bulk_export(
@@ -63,6 +66,7 @@ def _emit_bulk_export(
     if fmt is not None and fmt not in ("csv", "jsonl"):
         raise UsageError(f"Unknown --format {fmt!r}.", hint="Use csv or jsonl.")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     if app_ctx.is_json:
         if fmt == "csv":
             raise UsageError(

@@ -11,7 +11,7 @@ from ..output.plain import tsv_rows
 from ..output.table import bar_chart, data_table
 from ..services import stats as stats_service
 from ..services import viz as viz_service
-from ._render import resolve_limit
+from ._render import resolve_limit, validate_venue
 
 app = typer.Typer(no_args_is_help=False, help="Visualise the landscape (charts + graphs).")
 
@@ -53,6 +53,7 @@ def topics(
     """
     app_ctx = bind_command(ctx, "viz.topics")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     limit = resolve_limit(None, app_ctx.limit, 20)
     result = stats_service.topics(app_ctx.paths, resolved_venue, limit=limit)
     _bar_command(app_ctx, result, label="topics")
@@ -72,6 +73,7 @@ def orgs(
     """
     app_ctx = bind_command(ctx, "viz.orgs")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     limit = resolve_limit(None, app_ctx.limit, 20)
     result = stats_service.orgs(app_ctx.paths, resolved_venue, limit=limit)
     _bar_command(app_ctx, result, label="organisations", hue="confos.bar2")
@@ -99,6 +101,7 @@ def network(
     if format not in ("terminal", "mermaid", "html"):
         raise UsageError(f"Unknown --format {format!r}.", hint="Use terminal, mermaid, or html.")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     graph = viz_service.build_coauthor_graph(app_ctx.paths, topic, venue=resolved_venue)
     nodes = graph["nodes"]
     edges = graph["edges"]

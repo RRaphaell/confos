@@ -6,6 +6,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 ## [Unreleased]
 
 ### Fixed
+- **A misspelled `--venue` now fails loudly instead of looking like an empty venue.** Every
+  `--venue`-accepting read command (`stats`, `papers`, `authors`, `orgs`, `export`, `brief`,
+  `viz`) validates the slug through one shared guard: an unknown slug raises a `not_found`
+  error (exit 1) with a `venues list` hint, while a known-but-not-ingested alias passes with
+  a stderr note. Previously a typo returned `ok:true` with zero rows (exit 0) — indistinguish­
+  able from a real empty venue, quietly corrupting an agent's conclusions.
+- **`papers show` (human view) now shows reviews.** The card renders `rating mean ± std
+  (n reviews)` and the `decision` when a venue has reviews ingested — previously that data was
+  visible only under `--json`/`--plain`, despite field-parity claims.
+- **Result tables no longer collapse their short columns at normal terminal widths.** The
+  `#/status/score/rating/±std/reviews/matched` columns were starved to zero width because the
+  free-text columns were `no_wrap` and greedy; the tables now flex (ratio-sized text columns +
+  reserved widths for the short ones) so every value stays visible at 80/100/120 columns.
+- **A negative `--limit` is now rejected (exit 2) instead of returning the whole result set.**
+  SQLite reads a negative `LIMIT` as unbounded, so `--limit -5` silently dumped everything; the
+  shared limit resolver now rejects it (the root and per-subcommand flags are both covered).
 - **`export papers --json` / `export authors --json` now emit the JSON envelope** instead of
   silently falling back to CSV — the core "every command speaks stable JSON" contract held
   everywhere except these two commands. `--json` returns the rows in the standard envelope;

@@ -8,7 +8,7 @@ from ..console import AppContext, bind_command, global_output_options
 from ..output.plain import key_value_plain, tsv_rows
 from ..output.table import data_table, key_value_table
 from ..services import stats as stats_service
-from ._render import resolve_limit
+from ._render import resolve_limit, validate_venue
 
 app = typer.Typer(no_args_is_help=False, help="Aggregate statistics (honest about uncertainty).")
 
@@ -65,6 +65,7 @@ def overview(
     """
     app_ctx = bind_command(ctx, "stats.overview")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     result = stats_service.overview(app_ctx.paths, resolved_venue)
     if app_ctx.is_json:
         app_ctx.render_json(result, query={"venue": resolved_venue}, venue=resolved_venue)
@@ -110,6 +111,7 @@ def topics(
     """
     app_ctx = bind_command(ctx, "stats.topics")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     limit = resolve_limit(None, app_ctx.limit, 50)
     result = stats_service.topics(app_ctx.paths, resolved_venue, limit=limit)
     _emit_breakdown(app_ctx, result, venue=resolved_venue, label="topic", explain=explain)
@@ -132,6 +134,7 @@ def orgs(
     """
     app_ctx = bind_command(ctx, "stats.orgs")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     limit = resolve_limit(None, app_ctx.limit, 50)
     result = stats_service.orgs(app_ctx.paths, resolved_venue, limit=limit)
     _emit_breakdown(app_ctx, result, venue=resolved_venue, label="organisation", explain=explain)
@@ -154,6 +157,7 @@ def countries(
     """
     app_ctx = bind_command(ctx, "stats.countries")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     limit = resolve_limit(None, app_ctx.limit, 50)
     result = stats_service.countries(app_ctx.paths, resolved_venue, limit=limit)
     _emit_breakdown(app_ctx, result, venue=resolved_venue, label="country", explain=explain)
