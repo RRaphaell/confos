@@ -79,6 +79,21 @@ def test_enrich_snapshots_and_applies(tmp_path: Path) -> None:
     assert stats_service.orgs(paths, "test-venue")["data_quality"]["papers_with_signal"] == 1
 
 
+def test_enrich_dry_run_previews_without_writing(tmp_path: Path) -> None:
+    # P1-8: --dry-run reports would-fetch counts and touches nothing (no network, no snapshot).
+    paths = _ingest(tmp_path / "store", ["~Alice1", "~Bob1"])
+    fetcher = _FakeFetcher({"~Alice1": make_profile("~Alice1", name="MIT", domain="mit.edu")})
+
+    result = enrich_service.enrich_profiles(paths, "test-venue", fetcher=fetcher, dry_run=True)
+
+    assert result["dry_run"] is True
+    assert result["would_fetch"] == 2
+    assert result["fetched"] == 0
+    assert fetcher.calls == []  # no network call was made
+    snapshot = paths.raw_venue_dir("openreview", "test-venue") / "profiles.jsonl"
+    assert not snapshot.exists()  # nothing written
+
+
 def test_enrich_resumes_and_skips_already_fetched(tmp_path: Path) -> None:
     paths = _ingest(tmp_path / "store", ["~Alice1", "~Bob1"])
     profiles = {

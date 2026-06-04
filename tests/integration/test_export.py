@@ -200,3 +200,40 @@ def test_cli_export_bad_format(run_cli: RunCli, export_home: Path) -> None:
     result = run_cli("export", "papers", "--format", "xml", "--json")
     assert result.exit_code == 2
     assert result.json()["error"]["type"] == "usage"
+
+
+def test_cli_export_papers_json_emits_envelope(run_cli: RunCli, export_home: Path) -> None:
+    # The #1 contract: --json must speak JSON, not silently fall back to CSV.
+    result = run_cli("export", "papers", "--json")
+    assert result.exit_code == 0
+    payload = result.json()
+    assert payload["ok"] is True
+    assert payload["command"] == "export.papers"
+    assert isinstance(payload["data"], list) and len(payload["data"]) == 3
+    assert {"paper_id", "title", "authors"} <= payload["data"][0].keys()
+
+
+def test_cli_export_authors_json_emits_envelope(run_cli: RunCli, export_home: Path) -> None:
+    result = run_cli("export", "authors", "--json")
+    assert result.exit_code == 0
+    payload = result.json()
+    assert payload["ok"] is True
+    assert payload["command"] == "export.authors"
+    assert isinstance(payload["data"], list) and payload["data"]
+    assert "author_id" in payload["data"][0]
+
+
+def test_cli_export_json_conflicts_with_explicit_csv(run_cli: RunCli, export_home: Path) -> None:
+    # Asking for --json AND --format csv is contradictory: a loud usage error beats
+    # silently honouring one and dropping the other.
+    result = run_cli("export", "papers", "--json", "--format", "csv")
+    assert result.exit_code == 2
+    assert result.json()["error"]["type"] == "usage"
+
+
+def test_cli_export_context_plain_is_tsv(run_cli: RunCli, export_home: Path) -> None:
+    # P1-7: --plain must emit TSV rows, not the JSON envelope.
+    result = run_cli("export", "context", "--topic", "qq", "--plain")
+    assert result.exit_code == 0
+    assert not result.stdout.lstrip().startswith("{")  # not the JSON envelope
+    assert "\t" in result.stdout  # tab-separated paper rows

@@ -7,6 +7,7 @@ introspect the ``Annotated[...]`` option types at runtime.
 """
 
 import os
+import sqlite3
 import sys
 from contextvars import ContextVar
 from pathlib import Path
@@ -43,7 +44,7 @@ from .console import (
     should_use_unicode,
     stream_is_tty,
 )
-from .errors import EXIT_INTERRUPTED, EXIT_OK, EXIT_USAGE, ConfosError, UsageError
+from .errors import EXIT_INTERRUPTED, EXIT_OK, EXIT_USAGE, ConfosError, NetworkError, UsageError
 from .output import json as jsonout
 from .paths import Paths
 
@@ -220,6 +221,21 @@ def _render_confos_error(exc: ConfosError, *, original: BaseException | None = N
             sys.stderr.write(f"hint: {exc.hint}\n")
 
 
+def _command_from_click_error(exc: ClickUsageError) -> str | None:
+    """Dotted command from the click error's context, e.g. ``papers.search``.
+
+    A parse error (unknown option / missing argument) fires *before* the command body
+    calls ``bind_command``, so the AppContext still holds the default ``"confos"``. The
+    click context's ``command_path`` ("confos papers search") is the only place the real
+    command name lives at that point — without this, the error envelope's ``command`` field
+    is the useless generic ``"confos"`` precisely on the error path agents key off.
+    """
+    click_ctx = getattr(exc, "ctx", None)
+    path = getattr(click_ctx, "command_path", "") if click_ctx is not None else ""
+    parts = path.split()
+    return ".".join(parts[1:]) if len(parts) > 1 else None
+
+
 def _render_click_usage_error(exc: ClickUsageError) -> int:
     """Render a click parse/usage error (unknown option, missing arg, bare group).
 
@@ -229,7 +245,7 @@ def _render_click_usage_error(exc: ClickUsageError) -> int:
     """
     code = exc.exit_code if isinstance(getattr(exc, "exit_code", None), int) else EXIT_USAGE
     ctx = _ACTIVE.get()
-    command = ctx.command if ctx is not None else "confos"
+    command = _command_from_click_error(exc) or (ctx.command if ctx is not None else "confos")
     if _wants_json():
         usage = UsageError((exc.format_message() or "missing command or argument").strip())
         usage.exit_code = code
@@ -256,6 +272,19 @@ def main() -> None:
         sys.exit(int(getattr(exc, "exit_code", 0)))
     except SystemExit as exc:
         sys.exit(exc.code if isinstance(exc.code, int) else EXIT_OK)
+    except sqlite3.OperationalError as exc:
+        # A lock that outlasts the 5s busy_timeout (sustained concurrent writers) is a
+        # backend/retry condition (exit 4), not the catch-all "unexpected error" (exit 1).
+        if "locked" in str(exc).lower() or "busy" in str(exc).lower():
+            backend = NetworkError(
+                f"database is busy: {exc}",
+                hint="Another writer holds the store; retry shortly.",
+            )
+            _render_confos_error(backend, original=exc)
+            sys.exit(backend.exit_code)
+        wrapped = ConfosError(f"unexpected error: {exc}")
+        _render_confos_error(wrapped, original=exc)
+        sys.exit(wrapped.exit_code)
     except Exception as exc:
         # Last resort: never dump a raw traceback by default. The traceback is genuinely
         # useful for an unexpected crash, so attach it at -vv.

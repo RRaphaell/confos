@@ -14,6 +14,7 @@ from ..console import AppContext, bind_command
 from ..output.dashboard import composition_bar, entry, section, stat_line
 from ..output.table import bar_chart
 from ..services import brief as brief_service
+from ._render import validate_venue
 
 # Paper status → composition-bar segment style (themed; collapses to plain without colour).
 _STATUS_SEG_STYLE = {
@@ -52,6 +53,7 @@ def run(
     """
     app_ctx = bind_command(ctx, "brief")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     brief = brief_service.build_brief(app_ctx.paths, venue=resolved_venue, topic=topic)
     query = {"venue": resolved_venue, "topic": topic}
     if app_ctx.is_json:
@@ -89,6 +91,9 @@ def render_brief(app_ctx: AppContext, brief: dict[str, Any]) -> None:
         for status, count in (overview.get("status") or {}).items()
     ]
     composition_bar(out, segments, unicode=uni)
+    # The bar prints "(95%)" per segment — caption it so that's never read as an acceptance rate.
+    if segments and overview.get("status_note"):
+        out.print(f"  [confos.muted]{escape(str(overview['status_note']))}[/]")
 
     if brief["hot_topics"]:
         section(out, "Hot topics", "most-published subtopics here")

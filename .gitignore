@@ -5,7 +5,7 @@ __pycache__/
 .eggs/
 build/
 dist/
-.venv/
+.venv*/
 venv/
 
 # uv
@@ -28,6 +28,9 @@ htmlcov/
 .env
 .env.*
 !.env.example
+
+# Internal pre-launch QA / audit reports (kept local, not published)
+/QA_REPORT_*.md
 
 # OS / editor
 .DS_Store

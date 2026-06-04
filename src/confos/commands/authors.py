@@ -18,6 +18,7 @@ from ._render import (
     render_found_authors,
     render_papers,
     resolve_limit,
+    validate_venue,
 )
 
 app = typer.Typer(no_args_is_help=False, help="Find and explore authors.")
@@ -39,6 +40,7 @@ def find(
     """
     app_ctx = bind_command(ctx, "authors.find")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
     result = ranking_service.find_authors(
         app_ctx.paths, topic, venue=resolved_venue, limit=resolved_limit
@@ -162,6 +164,7 @@ def papers(
     """
     app_ctx = bind_command(ctx, "authors.papers")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
     result = authors_service.author_papers(
         app_ctx.paths, author_id, venue=resolved_venue, limit=resolved_limit

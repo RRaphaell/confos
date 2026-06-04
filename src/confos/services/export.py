@@ -234,9 +234,13 @@ def _author_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
         conn.close()
 
 
-def export_papers(paths: Paths, *, venue: str | None, fmt: str) -> str:
-    rows = _paper_rows(paths, venue)
-    flat = [
+def paper_export_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
+    """Flat, export-shaped paper rows — the exact shape CSV/JSONL emit.
+
+    Shared by the bulk CSV/JSONL dump and the ``--json`` envelope path so both speak the
+    identical row shape (CLI_CONTRACT §4: ``--json`` must never be silently dropped).
+    """
+    return [
         {
             "paper_id": p["paper_id"],
             "title": p["title"],
@@ -250,14 +254,21 @@ def export_papers(paths: Paths, *, venue: str | None, fmt: str) -> str:
             "keywords": "; ".join(p["keywords"]),
             "bibtex": p["bibtex"] or "",
         }
-        for p in rows
+        for p in _paper_rows(paths, venue)
     ]
-    return _render_bulk(flat, _PAPER_COLUMNS, fmt)
+
+
+def author_export_rows(paths: Paths, venue: str | None) -> list[dict[str, Any]]:
+    """Export-shaped author rows — shared by the CSV/JSONL dump and the ``--json`` envelope."""
+    return _author_rows(paths, venue)
+
+
+def export_papers(paths: Paths, *, venue: str | None, fmt: str) -> str:
+    return _render_bulk(paper_export_rows(paths, venue), _PAPER_COLUMNS, fmt)
 
 
 def export_authors(paths: Paths, *, venue: str | None, fmt: str) -> str:
-    rows = _author_rows(paths, venue)
-    return _render_bulk(rows, _AUTHOR_COLUMNS, fmt)
+    return _render_bulk(author_export_rows(paths, venue), _AUTHOR_COLUMNS, fmt)
 
 
 def _csv_safe(value: Any) -> Any:

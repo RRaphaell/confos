@@ -5,6 +5,61 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Added
+- **`enrich profiles --dry-run`** previews the would-fetch / already-cached counts without any
+  network call or write (contract §8 for state-changing commands).
+- **`--limit` on `viz topics`, `viz orgs`, and `venues search`** — the flag the `--help`
+  examples already showed is now a real per-command option (it previously errored, exit 2).
+
+### Changed
+- **The SQLite store now opens in WAL mode** (`journal_mode=WAL`) so parallel agents can read
+  while a writer ingests, instead of blocking on the rollback journal. This adds the standard
+  `-wal`/`-shm` sidecar files next to `confos.db`.
+
+### Fixed
+- **Usage-error JSON envelopes now name the real command.** A parse error (unknown option,
+  missing argument) reported `"command": "confos"` instead of the actual dotted command
+  (e.g. `papers.search`), because the error fires before the command body runs. The error
+  envelope now derives the command from the parser context, so an agent keying on `command`
+  can tell which call failed even on the error path.
+- **`--plain` now honours its line/TSV contract** where it didn't: `viz network --plain` emits
+  TSV (was a Rich box table), `export context --plain` emits TSV paper rows (was the full JSON
+  envelope), `papers controversial --plain` now carries the `rating_std` column it ranks by,
+  and `stats … --plain --explain` now emits the data-quality block (was silently dropped).
+- **A `database is locked` that outlasts the busy-timeout** is now reported as a backend/retry
+  error (exit 4) with a retry hint, instead of the catch-all "unexpected error" (exit 1).
+- **A misspelled `--venue` now fails loudly instead of looking like an empty venue.** Every
+  `--venue`-accepting read command (`stats`, `papers`, `authors`, `orgs`, `export`, `brief`,
+  `viz`) validates the slug through one shared guard: an unknown slug raises a `not_found`
+  error (exit 1) with a `venues list` hint, while a known-but-not-ingested alias passes with
+  a stderr note. Previously a typo returned `ok:true` with zero rows (exit 0) — indistinguish­
+  able from a real empty venue, quietly corrupting an agent's conclusions.
+- **`papers show` (human view) now shows reviews.** The card renders `rating mean ± std
+  (n reviews)` and the `decision` when a venue has reviews ingested — previously that data was
+  visible only under `--json`/`--plain`, despite field-parity claims.
+- **Result tables no longer collapse their short columns at normal terminal widths.** The
+  `#/status/score/rating/±std/reviews/matched` columns were starved to zero width because the
+  free-text columns were `no_wrap` and greedy; the tables now flex (ratio-sized text columns +
+  reserved widths for the short ones) so every value stays visible at 80/100/120 columns.
+- **A negative `--limit` is now rejected (exit 2) instead of returning the whole result set.**
+  SQLite reads a negative `LIMIT` as unbounded, so `--limit -5` silently dumped everything; the
+  shared limit resolver now rejects it (the root and per-subcommand flags are both covered).
+- **`export papers --json` / `export authors --json` now emit the JSON envelope** instead of
+  silently falling back to CSV — the core "every command speaks stable JSON" contract held
+  everywhere except these two commands. `--json` returns the rows in the standard envelope;
+  combining `--json` with an explicit `--format csv` is now a usage error (exit 2) rather than
+  silently honouring one and dropping the other. Plain `--format csv`/`jsonl` is unchanged.
+- **Snapshot reads no longer drop papers containing Unicode line separators.** JSONL records
+  were split with `str.splitlines()`, which also breaks on U+2028/U+2029/U+0085 — characters
+  that legitimately appear in abstracts/reviews — tearing a record into fragments that failed
+  `json.loads` and vanished silently (a lone U+2028 dropped `colm-2024` from 299 to 298 on
+  `index rebuild`). All snapshot reads now go through one helper that splits on `\n` only.
+  Re-running `index rebuild` restores any previously-dropped papers.
+- **The accepted/rejected status mix no longer reads as an acceptance rate.** `stats overview`
+  and `brief` now carry a one-line caveat that the mix reflects publicly-visible submissions
+  only (OpenReview hides most rejections), so e.g. NeurIPS's "accepted 5286 (95%)" is not
+  mistaken for a 95% acceptance rate. `stats overview --json` gains an additive `status_note`.
+
 ## [0.3.0] - 2026-06-04
 
 ### Added

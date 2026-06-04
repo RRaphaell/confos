@@ -46,3 +46,10 @@ def test_add_rejects_non_openreview_id(run_cli: RunCli) -> None:
     result = run_cli("venues", "add", "--slug", "x", "--openreview-id", "notanid", "--json")
     assert result.exit_code == 2
     assert result.json()["error"]["type"] == "usage"
+
+
+def test_search_documents_a_real_limit_option(run_cli: RunCli) -> None:
+    # P1-9: the help example `venues search ... --limit 5` must map to a real option, not error.
+    result = run_cli("venues", "search", "--help")
+    assert result.exit_code == 0
+    assert "--limit" in result.stdout

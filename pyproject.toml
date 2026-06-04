@@ -66,6 +66,21 @@ path = "src/confos/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/confos"]
 
+[tool.hatch.build.targets.sdist]
+# Explicit allowlist so the source archive is deterministic regardless of working-tree
+# cruft (e.g. a local .venv313/). Without this, hatchling sweeps the whole tree and a
+# stray virtualenv ends up in the sdist (0.2.0/0.3.0 sdists were ~12.7 MB of bundled venv).
+include = [
+    "src",
+    "tests",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "AGENTS.md",
+    "pyproject.toml",
+]
+
 [tool.ruff]
 target-version = "py312"
 line-length = 100

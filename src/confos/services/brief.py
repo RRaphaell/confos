@@ -85,6 +85,9 @@ def brief_markdown(brief: dict[str, Any]) -> str:
         f"**Landscape:** {overview['papers']} papers ({status}) · {overview['authors']} authors "
         f"· {overview['orgs']} orgs · {overview['topics']} topics"
     )
+    if overview.get("status_note"):
+        lines.append("")
+        lines.append(f"> _{overview['status_note']}_")
     lines.append("")
 
     papers = brief["top_papers"]

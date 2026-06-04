@@ -186,3 +186,18 @@ def test_viz_network_bad_format_is_usage_error(run_cli: RunCli, viz_home: Path) 
     result = run_cli("viz", "network", "--topic", "qq", "--format", "svg", "--json")
     assert result.exit_code == 2
     assert result.json()["error"]["type"] == "usage"
+
+
+def test_viz_network_plain_is_tsv(run_cli: RunCli, viz_home: Path) -> None:
+    # P1-7: --plain must be line/TSV, not a Rich box table.
+    result = run_cli("viz", "network", "--topic", "qq", "--plain")
+    assert result.exit_code == 0
+    assert "\t" in result.stdout
+    assert "┏" not in result.stdout and "│" not in result.stdout
+
+
+def test_viz_topics_limit_is_accepted(run_cli: RunCli, viz_home: Path) -> None:
+    # P1-9: the documented `--limit` example must be a real option (was exit 2 "No such option").
+    result = run_cli("viz", "topics", "--venue", "test-venue", "--limit", "1", "--json")
+    assert result.exit_code == 0
+    assert len(result.json()["data"]["rows"]) <= 1

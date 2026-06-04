@@ -8,7 +8,7 @@ from ..console import bind_command, global_output_options
 from ..output.plain import tsv_rows
 from ..output.table import data_table
 from ..services import orgs as orgs_service
-from ._render import papers_tsv, render_papers, resolve_limit
+from ._render import papers_tsv, render_papers, resolve_limit, validate_venue
 
 app = typer.Typer(no_args_is_help=False, help="Explore organisations.")
 
@@ -28,6 +28,7 @@ def top(
     """
     app_ctx = bind_command(ctx, "orgs.top")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
     result = orgs_service.top_orgs(app_ctx.paths, venue=resolved_venue, limit=resolved_limit)
     rows = result["rows"]
@@ -71,6 +72,7 @@ def papers(
     """
     app_ctx = bind_command(ctx, "orgs.papers")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 50)
     result = orgs_service.org_papers(app_ctx.paths, org, venue=resolved_venue, limit=resolved_limit)
     if app_ctx.is_json:
