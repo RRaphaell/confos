@@ -14,6 +14,7 @@ from ._render import (
     render_papers,
     render_rated_papers,
     resolve_limit,
+    validate_venue,
 )
 
 app = typer.Typer(no_args_is_help=False, help="Search and explore papers.")
@@ -40,6 +41,7 @@ def search(
     """
     app_ctx = bind_command(ctx, "papers.search")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
     results = search_service.search_papers(
         app_ctx.paths,
@@ -160,6 +162,7 @@ def top(
     """
     app_ctx = bind_command(ctx, "papers.top")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
     results = search_service.top_papers(
         app_ctx.paths,
@@ -201,6 +204,7 @@ def controversial(
     """
     app_ctx = bind_command(ctx, "papers.controversial")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     resolved_limit = resolve_limit(limit, app_ctx.limit, 20)
     results = search_service.top_papers(
         app_ctx.paths,

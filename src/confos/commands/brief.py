@@ -14,6 +14,7 @@ from ..console import AppContext, bind_command
 from ..output.dashboard import composition_bar, entry, section, stat_line
 from ..output.table import bar_chart
 from ..services import brief as brief_service
+from ._render import validate_venue
 
 # Paper status → composition-bar segment style (themed; collapses to plain without colour).
 _STATUS_SEG_STYLE = {
@@ -52,6 +53,7 @@ def run(
     """
     app_ctx = bind_command(ctx, "brief")
     resolved_venue = venue or app_ctx.venue
+    validate_venue(app_ctx, resolved_venue)
     brief = brief_service.build_brief(app_ctx.paths, venue=resolved_venue, topic=topic)
     query = {"venue": resolved_venue, "topic": topic}
     if app_ctx.is_json:

@@ -5,11 +5,38 @@ that richness never leaks into a no-colour / non-Unicode stream.
 
 from __future__ import annotations
 
-import pytest
+from pathlib import Path
 
-from confos.commands._render import resolve_limit
-from confos.console import build_consoles, confos_theme, should_use_unicode
+import pytest
+from rich.console import Console
+
+from confos.commands._render import render_rated_papers, resolve_limit
+from confos.config import Config
+from confos.console import AppContext, OutputMode, build_consoles, confos_theme, should_use_unicode
+from confos.errors import UsageError
 from confos.output.progress import spinner
+from confos.paths import Paths
+
+
+def _human_ctx(width: int) -> AppContext:
+    """A minimal human-mode AppContext whose stdout Console has a fixed width."""
+    out = Console(width=width, no_color=True, highlight=False, soft_wrap=False)
+    err = Console(width=width, stderr=True, no_color=True)
+    return AppContext(
+        mode=OutputMode.HUMAN,
+        quiet=False,
+        verbose=0,
+        no_input=False,
+        use_color=False,
+        use_unicode=True,
+        supports_hyperlinks=False,
+        paths=Paths(home=Path("/tmp/confos-render-test")),
+        config=Config(),
+        venue=None,
+        limit=None,
+        out=out,
+        err=err,
+    )
 
 
 class _Stream:
@@ -90,3 +117,34 @@ def test_resolve_limit_precedence() -> None:
     assert resolve_limit(None, 30, 50) == 30  # falls back to root --limit
     assert resolve_limit(None, None, 50) == 50  # default
     assert resolve_limit(0, 20, 50) == 0  # explicit 0 is honoured (not falsy-skipped)
+
+
+def test_resolve_limit_rejects_negative() -> None:
+    # A negative LIMIT is "unbounded" in SQLite, so it must be rejected at this funnel —
+    # whether it arrives via the command flag or the root --limit.
+    with pytest.raises(UsageError):
+        resolve_limit(-1, None, 50)
+    with pytest.raises(UsageError):
+        resolve_limit(None, -5, 50)
+
+
+def test_result_tables_keep_short_columns_at_normal_width() -> None:
+    # Regression (P1-5): a long title used to starve the numeric columns to ~zero width at
+    # common terminal widths, because the text columns were no_wrap with no cap. The
+    # rating/±std/reviews values must remain visible.
+    paper = {
+        "paper_id": "x1",
+        "venue": "neurips-2025",
+        "title": "A very long paper title that would devour the whole row when uncapped " * 2,
+        "authors": [{"name": "Ada Lovelace"}, {"name": "Alan Turing"}],
+        "rating_mean": 7.5,
+        "rating_std": 1.25,
+        "review_count": 4,
+    }
+    ctx = _human_ctx(width=100)
+    with ctx.out.capture() as cap:
+        render_rated_papers(ctx, [paper])
+    text = cap.get()
+    assert "7.50" in text  # rating column survived
+    assert "1.25" in text  # ±std column survived
+    assert "4" in text  # reviews column survived

@@ -17,15 +17,47 @@ from rich.panel import Panel
 from rich.table import Table
 
 from ..console import AppContext
+from ..errors import NotFoundError, UsageError
+from ..services import venues as venues_service
 
 
 def resolve_limit(cmd_limit: int | None, ctx_limit: int | None, default: int) -> int:
-    """Resolve a result cap: command flag > root --limit > default. Honours an explicit 0."""
-    if cmd_limit is not None:
-        return cmd_limit
-    if ctx_limit is not None:
-        return ctx_limit
-    return default
+    """Resolve a result cap: command flag > root --limit > default. Honours an explicit 0.
+
+    A negative limit is rejected here (exit 2). This is the single funnel every subcommand
+    ``--limit`` passes through, and SQLite reads a negative ``LIMIT`` as *unbounded* — so an
+    unvalidated ``--limit -5`` silently returns the entire result set, a quiet contract
+    violation. (The root ``--limit`` is also checked in the CLI callback; this covers the
+    per-command flags.)
+    """
+    chosen = cmd_limit if cmd_limit is not None else ctx_limit if ctx_limit is not None else default
+    if chosen < 0:
+        raise UsageError("--limit must be >= 0.", hint="Use a non-negative result cap.")
+    return chosen
+
+
+def validate_venue(app_ctx: AppContext, slug: str | None) -> None:
+    """Reject an unknown ``--venue`` loudly instead of silently returning an empty result.
+
+    A typo'd slug is otherwise indistinguishable from a real but empty venue (``ok:true``,
+    zero rows, exit 0), which quietly corrupts an agent's conclusions. ``None`` (all venues)
+    and a real local venue pass silently; a known builtin alias that isn't ingested yet
+    legitimately has no rows, so it passes with a stderr note rather than an error; only a
+    genuinely-unknown slug raises (mirrors ``venues show``).
+    """
+    if not slug:
+        return
+    if venues_service.get_local_venue(app_ctx.paths, slug) is not None:
+        return
+    if slug in venues_service.builtin_aliases():
+        app_ctx.info(
+            f"venue '{slug}' is a known alias but not ingested yet — run `confos ingest {slug}`."
+        )
+        return
+    raise NotFoundError(
+        f"Venue '{slug}' is not known locally.",
+        hint="See `confos venues list` (or `confos venues search <query>`).",
+    )
 
 
 def _authors_label(authors: list[dict[str, Any]]) -> str:
@@ -73,16 +105,18 @@ def render_papers(
     single_venue = next(iter(venue_set)) if len(venue_set) == 1 else None
 
     table = Table(
-        caption=f"venue: {single_venue}" if single_venue else None, caption_justify="left"
+        caption=f"venue: {single_venue}" if single_venue else None,
+        caption_justify="left",
+        expand=True,
     )
     table.add_column("#", justify="right", no_wrap=True)
-    table.add_column("title", overflow="ellipsis", no_wrap=True)
-    table.add_column("authors", overflow="ellipsis", no_wrap=True)
+    table.add_column("title", overflow="ellipsis", no_wrap=True, ratio=3)
+    table.add_column("authors", overflow="ellipsis", no_wrap=True, ratio=1)
     if single_venue is None:
         table.add_column("venue", no_wrap=True)
-    table.add_column("status", no_wrap=True)
+    table.add_column("status", no_wrap=True, min_width=9)
     if show_score:
-        table.add_column("score", justify="right", no_wrap=True)
+        table.add_column("score", justify="right", no_wrap=True, min_width=5)
 
     for index, paper in enumerate(papers, start=1):
         title = escape(str(paper["title"]))
@@ -106,16 +140,18 @@ def render_rated_papers(ctx: AppContext, papers: list[dict[str, Any]]) -> None:
     venue_set = {p["venue"] for p in papers}
     single_venue = next(iter(venue_set)) if len(venue_set) == 1 else None
     table = Table(
-        caption=f"venue: {single_venue}" if single_venue else None, caption_justify="left"
+        caption=f"venue: {single_venue}" if single_venue else None,
+        caption_justify="left",
+        expand=True,
     )
     table.add_column("#", justify="right", no_wrap=True)
-    table.add_column("title", overflow="ellipsis", no_wrap=True)
-    table.add_column("authors", overflow="ellipsis", no_wrap=True)
+    table.add_column("title", overflow="ellipsis", no_wrap=True, ratio=3)
+    table.add_column("authors", overflow="ellipsis", no_wrap=True, ratio=1)
     if single_venue is None:
         table.add_column("venue", no_wrap=True)
-    table.add_column("rating", justify="right", no_wrap=True)
-    table.add_column("±std", justify="right", no_wrap=True)
-    table.add_column("reviews", justify="right", no_wrap=True)
+    table.add_column("rating", justify="right", no_wrap=True, min_width=6)
+    table.add_column("±std", justify="right", no_wrap=True, min_width=5)
+    table.add_column("reviews", justify="right", no_wrap=True, min_width=7)
     for index, paper in enumerate(papers, start=1):
         rating, std = paper.get("rating_mean"), paper.get("rating_std")
         row = [str(index), escape(str(paper["title"])), escape(_authors_label(paper["authors"]))]
@@ -143,13 +179,13 @@ def papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
 
 def render_found_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
     """Ranked people-discovery table for ``authors find`` (with why-relevant)."""
-    table = Table()
+    table = Table(expand=True)
     table.add_column("#", justify="right", no_wrap=True)
-    table.add_column("author", overflow="ellipsis", no_wrap=True)
-    table.add_column("affiliation", overflow="ellipsis", no_wrap=True)
-    table.add_column("matched", justify="right", no_wrap=True)
-    table.add_column("score", justify="right", no_wrap=True)
-    table.add_column("why", overflow="ellipsis", no_wrap=True)
+    table.add_column("author", overflow="ellipsis", no_wrap=True, ratio=2)
+    table.add_column("affiliation", overflow="ellipsis", no_wrap=True, ratio=2)
+    table.add_column("matched", justify="right", no_wrap=True, min_width=7)
+    table.add_column("score", justify="right", no_wrap=True, min_width=5)
+    table.add_column("why", overflow="ellipsis", no_wrap=True, ratio=3)
     for index, author in enumerate(authors, start=1):
         table.add_row(
             str(index),
@@ -163,12 +199,12 @@ def render_found_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None
 
 
 def render_authors(ctx: AppContext, authors: list[dict[str, Any]]) -> None:
-    table = Table()
+    table = Table(expand=True)
     table.add_column("id", no_wrap=True)
-    table.add_column("author", overflow="ellipsis", no_wrap=True)
-    table.add_column("affiliation", overflow="ellipsis")
-    table.add_column("papers", justify="right", no_wrap=True)
-    table.add_column("quality", no_wrap=True)
+    table.add_column("author", overflow="ellipsis", no_wrap=True, ratio=2)
+    table.add_column("affiliation", overflow="ellipsis", ratio=2)
+    table.add_column("papers", justify="right", no_wrap=True, min_width=6)
+    table.add_column("quality", no_wrap=True, min_width=7)
     for author in authors:
         table.add_row(
             str(author["author_id"]),
@@ -210,6 +246,16 @@ def render_paper_detail(ctx: AppContext, paper: dict[str, Any]) -> None:
     header.add_column(overflow="fold")
     header.add_row("authors", authors)
     header.add_row("status", status_line)
+    # Reviews are the payoff of `--with-reviews`; the human card must show them too, not just
+    # --json/--plain (field parity). Only render when the venue actually carries review data.
+    if paper.get("review_count"):
+        rating = paper.get("rating_mean")
+        if rating is not None:
+            std = paper.get("rating_std")
+            spread = f" ± {std:.2f}" if std is not None else ""
+            header.add_row("rating", f"{rating:.2f}{spread}  ({paper['review_count']} reviews)")
+        if paper.get("decision"):
+            header.add_row("decision", escape(str(paper["decision"])))
     if keywords != "—":
         header.add_row("keywords", keywords)
 

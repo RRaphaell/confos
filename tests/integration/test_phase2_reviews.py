@@ -141,3 +141,12 @@ def test_cli_papers_controversial_json(run_cli: RunCli, reviews_home: Path) -> N
     result = run_cli("papers", "controversial", "--venue", "test-venue", "--json")
     assert result.exit_code == 0
     assert result.json()["data"][0]["paper_id"] == "div"
+
+
+def test_cli_papers_show_human_surfaces_reviews(run_cli: RunCli, reviews_home: Path) -> None:
+    # Regression (P1-4): the human card must show rating + decision, not only --json/--plain.
+    result = run_cli("papers", "show", "hi")
+    assert result.exit_code == 0
+    assert "7.67" in result.stdout  # rating mean
+    assert "reviews" in result.stdout  # review-count label
+    assert "Accept (oral)" in result.stdout  # decision
