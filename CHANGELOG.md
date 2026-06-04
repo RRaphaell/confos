@@ -17,6 +17,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
   `-wal`/`-shm` sidecar files next to `confos.db`.
 
 ### Fixed
+- **Usage-error JSON envelopes now name the real command.** A parse error (unknown option,
+  missing argument) reported `"command": "confos"` instead of the actual dotted command
+  (e.g. `papers.search`), because the error fires before the command body runs. The error
+  envelope now derives the command from the parser context, so an agent keying on `command`
+  can tell which call failed even on the error path.
 - **`--plain` now honours its line/TSV contract** where it didn't: `viz network --plain` emits
   TSV (was a Rich box table), `export context --plain` emits TSV paper rows (was the full JSON
   envelope), `papers controversial --plain` now carries the `rating_std` column it ranks by,

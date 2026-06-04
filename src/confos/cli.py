@@ -221,6 +221,21 @@ def _render_confos_error(exc: ConfosError, *, original: BaseException | None = N
             sys.stderr.write(f"hint: {exc.hint}\n")
 
 
+def _command_from_click_error(exc: ClickUsageError) -> str | None:
+    """Dotted command from the click error's context, e.g. ``papers.search``.
+
+    A parse error (unknown option / missing argument) fires *before* the command body
+    calls ``bind_command``, so the AppContext still holds the default ``"confos"``. The
+    click context's ``command_path`` ("confos papers search") is the only place the real
+    command name lives at that point — without this, the error envelope's ``command`` field
+    is the useless generic ``"confos"`` precisely on the error path agents key off.
+    """
+    click_ctx = getattr(exc, "ctx", None)
+    path = getattr(click_ctx, "command_path", "") if click_ctx is not None else ""
+    parts = path.split()
+    return ".".join(parts[1:]) if len(parts) > 1 else None
+
+
 def _render_click_usage_error(exc: ClickUsageError) -> int:
     """Render a click parse/usage error (unknown option, missing arg, bare group).
 
@@ -230,7 +245,7 @@ def _render_click_usage_error(exc: ClickUsageError) -> int:
     """
     code = exc.exit_code if isinstance(getattr(exc, "exit_code", None), int) else EXIT_USAGE
     ctx = _ACTIVE.get()
-    command = ctx.command if ctx is not None else "confos"
+    command = _command_from_click_error(exc) or (ctx.command if ctx is not None else "confos")
     if _wants_json():
         usage = UsageError((exc.format_message() or "missing command or argument").strip())
         usage.exit_code = code
