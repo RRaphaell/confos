@@ -5,7 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-04
+
 ### Added
+- **README demo screenshots** (brief dashboard, `authors find`, `viz topics`, `papers top`),
+  with `scripts/gen_assets.py` to regenerate them deterministically.
 - **`enrich profiles --dry-run`** previews the would-fetch / already-cached counts without any
   network call or write (contract §8 for state-changing commands).
 - **`--limit` on `viz topics`, `viz orgs`, and `venues search`** — the flag the `--help`
@@ -59,6 +63,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
   and `brief` now carry a one-line caveat that the mix reflects publicly-visible submissions
   only (OpenReview hides most rejections), so e.g. NeurIPS's "accepted 5286 (95%)" is not
   mistaken for a 95% acceptance rate. `stats overview --json` gains an additive `status_note`.
+- **The published sdist is deterministic and no longer bundles a local virtualenv** (12.7 MB →
+  ~170 KB) — an explicit Hatch sdist allowlist replaces hatchling's default working-tree sweep.
 
 ## [0.3.0] - 2026-06-04
 
