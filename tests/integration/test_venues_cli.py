@@ -48,8 +48,12 @@ def test_add_rejects_non_openreview_id(run_cli: RunCli) -> None:
     assert result.json()["error"]["type"] == "usage"
 
 
-def test_search_documents_a_real_limit_option(run_cli: RunCli) -> None:
-    # P1-9: the help example `venues search ... --limit 5` must map to a real option, not error.
-    result = run_cli("venues", "search", "--help")
-    assert result.exit_code == 0
-    assert "--limit" in result.stdout
+def test_search_has_a_real_limit_option(run_cli: RunCli) -> None:
+    # P1-9: the documented `venues search ... --limit 5` must be a real option. Proven offline
+    # by feeding a bad value: a defined option fails as an INVALID VALUE during parsing (before
+    # any network), whereas an undefined one would fail as "No such option".
+    result = run_cli("venues", "search", "q", "--limit", "notanint", "--json")
+    assert result.exit_code == 2
+    message = result.json()["error"]["message"].lower()
+    assert "no such option" not in message  # --limit is recognised…
+    assert "limit" in message  # …it's the value that's rejected
