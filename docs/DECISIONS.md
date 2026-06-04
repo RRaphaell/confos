@@ -284,8 +284,9 @@ people-to-know, and (topic-mode) thin areas. **Pure composition** over existing 
 (``recent`` papers, ``top_by_paper_count`` authors) for the venue-wide fallbacks. With
 ``--topic`` it's a focused brief (relevance-ranked papers + ranked people with why-relevant +
 thin areas); without, the venue landscape (**top-rated papers when reviews exist, else
-most-recent**; most-prolific people). Default output is human Markdown (the launch demo);
-``--json`` is the agent primitive — a superset of ``export context``. **LLM-free.** **Why:**
+most-recent**; most-prolific people). Default output is a human dashboard (the launch demo);
+``--plain`` is the Markdown view; ``--json`` is the agent primitive — a superset of
+``export context``. **LLM-free.** **Why:**
 this is the entry point for all three personas (casual reader / attendee / agent) and the
 open-source headline; it's cheap once Phases 1–2 exist. **Graceful degradation is deliberate:**
 on an un-enriched store it still produces a useful brief (recent papers, ``Unknown``

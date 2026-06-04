@@ -22,22 +22,26 @@ If the target venue isn't local yet, ingest it (network, one-time): `confos inge
 ## Workflow
 1. **Confirm availability:** `confos venues list --json`; ingest if missing.
 2. **Pick the right command** (always `--json --no-input`):
+   - whole landscape of a venue/topic → `confos brief --venue V [--topic "<t>"] --json` (start here)
    - reading list / find papers → `confos papers search "<q>" --venue V --json`
+   - the *good* papers (needs reviews) → `confos papers top --venue V --json` (or `controversial`)
    - who works on a topic → `confos authors find --topic "<t>" --venue V --json`
    - trends → `confos trends compare V1 V2 --topic "<t>" --json`
    - landscape stats → `confos stats topics --venue V --json` (+ `viz` for charts)
-   - everything-about-X → `confos export context --topic "<t>" --venue V --json`
+   - everything-about-X (cited pack) → `confos export context --topic "<t>" --venue V --json`
 3. **Read the JSON, cite the provenance.** Every row has a source id + URL. Use them.
    Report `unknown`/low-confidence counts honestly; never fabricate stats.
 4. **Summarize for the user** with citations; offer the context pack for deeper work.
 
 ## Safety
 - Read commands (search/find/stats/trends/viz/export) are offline + safe — no approval needed.
-- `ingest` (and re-running it to update) and `venues search` hit the network and take time
-  — show progress, fine to run. There is no separate `sync` command.
+- `ingest` (re-run to update), `venues search`, and `enrich profiles` hit the network and take
+  time — show progress, fine to run. There is no separate `sync` command.
 - Never run destructive commands without explicit user intent.
 
 ## Notes
+- Affiliations/countries/orgs empty? Run `confos enrich profiles --venue V` once (network,
+  resumable). `papers top`/`controversial` need reviews: `confos ingest <venue> --with-reviews`.
 - `confos schema <command>` documents any command's JSON output (versioned).
 - "Likely relevant / likely attending" is a labelled proxy (e.g. authored a paper at the
   venue), not a certainty — present it as such.

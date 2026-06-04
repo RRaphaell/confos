@@ -89,7 +89,7 @@ confos
         # ~20/min, so a big venue is slow but resumable (cached in raw/<venue>/
         # profiles.jsonl; a later `index rebuild` reproduces it offline).
 
-  brief --venue V [--topic T]        # one-command landscape (human Markdown + --json)
+  brief --venue V [--topic T]        # one-command landscape (human dashboard · --plain Markdown · --json)
         #   composes overview + top papers + hot topics + orgs + people + thin areas.
 
   schema <command>                   print JSON schema for a command's --json output
