@@ -55,19 +55,19 @@ interpretability         ████████████▎                
 **Find the people working on a topic** — ranked, with a why-relevant reason and provenance:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/authors-find.png" alt="confos authors find — ranked people on a topic" width="780">
+  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/authors-find.png" alt="confos authors find — ranked people on a topic" width="860">
 </p>
 
 **See what's trending** — colored topic bars straight in the terminal:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/viz-topics.png" alt="confos viz topics — a colored bar chart of top topics" width="560">
+  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/viz-topics.png" alt="confos viz topics — a colored bar chart of top topics" width="640">
 </p>
 
 **Surface the best-reviewed work** — mean rating, spread, and review count from public reviews:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/papers-top.png" alt="confos papers top — highest-rated papers with review stats" width="780">
+  <img src="https://raw.githubusercontent.com/RRaphaell/confos/main/docs/assets/papers-top.png" alt="confos papers top — highest-rated papers with review stats" width="860">
 </p>
 
 ---
