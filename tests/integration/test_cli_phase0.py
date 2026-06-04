@@ -224,6 +224,9 @@ def test_parse_error_with_json_AFTER_subcommand_is_envelope(run_cli: RunCli) -> 
         payload = json.loads(result.stdout)  # must parse — no leak
         assert payload["ok"] is False
         assert payload["error"]["type"] == "usage"
+        # The error envelope must name the real command (not the generic "confos") so an
+        # agent keying on `command` can tell which call failed, even on the parse-error path.
+        assert payload["command"] == "papers.search", args
 
 
 def test_literal_json_positional_after_dashdash_is_not_json_mode(run_cli: RunCli) -> None:
