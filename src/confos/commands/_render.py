@@ -167,8 +167,17 @@ def render_rated_papers(ctx: AppContext, papers: list[dict[str, Any]]) -> None:
 
 
 def rated_papers_tsv(papers: list[dict[str, Any]]) -> list[tuple[Any, ...]]:
+    # Carries rating_std too: `papers controversial` ranks by it, so omitting it made the
+    # plain output look unsorted and hid the ranking metric.
     return [
-        (p["paper_id"], p["title"], p["venue"], p.get("rating_mean", ""), p.get("review_count", 0))
+        (
+            p["paper_id"],
+            p["title"],
+            p["venue"],
+            p.get("rating_mean", ""),
+            p.get("rating_std", ""),
+            p.get("review_count", 0),
+        )
         for p in papers
     ]
 

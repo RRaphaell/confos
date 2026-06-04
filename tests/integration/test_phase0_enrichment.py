@@ -112,3 +112,10 @@ def test_cli_papers_search_stays_lean_no_bibtex(run_cli: RunCli, phase0_home: Pa
     assert result.exit_code == 0
     rows = result.json()["data"]
     assert rows and "bibtex" not in rows[0] and "pdf_url" not in rows[0]
+
+
+def test_cli_stats_explain_under_plain_emits_coverage(run_cli: RunCli, phase0_home: Path) -> None:
+    # P1-7: --explain was silently ignored under --plain; the data-quality block must appear.
+    result = run_cli("stats", "topics", "--venue", "test-venue", "--plain", "--explain")
+    assert result.exit_code == 0
+    assert "data_quality." in result.stdout

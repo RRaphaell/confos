@@ -178,5 +178,10 @@ def _emit_breakdown(
         rows = result["rows"]
         assert isinstance(rows, list)
         tsv_rows(app_ctx.out, [(r["key"], r["papers"]) for r in rows])
+        if explain:
+            # --explain was silently ignored under --plain; emit the coverage block as TSV too.
+            dq = result["data_quality"]
+            assert isinstance(dq, dict)
+            tsv_rows(app_ctx.out, [(f"data_quality.{k}", v) for k, v in dq.items()])
         return
     _render_breakdown(app_ctx, result, label=label, explain=explain)

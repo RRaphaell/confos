@@ -150,3 +150,12 @@ def test_cli_papers_show_human_surfaces_reviews(run_cli: RunCli, reviews_home: P
     assert "7.67" in result.stdout  # rating mean
     assert "reviews" in result.stdout  # review-count label
     assert "Accept (oral)" in result.stdout  # decision
+
+
+def test_cli_papers_controversial_plain_carries_std(run_cli: RunCli, reviews_home: Path) -> None:
+    # P1-7: controversial ranks by rating_std, so --plain must carry that column (6 fields):
+    # paper_id, title, venue, rating_mean, rating_std, review_count.
+    result = run_cli("papers", "controversial", "--venue", "test-venue", "--plain")
+    assert result.exit_code == 0
+    lines = [ln for ln in result.stdout.splitlines() if ln.strip()]
+    assert lines and all(len(ln.split("\t")) == 6 for ln in lines)

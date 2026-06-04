@@ -7,6 +7,7 @@ import typer
 
 from ..console import AppContext, bind_command, global_output_options
 from ..errors import UsageError
+from ..output.plain import tsv_rows
 from ..paths import Paths
 from ..services import export as export_service
 from ._render import validate_venue
@@ -45,6 +46,16 @@ def context(
     query = {"topic": topic, "venue": resolved_venue}
     if format == "markdown" and not app_ctx.is_json:
         app_ctx.emit(export_service.context_pack_markdown(pack))
+        return
+    if app_ctx.is_plain:
+        # --plain is line/TSV, not the JSON envelope: emit the pack's papers as scriptable rows.
+        tsv_rows(
+            app_ctx.out,
+            [
+                (p.get("paper_id", ""), p.get("title", ""), p.get("status", ""), p.get("url", ""))
+                for p in pack["papers"]
+            ],
+        )
         return
     app_ctx.render_json(pack, query=query, venue=resolved_venue)
 

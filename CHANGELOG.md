@@ -5,7 +5,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Added
+- **`enrich profiles --dry-run`** previews the would-fetch / already-cached counts without any
+  network call or write (contract §8 for state-changing commands).
+- **`--limit` on `viz topics`, `viz orgs`, and `venues search`** — the flag the `--help`
+  examples already showed is now a real per-command option (it previously errored, exit 2).
+
+### Changed
+- **The SQLite store now opens in WAL mode** (`journal_mode=WAL`) so parallel agents can read
+  while a writer ingests, instead of blocking on the rollback journal. This adds the standard
+  `-wal`/`-shm` sidecar files next to `confos.db`.
+
 ### Fixed
+- **`--plain` now honours its line/TSV contract** where it didn't: `viz network --plain` emits
+  TSV (was a Rich box table), `export context --plain` emits TSV paper rows (was the full JSON
+  envelope), `papers controversial --plain` now carries the `rating_std` column it ranks by,
+  and `stats … --plain --explain` now emits the data-quality block (was silently dropped).
+- **A `database is locked` that outlasts the busy-timeout** is now reported as a backend/retry
+  error (exit 4) with a retry hint, instead of the catch-all "unexpected error" (exit 1).
 - **A misspelled `--venue` now fails loudly instead of looking like an empty venue.** Every
   `--venue`-accepting read command (`stats`, `papers`, `authors`, `orgs`, `export`, `brief`,
   `viz`) validates the slug through one shared guard: an unknown slug raises a `not_found`
