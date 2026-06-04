@@ -10,6 +10,13 @@ every release instead of hand-captured. Run it against an ingested store:
 
 Needs the venues below already ingested (neurips-2025 for the landscape/topics/people,
 a reviewed venue like colm-2024 for the rated-papers shot). Writes docs/assets/*.svg.
+
+Pass --png to also rasterise each SVG to a 2x PNG (the README embeds PNGs via absolute
+GitHub URLs because PyPI doesn't render SVGs). PNG conversion needs cairosvg + the cairo
+C library; on macOS/Homebrew run it with the lib on the dyld path, e.g.:
+
+    DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib \
+        uv run --with cairosvg python scripts/gen_assets.py --png
 """
 
 from __future__ import annotations
@@ -75,6 +82,7 @@ def main() -> None:
     ap.add_argument("--venue", default="neurips-2025", help="venue for landscape/topics/people")
     ap.add_argument("--reviewed-venue", default="colm-2024", help="venue with reviews (rated shot)")
     ap.add_argument("--topic", default="language models", help="topic for the people/find shot")
+    ap.add_argument("--png", action="store_true", help="also rasterise each SVG to a 2x PNG")
     args = ap.parse_args()
     paths = Paths(home=Path(args.home))
     ASSETS.mkdir(parents=True, exist_ok=True)
@@ -112,6 +120,25 @@ def main() -> None:
         _save(out, "papers-top.svg", f"confos papers top --venue {args.reviewed_venue}")
     else:
         print(f"  (skipped papers-top.svg — no reviews in {args.reviewed_venue})")
+
+    if args.png:
+        _rasterise_pngs()
+
+
+def _rasterise_pngs(scale: int = 2) -> None:
+    """Convert every docs/assets/*.svg to a 2x PNG (README embeds PNGs for PyPI)."""
+    try:
+        import cairosvg
+    except (ImportError, OSError) as exc:  # cairo C lib missing / not on the dyld path
+        print(
+            f"  PNG step skipped ({exc}). Needs cairosvg + cairo — see this script's docstring "
+            "for the DYLD_FALLBACK_LIBRARY_PATH invocation."
+        )
+        return
+    for svg in sorted(ASSETS.glob("*.svg")):
+        png = svg.with_suffix(".png")
+        cairosvg.svg2png(url=str(svg), write_to=str(png), scale=scale)
+        print(f"  wrote {png.relative_to(ASSETS.parent.parent)}")
 
 
 if __name__ == "__main__":
