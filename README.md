@@ -29,6 +29,8 @@ colored dashboard in your terminal (shown here in plain text):
   5,540 papers · 23,013 authors · 29 orgs · 9,826 topics
   ████████████████████████████████████████████████
   ▆ accepted 5286 (95%)   ▆ rejected 254 (5%)
+  Status mix reflects publicly-visible submissions only — OpenReview hides most
+  rejected papers, so this is not the venue's acceptance rate.
 
 HOT TOPICS
 most-published subtopics here

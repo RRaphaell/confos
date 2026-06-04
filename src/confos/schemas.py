@@ -126,6 +126,7 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "venue": "string|null",
             "papers": "int",
             "status": "{status: int}",
+            "status_note": "string (present when status is non-empty; coverage caveat)",
             "authors": "int",
             "orgs": "int",
             "topics": "int",

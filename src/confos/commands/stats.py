@@ -88,6 +88,9 @@ def overview(
     )
     if status:
         data_table(app_ctx.out, ["status", "papers"], [(k, str(v)) for k, v in status.items()])
+        note = result.get("status_note")
+        if note:
+            app_ctx.out.print(f"[confos.muted]{note}[/]" if app_ctx.use_color else str(note))
 
 
 @app.command()

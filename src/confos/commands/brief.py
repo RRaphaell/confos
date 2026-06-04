@@ -89,6 +89,9 @@ def render_brief(app_ctx: AppContext, brief: dict[str, Any]) -> None:
         for status, count in (overview.get("status") or {}).items()
     ]
     composition_bar(out, segments, unicode=uni)
+    # The bar prints "(95%)" per segment — caption it so that's never read as an acceptance rate.
+    if segments and overview.get("status_note"):
+        out.print(f"  [confos.muted]{escape(str(overview['status_note']))}[/]")
 
     if brief["hot_topics"]:
         section(out, "Hot topics", "most-published subtopics here")
