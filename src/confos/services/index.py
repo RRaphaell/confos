@@ -21,6 +21,7 @@ from ..db.migrate import create_derived, drop_derived, migrate
 from ..db.repositories import count_table, reset_entities
 from ..db.repositories import venues as venues_repo
 from ..errors import ConfigError
+from ..jsonl import read_jsonl_records
 from ..models import VenueRef
 from ..paths import Paths
 from .ingest import upsert_normalized_paper
@@ -63,9 +64,7 @@ def rebuild(paths: Paths) -> dict[str, Any]:
             adapter = _adapter_for(ref.source)
             profiles = _load_profiles(venue_dir)  # optional Phase-1 enrichment snapshot
             papers = []
-            for line in (venue_dir / "submissions.jsonl").read_text("utf-8").splitlines():
-                if not line.strip():
-                    continue
+            for line in read_jsonl_records(venue_dir / "submissions.jsonl"):
                 try:
                     papers.append(
                         adapter.normalize(json.loads(line), ref, aliases=aliases, profiles=profiles)
@@ -101,9 +100,7 @@ def _load_profiles(venue_dir: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     profiles: dict[str, Any] = {}
-    for line in path.read_text("utf-8").splitlines():
-        if not line.strip():
-            continue
+    for line in read_jsonl_records(path):
         try:
             record = json.loads(line)
         except json.JSONDecodeError:

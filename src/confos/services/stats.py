@@ -14,21 +14,35 @@ from ..db.migrate import migrate
 from ..db.repositories import stats as stats_repo
 from ..paths import Paths
 
+# Surfaced wherever the accepted/rejected status mix is shown, so the number is never
+# misread as a venue acceptance rate (OpenReview only exposes a subset of rejections).
+STATUS_COVERAGE_NOTE = (
+    "Status mix reflects publicly-visible submissions only — OpenReview hides most "
+    "rejected papers, so this is not the venue's acceptance rate."
+)
+
 
 def overview(paths: Paths, venue: str | None = None) -> dict[str, Any]:
     conn = connect(paths.db)
     try:
         migrate(conn)
         distinct = stats_repo.distinct_entity_counts(conn, venue)
-        return {
+        status = {r["key"]: r["papers"] for r in stats_repo.status_counts(conn, venue)}
+        result: dict[str, Any] = {
             "venue": venue,
             "papers": stats_repo.papers_total(conn, venue),
-            "status": {r["key"]: r["papers"] for r in stats_repo.status_counts(conn, venue)},
+            "status": status,
             "authors": distinct["authors"],
             "orgs": distinct["orgs"],
             "topics": distinct["topics"],
             "venues": distinct["venues"],
         }
+        # Honesty guard (PRODUCT principle #4): the status mix is the *publicly-visible*
+        # subset, not a venue acceptance rate — OpenReview hides most rejections, so a bare
+        # "accepted 5286 / rejected 254" must not be read as ~95% accepted.
+        if status:
+            result["status_note"] = STATUS_COVERAGE_NOTE
+        return result
     finally:
         conn.close()
 

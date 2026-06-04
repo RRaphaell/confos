@@ -24,6 +24,7 @@ from ..db.repositories import orgs as orgs_repo
 from ..db.repositories import papers as papers_repo
 from ..db.repositories import reviews as reviews_repo
 from ..db.repositories import venues as venues_repo
+from ..jsonl import read_jsonl_records
 from ..models import IngestOptions, IngestResult, IngestStatus, NormalizedPaper, VenueRef
 from ..paths import Paths
 from .reviews import aggregate as aggregate_reviews
@@ -229,10 +230,9 @@ def _persist_snapshot(path: Path, notes: list[RawNote], *, full: bool) -> None:
     """
     by_id: dict[str, RawNote] = {}
     if not full and path.exists():
-        for line in path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                existing = json.loads(line)
-                by_id[str(existing.get("id"))] = existing
+        for line in read_jsonl_records(path):
+            existing = json.loads(line)
+            by_id[str(existing.get("id"))] = existing
     for note in notes:
         by_id[str(note.get("id"))] = note
     with path.open("w", encoding="utf-8") as fh:

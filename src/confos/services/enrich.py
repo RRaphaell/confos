@@ -16,6 +16,7 @@ from typing import Any, Protocol
 
 from ..adapters.base import RawProfile
 from ..errors import NotFoundError
+from ..jsonl import read_jsonl_records
 from ..paths import Paths
 from . import index as index_service
 
@@ -124,9 +125,7 @@ def enrich_profiles(
 def _profile_handles(submissions: Path) -> list[str]:
     """Unique tilde author handles across a venue's raw submissions, in first-seen order."""
     seen: dict[str, None] = {}
-    for line in submissions.read_text("utf-8").splitlines():
-        if not line.strip():
-            continue
+    for line in read_jsonl_records(submissions):
         try:
             note = json.loads(line)
         except json.JSONDecodeError:
@@ -146,9 +145,7 @@ def _recorded_handles(profiles_path: Path) -> set[str]:
     if not profiles_path.exists():
         return set()
     out: set[str] = set()
-    for line in profiles_path.read_text("utf-8").splitlines():
-        if not line.strip():
-            continue
+    for line in read_jsonl_records(profiles_path):
         try:
             record = json.loads(line)
         except json.JSONDecodeError:

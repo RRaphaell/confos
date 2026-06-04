@@ -176,6 +176,8 @@ def test_stats_overview(corpus: Paths) -> None:
     assert overview["status"]["under_review"] == 1  # ccc3
     assert overview["status"]["accepted"] == 5
     assert overview["venues"] == 2
+    # Honesty caveat: the status mix carries a note so it is not read as an acceptance rate.
+    assert "acceptance rate" in overview["status_note"]
 
 
 def test_stats_topics_coverage(corpus: Paths) -> None:
@@ -184,6 +186,36 @@ def test_stats_topics_coverage(corpus: Paths) -> None:
     assert "agents" in keys
     dq = result["data_quality"]
     assert (dq["papers_total"], dq["papers_with_signal"], dq["unknown"]) == (6, 6, 0)
+
+
+def test_rebuild_preserves_unicode_line_separator(tmp_path: Path) -> None:
+    # Regression: a U+2028 inside note text must survive `index rebuild`. The snapshot is
+    # written ensure_ascii=False (D3), so the raw separator lands verbatim in
+    # submissions.jsonl; reading it with str.splitlines() used to tear the record in two,
+    # fail json.loads on both halves, and silently drop the paper (colm-2024 fell 299->298).
+    # See confos.jsonl.read_jsonl_records.
+    sep = chr(0x2028)
+    paths = Paths(home=tmp_path / "store")
+    pub = FAKE_REF.published_venueid or ""
+    notes = [
+        make_note("u1", title="Clean paper", keywords=["a"], venueid=pub),
+        make_note(
+            "u2",
+            title=f"Sep{sep}arated",
+            abstract=f"before{sep}after",
+            keywords=["b"],
+            venueid=pub,
+        ),
+    ]
+    ingest_venue(
+        paths=paths, adapter=FakeAdapter(FAKE_REF, notes), handle="test-venue", opts=IngestOptions()
+    )
+    assert stats_service.overview(paths)["papers"] == 2
+
+    result = index_service.rebuild(paths)
+    assert result["failed"] == 0
+    assert result["papers"] == 2  # the U+2028 paper is not dropped on re-read
+    assert stats_service.overview(paths)["papers"] == 2
 
 
 def test_stats_orgs_is_honest_about_sparsity(corpus: Paths) -> None:

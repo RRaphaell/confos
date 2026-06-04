@@ -5,6 +5,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Fixed
+- **`export papers --json` / `export authors --json` now emit the JSON envelope** instead of
+  silently falling back to CSV — the core "every command speaks stable JSON" contract held
+  everywhere except these two commands. `--json` returns the rows in the standard envelope;
+  combining `--json` with an explicit `--format csv` is now a usage error (exit 2) rather than
+  silently honouring one and dropping the other. Plain `--format csv`/`jsonl` is unchanged.
+- **Snapshot reads no longer drop papers containing Unicode line separators.** JSONL records
+  were split with `str.splitlines()`, which also breaks on U+2028/U+2029/U+0085 — characters
+  that legitimately appear in abstracts/reviews — tearing a record into fragments that failed
+  `json.loads` and vanished silently (a lone U+2028 dropped `colm-2024` from 299 to 298 on
+  `index rebuild`). All snapshot reads now go through one helper that splits on `\n` only.
+  Re-running `index rebuild` restores any previously-dropped papers.
+- **The accepted/rejected status mix no longer reads as an acceptance rate.** `stats overview`
+  and `brief` now carry a one-line caveat that the mix reflects publicly-visible submissions
+  only (OpenReview hides most rejections), so e.g. NeurIPS's "accepted 5286 (95%)" is not
+  mistaken for a 95% acceptance rate. `stats overview --json` gains an additive `status_note`.
+
 ## [0.3.0] - 2026-06-04
 
 ### Added
