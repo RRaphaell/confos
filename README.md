@@ -22,7 +22,14 @@ query is local, offline, and millisecond-fast — and unlike asking an LLM, ever
 real and traceable, not guessed.
 
 Run `confos brief --venue neurips-2025` and the whole conference lands in one screen — a
-colored dashboard in your terminal (shown here in plain text):
+colored dashboard in your terminal:
+
+<p align="center">
+  <img src="docs/assets/brief-demo.svg" alt="confos brief — a one-screen, colored conference dashboard for NeurIPS 2025" width="820">
+</p>
+
+<details>
+<summary>Plain-text version (for piping / screen readers)</summary>
 
 ```text
 ◆ confos brief · neurips-2025
@@ -39,13 +46,29 @@ reinforcement learning   ██████████████████�
 diffusion models         ████████████████████████                  181
 reasoning                ██████████████▍                           108
 interpretability         ████████████▎                              92
-
-TOP PAPERS
-  ★ Time-o1: Time-Series Forecasting Needs Transformed Label Alignment
-    Hao Wang, Licheng Pan, Zhichao Chen +5 · neurips-2025
-  ● Novel Exploration via Orthogonality
-    Andreas Theophilou, Özgür Şimşek · neurips-2025
 ```
+
+</details>
+
+## What it looks like
+
+**Find the people working on a topic** — ranked, with a why-relevant reason and provenance:
+
+<p align="center">
+  <img src="docs/assets/authors-find.svg" alt="confos authors find — ranked people on a topic" width="780">
+</p>
+
+**See what's trending** — colored topic bars straight in the terminal:
+
+<p align="center">
+  <img src="docs/assets/viz-topics.svg" alt="confos viz topics — a colored bar chart of top topics" width="560">
+</p>
+
+**Surface the best-reviewed work** — mean rating, spread, and review count from public reviews:
+
+<p align="center">
+  <img src="docs/assets/papers-top.svg" alt="confos papers top — highest-rated papers with review stats" width="780">
+</p>
 
 ---
 
