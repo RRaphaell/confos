@@ -3,7 +3,9 @@
 **Date:** 2026-05-23
 **Purpose:** Working reference for `confos`, ingesting OpenReview metadata into SQLite.
 
-Latest `openreview-py` release is **v2.2.0** (2026-04-28), with v2.0.0 cut on 2026-04-02 as a deliberate breaking-changes release. The repository is highly active: `master` was pushed to 2026-05-21 and has 322 open issues, 244 stars, MIT-licensed.
+At initial research time, `openreview-py` **v2.2.0** (2026-04-28) was the latest release;
+the project now locks **v2.2.1** in `uv.lock`. v2.0.0 was cut on 2026-04-02 as a deliberate
+breaking-changes release. The repository is actively maintained and MIT-licensed.
 
 ---
 
@@ -21,7 +23,12 @@ Auth on OpenReview is **optional for public reads**. The `OpenReviewClient.__ini
 
 Credentialed auth uses username + password to obtain a JWT bearer token (max lifetime 1 week, set via `tokenExpiresIn`). The token is sent as `Authorization: Bearer <jwt>`. You can skip login by passing an existing `token=` directly. There is no separate "API key" concept — sessions are JWTs from `/login`. MFA is supported via `MfaRequiredException` on accounts that have it enabled.
 
-**Default for `confos`**: anonymous-by-default, opt-in via env vars (`OPENREVIEW_USERNAME` / `OPENREVIEW_PASSWORD`, which the client picks up automatically) or `--login`. The only data anonymous mode cannot see is reviewer-private content (anonymous reviewer identities, reviewer-only discussions, withdrawn-paper internals on some venues). Public papers, accepted lists, abstracts, PDFs, and decision outcomes are all reachable without credentials.
+**Default for `confos`**: anonymous-by-default, with optional credentials supplied through
+env vars (`OPENREVIEW_USERNAME` / `OPENREVIEW_PASSWORD`) if a future command needs them. There
+is no `confos --login` flag today. The only data anonymous mode cannot see is reviewer-private
+content (anonymous reviewer identities, reviewer-only discussions, withdrawn-paper internals
+on some venues). Public papers, accepted lists, abstracts, PDFs, and decision outcomes are
+all reachable without credentials.
 
 ## 3. Venue Identification
 
@@ -141,16 +148,21 @@ A hybrid is best for `confos`: `mintcdate` for daily ticks (cheap, picks up new 
 
 OpenReview does not publish formal rate limits. The bug-bounty disclosure of an unmetered `/profiles/search` in 2025 confirms there was *no* per-IP throttle on at least that endpoint, and the patch focused on closing the public access rather than introducing limits. In practice the client is polite by construction:
 
-The v2 client wraps `requests` with a `LogRetry` adapter configured `total=3, backoff_factor=1, status_forcelist=[500, 502, 503, 504]`, respecting `Retry-After`. Notably **429 is not in the retry list** — if you ever do hit a 429, you'll see a raw exception, not an auto-retry. The client also sets a `User-Agent` of `openreview-py/{version} (Python/{x.y})`, which is reasonable identification.
+The v2 client wraps `requests` with retry behavior for backend failures and sets a
+`User-Agent` of `openreview-py/{version} (Python/{x.y})`, which is reasonable
+identification. In live profile-enrichment testing, `openreview-py` also printed 429/retry
+messages while waiting out the `/profiles` window; confos swallows that stdout noise during
+profile fetches so `--json` stays parseable.
 
 Best practices for `confos`:
 - Don't parallelize aggressively — sequential `get_all_notes` per venue is fine and predictable
-- Add your own 429-aware retry with exponential backoff around the client
 - Cache aggressively in SQLite — the whole point of `confos`. Re-fetch only what's needed (use `mintcdate` and `sort=tmdate:desc` tricks above)
 - Identify your tool in the User-Agent if you can (`requests.Session()` patch or env var)
 - Be especially polite to `/profiles` — it's the endpoint that has been historically abused
 
-A sensible default: between page fetches, add nothing; between venue sync runs, allow a small `--rate-delay` flag. Don't bother with token buckets unless you start seeing 429s.
+A sensible default: between page fetches, add nothing. Do not add a public rate-limit knob
+unless a concrete endpoint needs it; for profiles, the shipped answer is sequential,
+resumable fetching rather than user-tuned concurrency.
 
 ## 8. Decisions — Joining Strategy
 

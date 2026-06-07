@@ -1,11 +1,13 @@
 # confos — Build Plan & Working Manual
 
-**Status:** canonical · **Last updated:** 2026-05-31 · **Audience:** the agent building this.
+**Status:** historical build manual · **Last updated:** 2026-06-07 · **Audience:** agents
+maintaining this project.
 
 This is the operating manual for constructing confos. It assumes context will be lost
-and rebuilt between sessions — so it must be self-sufficient. Read this, then
+and rebuilt between sessions — so it must be self-sufficient. The initial build has shipped
+and the repo is public; keep this as the project archaeology and process bar. Read this, then
 [ARCHITECTURE.md](ARCHITECTURE.md) + [CLI_CONTRACT.md](CLI_CONTRACT.md), and you can
-build the whole project without re-deriving decisions.
+maintain the project without re-deriving decisions.
 
 ---
 
@@ -49,10 +51,9 @@ A repeating loop per phase:
   alternatives). This is for both of us — so future-me doesn't re-litigate, and Raphael
   can see why things are the way they are. If I have to assume something about the data or
   the user, log it as an assumption with how to verify it.
-- **Commit at every meaningful checkpoint** and push to the private GitHub repo so
-  progress is visible. Conventional-commit style (`feat:`, `fix:`, `test:`, `docs:`,
-  `chore:`). **Never add a `Co-Authored-By`/AI-attribution trailer** (Raphael's hard rule
-  — the harness adds it by default; omit it). Never commit secrets.
+- **Commit at every meaningful checkpoint** and keep GitHub visible. Conventional-commit
+  style (`feat:`, `fix:`, `test:`, `docs:`, `chore:`). **Never add a `Co-Authored-By` or
+  AI-attribution trailer.** Never commit secrets.
 - **Checkpoint discipline:** end each phase only when its definition-of-done is met and
   the subagent pass is clean (or findings are triaged and fixed).
 
@@ -96,7 +97,8 @@ doubt, write the simpler version.
   an invitation to add more layers.
 - **Errors:** a small set of typed exceptions → exit codes (CLI_CONTRACT §5); full stack
   trace only at higher `--verbose` (`-vv`).
-- **No hidden I/O:** read commands never touch the network; only `ingest` does.
+- **No hidden I/O:** read commands never touch the network. Only explicit network commands
+  (`ingest`, `venues search`, `enrich profiles`) call OpenReview.
 - **Determinism:** explicit `ORDER BY` with a unique tiebreak on list queries, so `--json`
   and tests are reproducible (pairs with RANKING §2). This is clean code, not complexity.
 - **Secrets:** none are needed (anonymous reads). If optional OpenReview creds are used,
@@ -184,17 +186,17 @@ code-reviewer sweep; tag `v0.1.0`.
 AIE/PMLR/OpenAlex adapters, semantic search, LLM `ask`, MCP server. Seams exist; code doesn't.
 
 ## 6. Git & GitHub workflow
-- Repo: private `RRaphaell/confos`. `main` is always green.
+- Repo: public `RRaphaell/confos`. `main` is always green.
 - Commit per checkpoint, push after each phase (and within phases at stable points).
 - Conventional-commit messages; each phase's final commit summarizes the DoD met.
 - Commit `uv.lock` for reproducible installs. `.gitignore` excludes `~/.confos`
   artifacts, `.venv`, caches, `__pycache__`, `*.db`, `.env`.
 
 ## 7. Definition of done (whole project)
-- [ ] All v1 commands (PRODUCT §8) implemented per CLI_CONTRACT.
-- [ ] ruff + mypy(strict) + pytest green in CI; integration tests on recorded fixtures.
-- [ ] Every command: stable `--json`, provenance, correct exit codes, helpful `--help`.
-- [ ] Subagent passes (code-reviewer, fresh-user, architecture-critic, agent-consumer) clean.
-- [ ] `uv tool install confos` works from a clean machine; README quickstart reproduces.
-- [ ] `.agents/skills/confos/SKILL.md` + `AGENTS.md` complete and accurate.
-- [ ] Tagged `v0.1.0`, pushed to private GitHub.
+- [x] All v1 commands (PRODUCT §8) implemented per CLI_CONTRACT.
+- [x] ruff + mypy(strict) + pytest green in CI; integration tests on recorded fixtures.
+- [x] Every command: stable `--json`, provenance, correct exit codes, helpful `--help`.
+- [x] Subagent passes (code-reviewer, fresh-user, architecture-critic, agent-consumer) clean.
+- [x] `uv tool install confos` works from a clean machine; README quickstart reproduces.
+- [x] `.agents/skills/confos/SKILL.md` + `AGENTS.md` complete and accurate.
+- [x] Tagged `v0.1.0`; later hardened through `v0.4.0` and made public.

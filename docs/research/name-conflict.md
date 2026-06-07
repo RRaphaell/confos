@@ -22,7 +22,7 @@ Plus mental scan of common collisions (Spanish "confos" slang, abbreviations, et
 
 | Namespace | Result |
 |---|---|
-| PyPI | No package named `confos` |
+| PyPI | `confos` is now Raphael's package |
 | npm | No package named `confos` |
 | GitHub | No repository at `github.com/*/confos` matching our category |
 | Common-name CLI | No CLI tool of that name surfaced in search |
@@ -65,7 +65,7 @@ If ConFoo ever becomes a real issue (e.g., we get sustained "is this the Montrea
 
 - [ ] Check domain availability: `confos.dev`, `confos.io`, `confos.sh`.
 - [ ] Check that `confos` isn't a registered trademark in any relevant jurisdiction (low risk for a 6-char invented word, but worth a quick USPTO/EUIPO search before we put it on slides or a website).
-- [ ] Reserve PyPI name early — `pip install confos` should resolve to us. PyPI lets you reserve a name with an empty 0.0.0 release.
+- [x] Reserve PyPI name early — done; `pip install confos` resolves to this project.
 
 ---
 

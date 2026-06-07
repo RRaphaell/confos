@@ -18,7 +18,7 @@ context** — all locally, all scriptable, with provenance back to the source.
 
 It's built for terminals, shell scripts, CI, and **coding agents** (Claude Code, Codex, or
 anything with shell access). Every command speaks stable JSON; after a one-time ingest every
-query is local, offline, and millisecond-fast — and unlike asking an LLM, every number is
+read/query command is local, offline, and millisecond-fast — and unlike asking an LLM, every number is
 real and traceable, not guessed.
 
 Run `confos brief --venue neurips-2025` and the whole conference lands in one screen — a
@@ -94,7 +94,8 @@ confos brief --venue neurips-2025    # the dashboard: topics, orgs, top papers, 
 ```
 
 Not sure of a venue slug? `confos venues search "ICLR 2026"` or `confos venues aliases`.
-After the one-time ingest, everything is **local and offline**.
+After ingest, the read/query surface is **local and offline**. Only `ingest`, `venues search`,
+and `enrich profiles` touch the network.
 
 ## Commands
 
@@ -193,7 +194,8 @@ confos is a first-class tool for coding agents (Claude Code, Codex, …):
   has to hallucinate a statistic.
 - **`confos export context --topic <t>`** returns one cited pack (top papers, ranked people,
   orgs, topic-scoped stats) — drop it straight into a prompt.
-- A **bundled skill** (`.agents/skills/confos/`) teaches an agent how to drive the tool. See
+- The repo includes an **agent skill** (`.agents/skills/confos/`) that teaches agents how to
+  drive the tool. See
   [AGENTS.md](AGENTS.md).
 
 ## How it works
@@ -230,5 +232,3 @@ uv sync && uv run confos --help
 ## License
 
 MIT — see [LICENSE](LICENSE).
-</content>
-</invoke>

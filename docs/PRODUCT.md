@@ -144,7 +144,8 @@ confos ingest neurips-2025 --force  # full re-sync
 
 ## 7. Product principles
 
-1. **Local-first.** Ingest touches the network; everything else is offline & fast.
+1. **Local-first.** `ingest`, `venues search`, and `enrich profiles` are explicit network
+   commands; the read/query surface is offline and fast.
 2. **Agent-native by default.** Every read command supports stable `--json`. Data →
    stdout, progress/warnings → stderr. `--no-input` never prompts.
 3. **Provenance everywhere.** Every paper, stat, person traces to source id + URL.

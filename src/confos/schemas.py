@@ -92,6 +92,33 @@ _VENUE = {
     "paper_count": "int",
 }
 
+_PAPER_EXPORT_ROW = {
+    "paper_id": "string (OpenReview note id)",
+    "title": "string",
+    "status": "accepted|under_review|withdrawn|desk_rejected|rejected|unknown",
+    "acceptance_type": "oral|spotlight|poster|string",
+    "venue": "string (slug)",
+    "url": "string",
+    "pdf_url": "string (empty when absent)",
+    "supplementary_url": "string (empty when absent)",
+    "authors": "string (semicolon-separated display names)",
+    "keywords": "string (semicolon-separated keywords)",
+    "bibtex": "string (empty when absent)",
+}
+
+_AUTHOR_EXPORT_ROW = {
+    "author_id": "string (profile id | email:<addr> | name:<slug>#…)",
+    "display_name": "string",
+    "affiliation_current": "string ('Unknown' if absent)",
+    "affiliation_country": "string (empty when unknown)",
+    "data_quality": "resolved|low|unresolved",
+    "profile_url": "string|null",
+    "homepage": "string (empty when absent)",
+    "gscholar": "string (empty when absent)",
+    "dblp": "string (empty when absent)",
+    "expertise": "string (semicolon-separated self-declared keywords)",
+}
+
 SCHEMAS: dict[str, dict[str, Any]] = {
     "papers.search": {"envelope": _ENVELOPE, "data": [_PAPER]},
     "papers.show": {
@@ -178,6 +205,14 @@ SCHEMAS: dict[str, dict[str, Any]] = {
             "thin_areas": "string[] (heuristic, labelled)",
             "notes": "string",
         },
+    },
+    "export.papers": {
+        "envelope": _ENVELOPE,
+        "data": [_PAPER_EXPORT_ROW],
+    },
+    "export.authors": {
+        "envelope": _ENVELOPE,
+        "data": [_AUTHOR_EXPORT_ROW],
     },
     "brief": {
         "envelope": _ENVELOPE,

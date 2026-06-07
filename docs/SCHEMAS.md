@@ -34,7 +34,7 @@ Error form:
   "error": { "code": 4, "type": "network", "message": "..." } }
 ```
 
-## 2. Paper object (shared by search/show/related/export)
+## 2. Paper object (shared by search/show/related/context)
 ```json
 {
   "paper_id": "aBcDeFgHiJ",                 // OpenReview note id == public id (C3)
@@ -82,6 +82,44 @@ venueid suffix); papers there used to mislabel as `unknown`.
 `affiliation_country`/`homepage`/`gscholar`/`dblp`/`expertise` come from author **profile
 enrichment** (Phase 1) — populated by `confos enrich profiles --venue <slug>` (or absent/empty
 until then). `authors find` extends this with the ranking fields in [RANKING.md](RANKING.md) §2.
+
+## 3.1 Bulk export rows (`export papers` / `export authors`)
+Bulk export commands use the standard JSON envelope under `--json`, but their `data` rows are
+the same **flat export rows** used by CSV/JSONL, not the nested Paper/Author objects above.
+That keeps `--json`, `--format jsonl`, and CSV column names aligned.
+
+`confos export papers --json`:
+```json
+{
+  "paper_id": "aBcDeFgHiJ",
+  "title": "…",
+  "status": "accepted",
+  "acceptance_type": "poster",
+  "venue": "neurips-2025",
+  "url": "https://openreview.net/forum?id=aBcDeFgHiJ",
+  "pdf_url": "https://openreview.net/pdf?id=aBcDeFgHiJ",
+  "supplementary_url": "",
+  "authors": "Alice Smith; Bob Tan",
+  "keywords": "agents; memory",
+  "bibtex": "@inproceedings{…}"
+}
+```
+
+`confos export authors --json`:
+```json
+{
+  "author_id": "~Alice_Smith1",
+  "display_name": "Alice Smith",
+  "affiliation_current": "MIT",
+  "affiliation_country": "United States",
+  "data_quality": "resolved",
+  "profile_url": "https://openreview.net/profile?id=~Alice_Smith1",
+  "homepage": "https://…",
+  "gscholar": "https://scholar.google.com/…",
+  "dblp": "https://dblp.org/pid/…",
+  "expertise": "language models; agents"
+}
+```
 
 ## 4. Stats object (topics/orgs/countries; `orgs top` carries it too)
 Every stats payload includes a `data_quality` block — confos never fakes clean numbers.

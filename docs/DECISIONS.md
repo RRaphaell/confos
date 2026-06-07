@@ -1,6 +1,6 @@
 # confos — Decisions & Assumptions Log
 
-**Status:** living · **Last updated:** 2026-06-02
+**Status:** living · **Last updated:** 2026-06-07
 
 A lightweight ADR (Architecture Decision Record). Every non-obvious choice, and every
 assumption we're relying on, gets an entry — so neither future-me nor Raphael has to
@@ -81,17 +81,16 @@ rewrite, but don't build speculative adapters. **Alternatives:** hard-code OpenR
 ### D11 — Deliberately CUT as over-engineering (2026-05-31)
 **What:** no SECURITY.md, no CONTRIBUTING.md (premature), no SBOM/pip-audit/Dependabot,
 no `--wrap-untrusted`, no `--rate-delay`, no per-project config layer, no plugin system,
-no coverage-percentage gate. **Why:** Raphael's explicit guardrail — public anonymous
+no coverage-percentage gate. **Why:** scope guardrail — public anonymous
 data, focused CLI; these add complexity without value. The only output-safety rule is
 `html.escape` on free-text in HTML graphs. **Re-add only if a concrete need appears.**
 **Update (D21, v0.1.0):** `CONTRIBUTING.md` was added at release (the "premature" window
 closed when the repo went public); everything else here stays cut.
 
 ### D12 — Git: no AI-attribution trailer; conventional commits; push per phase (2026-05-31)
-**What:** commit messages are plain conventional-commits with **no** `Co-Authored-By:
-Claude` line (the harness default must be omitted). Push to private `RRaphaell/confos`
-after each phase. **Why:** Raphael's hard rule. **Note:** the 3 blueprint commits were
-history-rewritten to strip a trailer that slipped in.
+**What:** commit messages are plain conventional-commits with **no** `Co-Authored-By` or
+AI-attribution trailer. Push at meaningful green checkpoints. **Why:** keep the public
+history clean and attributable to the maintainer.
 
 ### D13 — Full v1 schema applied once via `PRAGMA user_version` (2026-05-31, Phase 0)
 **What:** the complete v1 schema (core tables + FTS5) lives in `db/schema.sql` and is

@@ -5,11 +5,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow 
 
 ## [Unreleased]
 
+### Fixed
+- **`confos schema export.papers` and `confos schema export.authors` now document the
+  0.4.0 bulk-export JSON envelopes.** These commands gained proper `--json` envelopes in
+  0.4.0, but the schema registry still treated them as raw-only CSV/JSONL dumps, so schema
+  discovery failed for two commands that agents can call with `--json`.
+
 ## [0.4.0] - 2026-06-04
 
 ### Added
 - **README demo screenshots** (brief dashboard, `authors find`, `viz topics`, `papers top`),
-  with `scripts/gen_assets.py` to regenerate them deterministically.
+  captured from the real terminal output so GitHub and PyPI show the CLI as users see it.
 - **`enrich profiles --dry-run`** previews the would-fetch / already-cached counts without any
   network call or write (contract §8 for state-changing commands).
 - **`--limit` on `viz topics`, `viz orgs`, and `venues search`** — the flag the `--help`
@@ -192,7 +198,8 @@ agent skill — all offline after ingest, all with provenance.
 - Blueprint complete: product spec, architecture, CLI contract, ranking/topic spec, JSON
   schemas, build plan, references, agent docs.
 
-[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/RRaphaell/confos/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/RRaphaell/confos/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/RRaphaell/confos/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/RRaphaell/confos/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/RRaphaell/confos/releases/tag/v0.1.0

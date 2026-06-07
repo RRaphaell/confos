@@ -311,7 +311,7 @@ Each phase is independently shippable and leaves `main` green.
 - [ ] `TERM=dumb` → ASCII fallback for all glyphs/borders; no block characters.
 - [ ] Progress/spinners appear on **stderr** only, and only on a TTY without `--quiet`.
 - [ ] New pure helpers covered in `tests/unit/test_render_helpers.py`.
-- [ ] `ruff` clean + `mypy --strict` clean (the gate; see [CONTRIBUTING.md](CONTRIBUTING.md)).
+- [ ] `ruff` clean + `mypy --strict` clean (the gate; see [CONTRIBUTING.md](../CONTRIBUTING.md)).
 - [ ] No new runtime dependency (Rich + stdlib only).
 
 ## 7. Open decisions (resolve before/while implementing)
@@ -334,4 +334,4 @@ Each phase is independently shippable and leaves `main` green.
 - [CLI_CONTRACT.md](CLI_CONTRACT.md) — §3 modes, §4 output contract (the rule this doc obeys)
 - [REFERENCES.md](REFERENCES.md) — `ft`/`birdclaw` (storage shape borrowed; visual polish borrowed here)
 - [ARCHITECTURE.md](ARCHITECTURE.md) — where `output/` and `commands/` sit in the layering
-- [CONTRIBUTING.md](CONTRIBUTING.md) — the gate (ruff + mypy strict + pytest) every phase must pass
+- [CONTRIBUTING.md](../CONTRIBUTING.md) — the gate (ruff + mypy strict + pytest) every phase must pass

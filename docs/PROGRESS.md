@@ -1,6 +1,6 @@
 # confos — Progress
 
-**Status:** living · **Last updated:** 2026-06-02
+**Status:** living · **Last updated:** 2026-06-07
 
 The running state of the build. I update this every session: what's done, what's in
 progress, what's next, and pointers to any research notes. Read this first when resuming.
@@ -11,6 +11,23 @@ progress, what's next, and pointers to any research notes. Read this first when 
 
 Turning the most-caveated, emptiest parts of v0.1.0 into real data, then building the
 features that data unlocks. Sequencing: M0 → Phase 0 → 1 → 2 → (4) → 5 (Phase 3 deferred).
+
+## Launch audit (2026-06-07)
+
+Pre-tweet readiness pass against current `main`: fixed one remaining contract bug
+(`confos schema export.papers` / `export.authors` now document the bulk-export JSON
+envelopes), removed stale public-doc claims (manual screenshots, public repo/PyPI state,
+network-command wording), and verified the launch surface.
+
+Evidence:
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy` ✅
+- `uv run pytest` ✅ — 279 tests
+- `./scripts/live-test.sh` ✅ — live OpenReview ingest of `ICLR.cc/2025/Workshop/MLMP`
+  (33 papers), profile enrichment chunk, search/authors/stats/export/viz query surface
+- `uv build` ✅ — wheel + sdist build; isolated wheel `confos --version` / `--help` works
+- README local links + public GitHub/PyPI/screenshot/OpenReview doc URLs spot-checked ✅
 
 | Step | Name | Status |
 |---|---|---|
@@ -277,12 +294,11 @@ _(none yet — added under `docs/research/` as I look things up during the build
 - `docs/research/name-conflict.md` — name availability (pre-existing)
 
 ## Open questions / to confirm with Raphael
-- Reserve the `confos` name on PyPI before any public mention (cheap, do at Phase 6 prep).
-- (none blocking Phase 0)
+- None.
 
 ## Session log
 - **2026-05-31** — Reframed confos to general-purpose; wrote full doc set; studied
   create-cli/gogcli/ft/birdclaw; ran architecture-critic + fresh-user + re-validation
   subagents; fixed 6 criticals; cut over-engineering per Raphael; added DECISIONS.md +
-  PROGRESS.md + research/decision discipline to BUILD_PLAN; git init + pushed to private
-  GitHub (commits stripped of AI-attribution trailer).
+  PROGRESS.md + research/decision discipline to BUILD_PLAN; git init + pushed the
+  prelaunch repo.

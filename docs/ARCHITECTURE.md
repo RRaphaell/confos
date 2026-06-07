@@ -1,6 +1,6 @@
 # confos — Architecture & System Design
 
-**Status:** canonical · **Last updated:** 2026-05-31
+**Status:** canonical · **Last updated:** 2026-06-07
 
 How confos is built: high-level design, data flow, components, stack, data model.
 For the user-facing command contract see [CLI_CONTRACT.md](CLI_CONTRACT.md); for the
@@ -13,8 +13,9 @@ build process see [BUILD_PLAN.md](BUILD_PLAN.md).
 Three ideas drive every decision:
 
 1. **Local-first, index-as-cache.** Raw source snapshots are the source of truth;
-   SQLite (+FTS5) is a derived, rebuildable index. The network is touched *only* during
-   `ingest`. Everything else is offline and fast.
+   SQLite (+FTS5) is a derived, rebuildable index. The network is touched only by
+   explicit network commands: `ingest`, `venues search`, and `enrich profiles`. The
+   search/stats/trends/viz/export/read surface is offline and fast.
 2. **Layered, one-way dependencies.** `commands → services → adapters / repositories`.
    Adapters fetch but never write the DB. Repositories own SQL but never touch the
    network. Commands parse args and format output but contain no business logic.
@@ -63,7 +64,8 @@ Rules enforced by the layering:
   • adapters never import repositories (they return normalized objects + raw payloads)
   • repositories never import adapters (no network in the query path)
   • commands never contain business logic (they call exactly one service)
-  • only `ingest` touches the network; search/stats/trends/viz/export are offline
+  • only explicit network commands (`ingest`, `venues search`, `enrich profiles`) touch
+    OpenReview; search/stats/trends/viz/export are offline
 ```
 
 ## 3. Data-flow diagram (ingest → query)
@@ -150,6 +152,7 @@ flows command → service → repository.
     openreview/
       neurips-2025/
         submissions.jsonl   # raw notes (TRUTH — re-normalizable)
+        profiles.jsonl      # optional author-profile enrichment snapshot
         venue.json
         ingest_run.json
   aliases/
@@ -161,17 +164,21 @@ flows command → service → repository.
 
 ### Core tables (SQLite)
 ```
-venues(id, slug, source, source_venue_id, published_venueid,
+venues(slug, source, source_venue_id, published_venueid, submission_venueid,
        submission_name, display_name, year, url, last_ingested_at, ...)
-papers(id, venue_id, title, abstract, keywords_json, status,
-       acceptance_type, raw_venueid, url, pdate, raw_ref, created_at, updated_at)
+papers(id, venue_slug, title, abstract, keywords_json, status,
+       acceptance_type, raw_venueid, url, pdf_url, bibtex, supplementary_url,
+       review_count, rating_mean, rating_std, confidence_mean, decision,
+       pdate, tcdate, tmdate, created_at, updated_at)
 authors(id, profile_id, display_name, aliases_json,
-        affiliation_current, data_quality, ...)
+        affiliation_current, affiliation_country, homepage, gscholar, dblp,
+        expertise_json, data_quality, ...)
 paper_authors(paper_id, author_id, position, raw_name)  -- positional; raw_name kept for unresolved
 orgs(id, name, normalized_name, country, aliases_json)
 author_affiliations(author_id, org_id, start_year, end_year, confidence)
 paper_topics(paper_id, topic, source)                  -- topic = normalized keyword
-ingest_runs(id, venue_id, status, started_at, finished_at,
+reviews(paper_id, reviewer_key, rating, confidence, sub_scores_json, raw_rating)
+ingest_runs(id, venue_slug, status, started_at, finished_at,
             items_seen, items_added, items_updated,
             max_tcdate, max_tmdate, error)             -- BOTH watermarks (S1)
 
@@ -206,7 +213,7 @@ ranking in [RANKING.md](RANKING.md). The essentials:
 - Exit codes: `0` ok · `1` generic · `2` usage/validation · `3` config/env ·
   `4` network/backend · `5` partial ingest · `130` interrupted (SIGINT, bounded cleanup).
 - Safety classes: **local-read** (search/show/find/stats/trends/viz/export — no network),
-  **network** (`ingest`, `venues search`), **local-write** (`index rebuild`, `venues add`),
+  **network** (`ingest`, `venues search`, `enrich profiles`), **local-write** (`index rebuild`, `venues add`),
   **destructive** (future prune/reset — need `--force` non-interactive). There is **no
   `sync` command** — re-running `ingest` is the incremental update (C1).
 - `confos schema <command>` prints the JSON schema of that command's output (the JSON
@@ -218,10 +225,10 @@ ranking in [RANKING.md](RANKING.md). The essentials:
 |---|---|---|
 | **Accepted vs rejected** | OpenReview rewrites a note's `venueid` only *after* decisions; pre-decision every note's `venueid` is the under-review bucket, so a `content={'venueid': venue_id}` query returns ~0 papers mid-review (C2) | **Ingest always pulls the FULL submission set** via `invitation=f'{venue_id}/-/{submission_name}'`, stores each note's raw `venueid`, and derives `status` **locally**: `accepted` iff `raw_venueid == venue.published_venueid`; withdrawn/desk-rejected from the buckets named in the venue group. `--accepted-only` is a local `WHERE status='accepted'`, **never a different network query**. Mark unknown explicitly. |
 | **Incremental sync** | `/notes` endpoint exposes `mintcdate` but **no `mintmdate`** | `mintcdate` watermark for new notes + periodic full re-fetch with `sort='tmdate:desc'` short-circuit to catch edits; store **both** `max_tcdate` and `max_tmdate` in `ingest_runs`. Re-running `confos ingest` performs this incremental update; `--force` ignores watermarks for a full re-pull (there is no separate `sync` command — C1). |
-| **Author identity** | Names collide; one human can have multiple merged tilde ids | Key on profile id; expose "possible duplicates"; never auto-merge by name |
+| **Author identity** | Names collide; one human can have multiple merged tilde ids | Key on profile id when present; never auto-merge by name |
 | **Affiliations / countries** | Free-text, missing ~10–15%, inconsistent | Email-domain + curated alias table; report known/unknown/low-confidence in every stat; `--explain` shows method |
 | **Venue id conventions** | `NeurIPS.cc/2025/Conference` vs `colmweb.org/COLM/2024/Conference` | Curated alias map + `venues add` for arbitrary ids; never derive algorithmically |
-| **Rate/politeness** | No published limits; the API research concludes no throttling is needed for anonymous reads | Sequential ingest, cache aggressively, identify in User-Agent. No rate-limit knob unless 429s actually appear. |
+| **Rate/politeness** | Notes ingest is fine sequentially; `/profiles` has a practical anonymous cap of about 20 profiles/min | Keep ingest sequential and cached; make profile enrichment opt-in, sequential, and resumable via `profiles.jsonl`. No `--workers` knob because concurrency only creates 429 churn. |
 
 (Full OpenReview API mechanics: [research/openreview-api.md](research/openreview-api.md).)
 

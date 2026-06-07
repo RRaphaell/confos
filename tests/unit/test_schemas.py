@@ -7,10 +7,6 @@ import pytest
 from confos.schemas import SCHEMAS, available_commands, schema_for
 from tests.conftest import RunCli, leaf_command_paths
 
-# Commands that intentionally emit raw bulk (CSV/JSONL) instead of the JSON envelope, so
-# they have no envelope schema entry. Everything else the CLI exposes must be documented.
-_BULK_EXPORT = {"export.papers", "export.authors"}
-
 
 def test_schema_for_known_and_unknown() -> None:
     found = schema_for("papers.search")
@@ -38,11 +34,11 @@ def test_every_schema_command_is_real(run_cli: RunCli, command: str) -> None:
 
 def test_schema_registry_covers_every_envelope_command() -> None:
     # The `schema` command is only useful if it documents the whole surface: every leaf
-    # command that emits a --json envelope must have an entry (bulk-export dumps excepted),
-    # and no entry may name a phantom command.
+    # command that emits a --json envelope must have an entry, and no entry may name a
+    # phantom command.
     leaves = {".".join(p) for p in leaf_command_paths()}
     documented = set(SCHEMAS)
-    undocumented = leaves - documented - _BULK_EXPORT
+    undocumented = leaves - documented
     assert not undocumented, f"emit --json but have no schema entry: {sorted(undocumented)}"
     phantom = documented - leaves
     assert not phantom, f"schema lists non-existent commands: {sorted(phantom)}"
